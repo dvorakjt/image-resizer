@@ -13,4 +13,9 @@ public abstract class AbstractImageFormatData
     {
         return ".jpg";
     }
+
+    public virtual string GetMimeType()
+    {
+        return "image/jpeg";
+    }
 }

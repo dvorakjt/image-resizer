@@ -22,10 +22,42 @@ public class DensitiesModeFormData : AbstractFormData
 
     protected override IEnumerable<int> GetImageWidths()
     {
-        /*
-          NetVips.Image.Resize rounds to the nearest pixel, so the calculation here corresponds to what you would get 
-          if you provided the multiplier directly to the NetVips.Image.Resize method.
-        */
-        return Densities.Select(density => (int)Math.Round(BaseImageWidth * density.ToMultiplier()));
+        
+        return Densities.Select(density => CalculateImageWidthFromDensity(density));
+    }
+
+    protected override string CreateSourceOrImgElement(AbstractImageFormatData imageFormat)
+    {
+        var srcset = CreateSrcSet(imageFormat.GetExtension());
+
+        if (imageFormat is AVIFImageFormatData || imageFormat is WebPImageFormatData)
+        {
+            var source = $"<source srcset=\"{srcset}\" type=\"{imageFormat.GetMimeType()}\" />";
+            return source;
+        }
+        
+        return $"<img srcset=\"{srcset}\" alt=\"{AltText}\" />";
+    }
+    
+    /*
+      NetVips.Image.Resize rounds to the nearest pixel, so the calculation here corresponds to what you would get
+      if you provided the multiplier directly to the NetVips.Image.Resize method.
+    */
+    private int CalculateImageWidthFromDensity(Density density)
+    {
+        return (int)Math.Round(BaseImageWidth * density.ToMultiplier());
+    }
+
+    private string CreateSrcSet(string ext)
+    {
+        var sources = Densities.Select(density =>
+        {
+            var imageWidth = CalculateImageWidthFromDensity(density);
+            var relativeFilePath = OutputPath.ToRelativeFilePathString(imageWidth, ext);
+            var source = $"{relativeFilePath} {density.ToHtmlString()}";
+            return source;
+        });
+        
+        return string.Join(", ", sources);
     }
 }

@@ -1,4 +1,4 @@
-using System.Text;
+using Microsoft.Maui.ApplicationModel.DataTransfer;
 
 namespace ImageResizer.Models;
 
@@ -20,14 +20,25 @@ public abstract class AbstractFormData
         ImageFormats = imageFormats.ToList();
     }
 
-    public async Task Save()
+    public async Task<string> Save()
     {
         var imageWidths = GetImageWidths();
         foreach (var imageFormat in ImageFormats)
         {
             await Task.WhenAll(imageWidths.Select(width => ImageFormatter.ResizeReformatAndSave(imageFormat, width)));
         }
+
+        return CreatePictureTag();
+    }
+    
+    
+    private string CreatePictureTag()
+    {
+        var sourceOrImgElements = string.Join('\n', ImageFormats.Select(formatData => CreateSourceOrImgElement(formatData).PadLeft(2)));
+        return $"<picture>\n{sourceOrImgElements}\n</picture>";
     }
 
     protected abstract IEnumerable<int> GetImageWidths();
+    
+    protected abstract string CreateSourceOrImgElement(AbstractImageFormatData imageFormatData);
 }

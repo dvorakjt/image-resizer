@@ -23,7 +23,7 @@ public class OutputPath : AbstractOutputPath
 
    public override string ToRelativeDirPathString(string ext)
    {
-      return Path.Join(PathFromPublicDir, BaseFileName, ext);
+      return Path.Join(PathFromPublicDir, BaseFileName, ext.Substring(ext.IndexOf('.') + 1));
    }
 
    public override string ToAbsoluteFilePathString(int width, string ext)

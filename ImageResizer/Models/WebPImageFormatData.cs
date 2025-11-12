@@ -13,4 +13,9 @@ public class WebPImageFormatData : AbstractImageFormatData
     {
         return ".webp";
     }
+
+    public override string GetMimeType()
+    {
+        return "image/webp";
+    }
 }

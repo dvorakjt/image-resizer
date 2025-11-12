@@ -13,4 +13,9 @@ public class AVIFImageFormatData : AbstractImageFormatData
     {
         return ".avif";
     }
+
+    public override string GetMimeType()
+    {
+        return "image/avif";
+    }
 }

@@ -17,7 +17,7 @@ public class TestOutputPath
     {
         var outputPath = new OutputPath(PATH_TO_PUBLIC_DIR, PATH_FROM_PUBLIC_DIR, FILENAME, VERSION);
         var actualAbsoluteDirPath = outputPath.ToAbsoluteDirPathString(EXTENSION);
-        var expectedAbsoluteDirPath = $"{PATH_TO_PUBLIC_DIR}/{PATH_FROM_PUBLIC_DIR}/{FILENAME}/{EXTENSION}";
+        var expectedAbsoluteDirPath = $"{PATH_TO_PUBLIC_DIR}/{PATH_FROM_PUBLIC_DIR}/{FILENAME}/{EXTENSION.Substring(EXTENSION.IndexOf('.') + 1)}";
         Assert.Equal(expectedAbsoluteDirPath, actualAbsoluteDirPath);
     }
     
@@ -26,7 +26,7 @@ public class TestOutputPath
     {
         var outputPath = new OutputPath(PATH_TO_PUBLIC_DIR, PATH_FROM_PUBLIC_DIR, FILENAME, VERSION);
         var actualRelativeDirPath = outputPath.ToRelativeDirPathString(EXTENSION);
-        var expectedRelativeDirPath = $"{PATH_FROM_PUBLIC_DIR}/{FILENAME}/{EXTENSION}";
+        var expectedRelativeDirPath = $"{PATH_FROM_PUBLIC_DIR}/{FILENAME}/{EXTENSION.Substring(EXTENSION.IndexOf('.') + 1)}";
         Assert.Equal(expectedRelativeDirPath, actualRelativeDirPath);
     }
     
@@ -36,7 +36,7 @@ public class TestOutputPath
         var outputPath = new OutputPath(PATH_TO_PUBLIC_DIR, PATH_FROM_PUBLIC_DIR, FILENAME, VERSION);
         var actualAbsoluteFilePath = outputPath.ToAbsoluteFilePathString(WIDTH, EXTENSION);
         var expectedAbsoluteFilePath =
-            $"{PATH_TO_PUBLIC_DIR}/{PATH_FROM_PUBLIC_DIR}/{FILENAME}/{EXTENSION}/{FILENAME}_{WIDTH}w_v{VERSION}{EXTENSION}";
+            $"{PATH_TO_PUBLIC_DIR}/{PATH_FROM_PUBLIC_DIR}/{FILENAME}/{EXTENSION.Substring(EXTENSION.IndexOf('.') + 1)}/{FILENAME}_{WIDTH}w_v{VERSION}{EXTENSION}";
         Assert.Equal(expectedAbsoluteFilePath, actualAbsoluteFilePath);
     }
     
@@ -46,7 +46,7 @@ public class TestOutputPath
         var outputPath = new OutputPath(PATH_TO_PUBLIC_DIR, PATH_FROM_PUBLIC_DIR, FILENAME, VERSION);
         var actualRelativeFilePath = outputPath.ToRelativeFilePathString(WIDTH, EXTENSION);
         var expectedRelativeFilePath =
-            $"{PATH_FROM_PUBLIC_DIR}/{FILENAME}/{EXTENSION}/{FILENAME}_{WIDTH}w_v{VERSION}{EXTENSION}";
+            $"{PATH_FROM_PUBLIC_DIR}/{FILENAME}/{EXTENSION.Substring(EXTENSION.IndexOf('.') + 1)}/{FILENAME}_{WIDTH}w_v{VERSION}{EXTENSION}";
         Assert.Equal(expectedRelativeFilePath, actualRelativeFilePath);
     }
 }
