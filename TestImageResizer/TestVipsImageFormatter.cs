@@ -9,52 +9,80 @@ public class TestVipsImageFormatter
     public async Task TestSavesAVIFImage()
     {
         using var originalImage = NetVips.Image.Black(200, 200);
+        var originalImgBuffer = originalImage.WriteToBuffer(".jpg");
+        var outputPath = new OutputPath(
+            Environment.CurrentDirectory, 
+            "temp", 
+            Guid.NewGuid().ToString(), 
+            1);
+        
+        var formatter = new NetVipsImageFormatter(originalImgBuffer, outputPath);
         var avifFormatData = new AVIFImageFormatData(100, 1);
-        var outputPath = $"./temp/{Guid.NewGuid()}.avif";
-        var formatter = new NetVipsImageFormatter();
-        await formatter.ResizeReformatAndSave(originalImage.WriteToBuffer(".jpg"), avifFormatData, originalImage.Width, outputPath);
-        Assert.True(File.Exists(outputPath));
-        File.Delete(outputPath);
+        await formatter.ResizeReformatAndSave(avifFormatData, originalImage.Width);
+        var filePath = outputPath.ToAbsoluteFilePathString(originalImage.Width, avifFormatData.GetExtension());
+        Assert.True(File.Exists(filePath));
+        File.Delete(filePath);
     }
     
     [Fact]
     public async Task TestSavesWebPImage()
     {
         using var originalImage = NetVips.Image.Black(200, 200);
+        var originalImgBuffer = originalImage.WriteToBuffer(".jpg");
+        var outputPath = new OutputPath(
+            Environment.CurrentDirectory, 
+            "temp", 
+            Guid.NewGuid().ToString(), 
+            1);
+        
+        var formatter = new NetVipsImageFormatter(originalImgBuffer, outputPath);
         var webPFormatData = new WebPImageFormatData(100, 1);
-        var outputPath = $"./temp/{Guid.NewGuid()}.webp";
-        var formatter = new NetVipsImageFormatter();
-        await formatter.ResizeReformatAndSave(originalImage.WriteToBuffer(".jpg"), webPFormatData, originalImage.Width, outputPath);
-        Assert.True(File.Exists(outputPath));
-        File.Delete(outputPath);
+        await formatter.ResizeReformatAndSave(webPFormatData, originalImage.Width);
+        var filePath = outputPath.ToAbsoluteFilePathString(originalImage.Width, webPFormatData.GetExtension());
+        Assert.True(File.Exists(filePath));
+        File.Delete(filePath);
     }
     
     [Fact]
     public async Task TestSavesJPGImage()
     {
         using var originalImage = NetVips.Image.Black(200, 200);
+        var originalImgBuffer = originalImage.WriteToBuffer(".jpg");
+        var outputPath = new OutputPath(
+            Environment.CurrentDirectory, 
+            "temp", 
+            Guid.NewGuid().ToString(), 
+            1);
+        
+        var formatter = new NetVipsImageFormatter(originalImgBuffer, outputPath);
         var jpgFormatData = new JPGImageFormatData(100);
-        var outputPath = $"./temp/{Guid.NewGuid()}.jpg";
-        var formatter = new NetVipsImageFormatter();
-        await formatter.ResizeReformatAndSave(originalImage.WriteToBuffer(".jpg"), jpgFormatData, originalImage.Width, outputPath);
-        Assert.True(File.Exists(outputPath));
-        File.Delete(outputPath);
+        await formatter.ResizeReformatAndSave(jpgFormatData, originalImage.Width);
+        var filePath = outputPath.ToAbsoluteFilePathString(originalImage.Width, jpgFormatData.GetExtension());
+        Assert.True(File.Exists(filePath));
+        File.Delete(filePath);
     }
 
     [Fact]
     public async Task TestResizesImage()
     {
         using var originalImage = NetVips.Image.Black(50, 50);
+        var originalImgBuffer = originalImage.WriteToBuffer(".jpg"); 
         var jpgFormatData = new JPGImageFormatData(100);
-        var formatter = new NetVipsImageFormatter();
+        
         for (int newWidth = originalImage.Width; newWidth >= 1; newWidth--)
         {
-            var outputPath = $"./temp/{Guid.NewGuid()}.jpg";
-            await formatter.ResizeReformatAndSave(originalImage.WriteToBuffer(".jpg"), jpgFormatData, newWidth, outputPath);
-            var resizedImage = NetVips.Image.NewFromFile(outputPath);
+            var outputPath = new OutputPath(
+                Environment.CurrentDirectory, 
+                "temp", 
+                Guid.NewGuid().ToString(), 
+                1);
+            
+            var formatter = new NetVipsImageFormatter(originalImgBuffer, outputPath);
+            await formatter.ResizeReformatAndSave(jpgFormatData, newWidth);
+            var resizedImage = NetVips.Image.NewFromFile(outputPath.ToAbsoluteFilePathString(newWidth, jpgFormatData.GetExtension()));
             Assert.Equal(newWidth, resizedImage.Width);
             resizedImage.Dispose();
-            File.Delete(outputPath);
+            File.Delete(outputPath.ToAbsoluteFilePathString(newWidth, jpgFormatData.GetExtension()));
         }
     }
 }

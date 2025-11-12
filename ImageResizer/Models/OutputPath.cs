@@ -42,6 +42,6 @@ public class OutputPath : AbstractOutputPath
 
    private string GetFileNameWithVersionAndFormat(int width, string ext)
    {
-      return $"{BaseFileName}_{width}w_${Version}.${ext}";
+      return $"{BaseFileName}_{width}w_v{Version}{ext}";
    }
 }

@@ -22,7 +22,10 @@ public class DensitiesModeFormData : AbstractFormData
 
     protected override IEnumerable<int> GetImageWidths()
     {
-        // This needs looking into --> is this how Vips handles subpixel sizes?
+        /*
+          NetVips.Image.Resize rounds to the nearest pixel, so the calculation here corresponds to what you would get 
+          if you provided the multiplier directly to the NetVips.Image.Resize method.
+        */
         return Densities.Select(density => (int)Math.Round(BaseImageWidth * density.ToMultiplier()));
     }
 }
