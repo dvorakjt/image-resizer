@@ -4,23 +4,26 @@ namespace ImageResizer.Models;
 
 public class NetVipsImageFormatter : AbstractImageFormatter
 {
-    protected override Task ResizeAndReformat(byte[] imageData, AbstractImageFormatData imageFormatData, int newWidth, string outputPath)
+    public NetVipsImageFormatter(byte[] imageBuffer, AbstractOutputPath outputPath) : base(imageBuffer, outputPath) {}
+    
+    protected override Task ResizeAndReformat(AbstractImageFormatData imageFormatData, int newWidth)
     {
         return Task.Run(() =>
         {
-            using var originalImage = NetVips.Image.NewFromBuffer(imageData);
+            using var originalImage = NetVips.Image.NewFromBuffer(ImageBuffer);
             using var resizedImage = ResizeImage(originalImage, newWidth);
+            var outFilePath = OutputPath.ToAbsoluteFilePathString(newWidth, imageFormatData.GetExtension());
             
             switch (imageFormatData)
             {
                 case AVIFImageFormatData avifImageFormatData:
-                    ReformatAndSaveAVIFImage(resizedImage, avifImageFormatData, outputPath);
+                    ReformatAndSaveAVIFImage(resizedImage, avifImageFormatData, outFilePath);
                     break;
                 case WebPImageFormatData webpImageFormatData:
-                    ReformatAndSaveWebPImage(resizedImage, webpImageFormatData, outputPath);
+                    ReformatAndSaveWebPImage(resizedImage, webpImageFormatData, outFilePath);
                     break;
                 default:
-                    ReformatAndSaveJPGImage(resizedImage, imageFormatData, outputPath);
+                    ReformatAndSaveJPGImage(resizedImage, imageFormatData, outFilePath);
                     break;
             }
         });

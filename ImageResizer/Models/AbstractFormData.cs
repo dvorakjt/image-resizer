@@ -4,24 +4,30 @@ namespace ImageResizer.Models;
 
 public abstract class AbstractFormData
 {
-    public Stream ImageStream { get; }
-    public string OutputFileName { get; }
-    public uint VersionNumber { get; }
-    public string PathToPublicDirectory { get; }
-    public string PathFromPublicDirectory { get; }
-    public string AltText { get; }
+    protected AbstractImageFormatter ImageFormatter { get; }
+    protected AbstractOutputPath OutputPath { get; }
+    protected string AltText { get; }
     
     public IList<AbstractImageFormatData> ImageFormats { get; }
 
-    protected AbstractFormData(Stream imageStream, string outputFileName, uint versionNumber, string pathToPublicDirectory,
+    protected AbstractFormData(byte[] imageBuffer, string outputFileName, int versionNumber, string pathToPublicDirectory,
         string pathFromPublicDirectory, string altText, IEnumerable<AbstractImageFormatData> imageFormats)
     {
-        ImageStream = imageStream;
-        OutputFileName = outputFileName;
-        VersionNumber = versionNumber;
-        PathToPublicDirectory = pathToPublicDirectory;
-        PathFromPublicDirectory = pathFromPublicDirectory;
+        var op = new OutputPath(pathToPublicDirectory, pathFromPublicDirectory, outputFileName, versionNumber);
+        ImageFormatter = new NetVipsImageFormatter(imageBuffer, op);
+        OutputPath = op;
         AltText = altText;
         ImageFormats = imageFormats.ToList();
     }
+
+    public async Task Save()
+    {
+        var imageWidths = GetImageWidths();
+        foreach (var imageFormat in ImageFormats)
+        {
+            await Task.WhenAll(imageWidths.Select(width => ImageFormatter.ResizeReformatAndSave(imageFormat, width)));
+        }
+    }
+
+    protected abstract IEnumerable<int> GetImageWidths();
 }

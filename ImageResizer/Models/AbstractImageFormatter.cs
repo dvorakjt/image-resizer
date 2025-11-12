@@ -2,19 +2,28 @@ namespace ImageResizer.Models;
 
 public abstract class AbstractImageFormatter
 {
-    private static void CreateDirectoryIfNotExists(string outputPath)
+    protected byte[] ImageBuffer { get; }
+    protected AbstractOutputPath OutputPath { get; }
+
+    protected AbstractImageFormatter(byte[] imageBuffer, AbstractOutputPath outputPath)
     {
-        if(outputPath == null) throw new ArgumentNullException(nameof(outputPath));
-        
-        string dirPath = Path.GetDirectoryName(outputPath);
+        ImageBuffer = imageBuffer;
+        OutputPath = outputPath;
+    }
+    
+    public async Task ResizeReformatAndSave( AbstractImageFormatData imageFormatData, int newWidth)
+    {
+        CreateDirectoryIfNotExists(imageFormatData);
+        await ResizeAndReformat(imageFormatData, newWidth);
+    }
+
+    private void CreateDirectoryIfNotExists(AbstractImageFormatData imageFormatData)
+    {
+        var ext = imageFormatData.GetExtension();
+        var dirPath = OutputPath.ToAbsoluteDirPathString(ext);
         Directory.CreateDirectory(dirPath);
     }
+
     
-    public async Task ResizeReformatAndSave(byte[] imageData, AbstractImageFormatData imageFormatData, int newWidth, string outputPath)
-    {
-        CreateDirectoryIfNotExists(outputPath);
-        await ResizeAndReformat(imageData, imageFormatData, newWidth, outputPath);
-    }
-    
-    protected abstract Task ResizeAndReformat(byte[] imageData, AbstractImageFormatData imageFormatData, int newWidth,  string outputPath);
+    protected abstract Task ResizeAndReformat(AbstractImageFormatData imageFormatData, int newWidth);
 }

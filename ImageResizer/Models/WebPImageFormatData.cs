@@ -8,4 +8,9 @@ public class WebPImageFormatData : AbstractImageFormatData
     {
         Effort = effort;
     }
+
+    public override string GetExtension()
+    {
+        return ".webp";
+    }
 }

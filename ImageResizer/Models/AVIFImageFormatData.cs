@@ -8,4 +8,9 @@ public class AVIFImageFormatData : AbstractImageFormatData
     {
         Effort = effort;
     }
+
+    public override string GetExtension()
+    {
+        return ".avif";
+    }
 }

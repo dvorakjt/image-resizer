@@ -5,23 +5,28 @@ namespace ImageResizer.Models;
 public class WidthsModeFormData : AbstractFormData
 {
     public WidthComparisonMode WidthComparisonMode { get; }
-    public uint DefaultImageWidth { get; }
-    public IReadOnlyDictionary<uint, uint> Widths { get; }
+    public int DefaultImageWidth { get; }
+    public IReadOnlyDictionary<int, int> Widths { get; }
 
 public WidthsModeFormData(
-        Stream imageStream,
+        byte[] imageBuffer,
         string outputFileName, 
-        uint versionNumber,
+        int versionNumber,
         string pathToPublicDirectory,
         string pathFromPublicDirectory, 
         string altText, 
         IEnumerable<AbstractImageFormatData> imageFormats,
         WidthComparisonMode widthComparisonMode,
-        uint defaultImageWidth,
-        IDictionary<uint, uint> widths): base(imageStream, outputFileName, versionNumber, pathToPublicDirectory, pathFromPublicDirectory, altText, imageFormats)
+        int defaultImageWidth,
+        IDictionary<int, int> widths): base(imageBuffer, outputFileName, versionNumber, pathToPublicDirectory, pathFromPublicDirectory, altText, imageFormats)
     {
         this.WidthComparisonMode = widthComparisonMode;
         this.DefaultImageWidth = defaultImageWidth;
-        this.Widths = new ReadOnlyDictionary<uint, uint>(widths);
+        this.Widths = new ReadOnlyDictionary<int, int>(widths);
+    }
+
+    protected override IEnumerable<int> GetImageWidths()
+    {
+        return Widths.Values.ToList().Append(DefaultImageWidth);
     }
 }
