@@ -1,4 +1,6 @@
-﻿namespace ImageResizer;
+﻿using ImageResizer.Components;
+
+namespace ImageResizer;
 
 public partial class MainPage : ContentPage
 {

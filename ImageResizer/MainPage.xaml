@@ -8,7 +8,7 @@
             Padding="24"
             >
             <Label Text="Image Resizer" FontSize="24" HorizontalOptions="Center"/>
-            <components:ImagePicker></components:ImagePicker>
+            <components:ImagePicker />
         </VerticalStackLayout>
     </ScrollView>
 
