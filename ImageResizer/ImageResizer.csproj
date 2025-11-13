@@ -68,4 +68,8 @@
         <PackageReference Include="NetVips" Version="3.1.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Resources\Images\" />
+    </ItemGroup>
+
 </Project>
