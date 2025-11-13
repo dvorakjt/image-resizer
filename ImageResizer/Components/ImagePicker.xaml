@@ -5,6 +5,7 @@
              x:Class="ImageResizer.Components.ImagePicker">
     <ContentView.GestureRecognizers>
         <TapGestureRecognizer Tapped="OnTapped"/>
+        <DropGestureRecognizer DragOver="OnDragOver" Drop="OnDrop"></DropGestureRecognizer>
     </ContentView.GestureRecognizers>
     <Border Stroke="White" StrokeThickness="4">
         <FlexLayout WidthRequest="350" HeightRequest="350" Direction="Column" AlignItems="Center" JustifyContent="Center">

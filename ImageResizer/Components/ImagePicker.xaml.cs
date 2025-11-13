@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Reflection;
 
 namespace ImageResizer.Components;
 
@@ -57,4 +58,19 @@ public partial class ImagePicker : ContentView
             EndLoading?.Invoke(this, EventArgs.Empty);
         }
     }
+
+    private void OnDragOver(object sender, DragEventArgs e)
+    {
+        bool canDrop = CanDrop(e);
+        Console.WriteLine(canDrop);
+        e.AcceptedOperation = canDrop ? DataPackageOperation.Copy : DataPackageOperation.None;
+    }
+
+    private async void OnDrop(object sender, DropEventArgs e)
+    {
+        // need a method to get the dropped image
+    }
+    
+    private partial bool CanDrop(DragEventArgs e);
+    
 }
