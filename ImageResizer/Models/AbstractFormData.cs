@@ -1,5 +1,3 @@
-using Microsoft.Maui.ApplicationModel.DataTransfer;
-
 namespace ImageResizer.Models;
 
 public abstract class AbstractFormData

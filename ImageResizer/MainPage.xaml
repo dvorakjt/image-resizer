@@ -11,5 +11,4 @@
             <components:ImagePicker />
         </VerticalStackLayout>
     </ScrollView>
-
 </ContentPage>

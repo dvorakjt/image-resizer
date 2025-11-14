@@ -1,11 +1,17 @@
-﻿namespace ImageResizer;
+﻿using Microsoft.Extensions.DependencyInjection;
 
-public partial class App : Application
+namespace ImageResizer
 {
-    public App()
+    public partial class App : Application
     {
-        InitializeComponent();
+        public App()
+        {
+            InitializeComponent();
+        }
 
-        MainPage = new MainPage();
+        protected override Window CreateWindow(IActivationState? activationState)
+        {
+            return new Window(new MainPage());
+        }
     }
 }

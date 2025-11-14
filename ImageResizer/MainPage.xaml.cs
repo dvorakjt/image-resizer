@@ -1,11 +1,10 @@
-﻿using ImageResizer.Components;
-
-namespace ImageResizer;
-
-public partial class MainPage : ContentPage
+﻿namespace ImageResizer
 {
-    public MainPage()
+    public partial class MainPage : ContentPage
     {
-        InitializeComponent();
+        public MainPage()
+        {
+            InitializeComponent();
+        }
     }
 }
