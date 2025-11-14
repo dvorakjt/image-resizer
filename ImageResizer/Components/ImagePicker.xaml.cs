@@ -51,10 +51,9 @@ public partial class ImagePicker : ContentView
         }
     }
 
-    private void OnDragOver(object sender, DragEventArgs e)
+    private async void OnDragOver(object sender, DragEventArgs e)
     {
-        bool canDrop = CanDrop(e);
-        Console.WriteLine(canDrop);
+        bool canDrop = await CanDrop(e);
         e.AcceptedOperation = canDrop ? DataPackageOperation.Copy : DataPackageOperation.None;
     }
 
@@ -64,7 +63,7 @@ public partial class ImagePicker : ContentView
         ImageStream = imageStream;
     }
 
-    private partial bool CanDrop(DragEventArgs e);
+    private partial Task<bool> CanDrop(DragEventArgs e);
     
     private partial Task<Stream?> GetDroppedImageStream(DropEventArgs e);
 }

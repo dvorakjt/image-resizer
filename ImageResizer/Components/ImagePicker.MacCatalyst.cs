@@ -6,10 +6,10 @@ namespace ImageResizer.Components;
 
 public partial class ImagePicker
 {
-    private partial bool CanDrop(DragEventArgs e)
+    private partial Task<bool> CanDrop(DragEventArgs e)
     {
         var dropSession = e.PlatformArgs?.DropSession;
-        return CanDrop(dropSession);
+        return Task.FromResult(CanDrop(dropSession));
     }
     
     private partial async Task<Stream?> GetDroppedImageStream(DropEventArgs e)
