@@ -4,11 +4,9 @@
              xmlns:components="clr-namespace:ImageResizer.Components"
              x:Class="ImageResizer.MainPage">
     <ScrollView>
-        <VerticalStackLayout
-            Padding="24"
-            >
-            <Label Text="Image Resizer" FontSize="24" HorizontalOptions="Center"/>
+        <FlexLayout Direction="Column" AlignItems="Center" x:Name="FormLayout">
+            <Label Text="Image Resizer" />
             <components:ImagePicker />
-        </VerticalStackLayout>
+        </FlexLayout>
     </ScrollView>
 </ContentPage>

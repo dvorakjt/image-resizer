@@ -90,7 +90,6 @@
 		<None Include="**\*.net.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
 	</ItemGroup>
 	<ItemGroup>
-	  <Folder Include="Components\" />
 	  <Folder Include="Models\" />
 	</ItemGroup>
 </Project>
