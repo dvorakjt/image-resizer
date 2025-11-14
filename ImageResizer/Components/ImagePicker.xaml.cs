@@ -68,9 +68,11 @@ public partial class ImagePicker : ContentView
 
     private async void OnDrop(object sender, DropEventArgs e)
     {
-        // need a method to get the dropped image
+        var imageStream = await GetDroppedImageStream(e);
+        ImageStream = imageStream;
     }
-    
+
     private partial bool CanDrop(DragEventArgs e);
     
+    private partial Task<Stream?> GetDroppedImageStream(DropEventArgs e);
 }

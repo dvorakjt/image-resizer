@@ -1,10 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFrameworks>net8.0;net8.0-maccatalyst</TargetFrameworks>
+        <TargetFrameworks>net8.0;net8.0-maccatalyst;</TargetFrameworks>
         <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net8.0-windows10.0.19041.0</TargetFrameworks>
-        <!-- Uncomment to also build the tizen app. You will need to install tizen by following this: https://github.com/Samsung/Tizen.NET -->
-        <!-- <TargetFrameworks>$(TargetFrameworks);net8.0-tizen</TargetFrameworks> -->
 
         <!-- Note for MacCatalyst:
         The default runtime is maccatalyst-x64, except in Release config, in which case the default is maccatalyst-x64;maccatalyst-arm64.
@@ -24,18 +22,16 @@
         <ApplicationTitle>ImageResizer</ApplicationTitle>
 
         <!-- App Identifier -->
-        <ApplicationId>com.companyname.imageresizer</ApplicationId>
+        <ApplicationId>dev.joedvorak.imageresizer</ApplicationId>
 
         <!-- Versions -->
         <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
         <ApplicationVersion>1</ApplicationVersion>
 
-        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">11.0</SupportedOSPlatformVersion>
+
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">13.1</SupportedOSPlatformVersion>
-        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
         <TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
-        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-maccatalyst|AnyCPU'">
@@ -76,14 +72,22 @@
       <Folder Include="Resources\Images\" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Compile Update="Platforms\MacCatalyst\Components\ImagePicker.cs">
-        <ExcludeFromCurrentConfiguration>true</ExcludeFromCurrentConfiguration>
-      </Compile>
+    <!-- Mac Catalyst -->
+    <ItemGroup Condition="$(TargetFramework.StartsWith('net8.0-maccatalyst')) != true">
+        <Compile Remove="**\**\*.MacCatalyst.cs" />
+        <None Include="**\**\*.MacCatalyst.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
     </ItemGroup>
 
-    <ItemGroup>
-      <None Include="Platforms\Windows\Components\ImagePicker.cs" />
+    <!-- Windows -->
+    <ItemGroup Condition="$(TargetFramework.StartsWith('net8.0-windows')) != true">
+        <Compile Remove="**\*.Windows.cs" />
+        <None Include="**\*.Windows.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
+    </ItemGroup>
+
+    <!-- .NET -->
+    <ItemGroup Condition="!($(TargetFramework.StartsWith('net')) == true AND $(TargetFramework.EndsWith('.0')) == true AND $(TargetFramework.Contains('-')) != true)">
+        <Compile Remove="**\*.net.cs" />
+        <None Include="**\*.net.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
     </ItemGroup>
 
 </Project>
