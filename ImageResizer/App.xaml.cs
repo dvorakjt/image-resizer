@@ -11,7 +11,13 @@ namespace ImageResizer
 
         protected override Window CreateWindow(IActivationState? activationState)
         {
-            return new Window(new MainPage());
+            return new Window(new MainPage())
+            {
+                Width = 540,
+                Height = 768,
+                MinimumWidth = 412,
+                MinimumHeight = 540
+            };
         }
     }
 }

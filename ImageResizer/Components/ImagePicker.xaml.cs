@@ -5,8 +5,6 @@ namespace ImageResizer.Components;
 
 public partial class ImagePicker : ContentView, IFormElement<Stream?>, IFormElementWithErrorDisplay, INotifyPropertyChanged
 {
-    public event EventHandler? BeginLoading;
-    public event EventHandler? EndLoading;
     public event EventHandler<FormElementStateChangedEventArgs<Stream?>> StateChanged;
     public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -50,8 +48,6 @@ public partial class ImagePicker : ContentView, IFormElement<Stream?>, IFormElem
 
     private async void OnTapped(object sender, EventArgs e)
     {
-        BeginLoading?.Invoke(this, EventArgs.Empty);
-        
         try
         {
             var pickOptions = new PickOptions
@@ -79,10 +75,6 @@ public partial class ImagePicker : ContentView, IFormElement<Stream?>, IFormElem
         {
             Console.WriteLine(ex);
             RevealErrors();
-        }
-        finally
-        {
-            EndLoading?.Invoke(this, EventArgs.Empty);
         }
     }
 

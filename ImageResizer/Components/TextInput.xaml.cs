@@ -44,14 +44,23 @@ public partial class TextInput : ContentView, IFormElement<string>, ISettableFor
     }
 
     private readonly Func<string, ValidatorFuncResult> _validationFunc;
+    private readonly Func<string, string> _filterInput;
     private bool _isPristine = true;
     
-    public TextInput(string defaultValue, Func<string, ValidatorFuncResult> validationFunc)
+    public TextInput(string defaultValue, Func<string, ValidatorFuncResult> validationFunc, Func<string, string>? filterInput = null)
     {
-        InitializeComponent();    
+        InitializeComponent();
+        
         _validationFunc = validationFunc;
         
-        var validationResult = _validationFunc(defaultValue);
+        if(filterInput == null)
+        {
+            filterInput = val => val;
+        }
+        
+        _filterInput = filterInput;
+           
+        var validationResult = _validationFunc(_filterInput(defaultValue));
 
         State = new FormElementState<string>(
             defaultValue,
@@ -62,10 +71,11 @@ public partial class TextInput : ContentView, IFormElement<string>, ISettableFor
     
     public void SetValue(string value)
     {
-        var validationResult = _validationFunc(value);
+        var filteredValue = _filterInput(value);
+        var validationResult = _validationFunc(filteredValue);
 
         State = new FormElementState<string>(
-            value,
+            filteredValue,
             validationResult.IsValid,
             validationResult.Message
         );
@@ -79,6 +89,7 @@ public partial class TextInput : ContentView, IFormElement<string>, ISettableFor
     private void OnEntryTextChanged(object sender, TextChangedEventArgs e)
     {
         SetValue(e.NewTextValue);
+        
         if (_isPristine)
         {
             _isPristine = false;

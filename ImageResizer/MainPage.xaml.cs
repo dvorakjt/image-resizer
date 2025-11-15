@@ -1,5 +1,7 @@
-﻿using ImageResizer.Components;
+﻿using System.Text.RegularExpressions;
+using ImageResizer.Components;
 using ImageResizer.Models;
+using RadioButtonGroup = ImageResizer.Components.RadioButtonGroup;
 
 namespace ImageResizer;
 
@@ -25,13 +27,34 @@ public partial class MainPage : ContentPage
         {
             LabelText = "Alt Text",
         };
+    
+        FormLayout.Children.Add(altTextInput);
 
-        altTextInput.StateChanged += (object sender, FormElementStateChangedEventArgs<string> e) =>
+        var radioGroup = new RadioButtonGroup([
+            new RadioButtonGroupItem() { Content = "Dogs", Value = "dogs" },
+            new RadioButtonGroupItem() { Content = "Cats", Value = "cats" },
+            new RadioButtonGroupItem() { Content = "Baboons", Value = "baboons" },
+        ], "dogs", "animals")
+        {
+            LabelText = "Animals",
+        };
+        
+        radioGroup.StateChanged += (object sender, FormElementStateChangedEventArgs<string> e) =>
         {
             Console.WriteLine(e.State.Value);
         };
-    
-        FormLayout.Children.Add(altTextInput);
+        
+        FormLayout.Add(radioGroup);
+
+        var numericInput = new TextInput("", FormElementHelpers.CreateRequiredFieldValidator("Please enter a number."),
+            FormElementHelpers.AllowOnlyDigits)
+        {
+            LabelText = "Numeric Input",
+        };
+        
+        numericInput.SetValue("33");
+        
+        FormLayout.Children.Add(numericInput);
     }
 }
 
