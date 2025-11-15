@@ -2,7 +2,7 @@ using System.ComponentModel;
 
 namespace ImageResizer.Components;
 
-public partial class TextInput : ContentView, IFormElement<string>, INotifyPropertyChanged
+public partial class TextInput : ContentView, IFormElement<string>, ISettableFormElement<string>, IFormElementWithErrorDisplay, INotifyPropertyChanged
 {
     public static BindableProperty LabelTextProperty =
         BindableProperty.Create("LabelText", typeof(string), typeof(TextInput), "");

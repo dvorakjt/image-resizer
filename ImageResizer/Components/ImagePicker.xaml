@@ -3,7 +3,8 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:components="clr-namespace:ImageResizer.Components"
-             x:Class="ImageResizer.Components.ImagePicker">
+             x:Class="ImageResizer.Components.ImagePicker"
+             x:Name="ImagePickerComponent">
     <VerticalStackLayout>
     <Border Stroke="White" StrokeThickness="4">
         <FlexLayout WidthRequest="350" HeightRequest="350" Direction="Column" AlignItems="Center" JustifyContent="Center">
@@ -15,6 +16,6 @@
             <Label Text="Select An Image" FontSize="18" />
         </FlexLayout>
     </Border>
-    <components:ErrorMessage x:Name="ErrorMessage" />
+        <components:ErrorMessage IsVisible="{Binding Source={x:Reference ImagePickerComponent}, Path=IsErrorMessageVisible}" Text="{Binding Source={x:Reference ImagePickerComponent}, Path=ErrorMessageText}" />
     </VerticalStackLayout>
 </ContentView>
