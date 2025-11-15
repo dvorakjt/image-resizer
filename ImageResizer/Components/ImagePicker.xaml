@@ -2,15 +2,19 @@
 
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:components="clr-namespace:ImageResizer.Components"
              x:Class="ImageResizer.Components.ImagePicker">
-    <ContentView.GestureRecognizers>
-        <TapGestureRecognizer Tapped="OnTapped"/>
-        <DropGestureRecognizer DragOver="OnDragOver" Drop="OnDrop"></DropGestureRecognizer>
-    </ContentView.GestureRecognizers>
+    <VerticalStackLayout>
     <Border Stroke="White" StrokeThickness="4">
         <FlexLayout WidthRequest="350" HeightRequest="350" Direction="Column" AlignItems="Center" JustifyContent="Center">
+            <FlexLayout.GestureRecognizers>
+                <TapGestureRecognizer Tapped="OnTapped"/>
+                <DropGestureRecognizer DragOver="OnDragOver" Drop="OnDrop"></DropGestureRecognizer>
+            </FlexLayout.GestureRecognizers>
             <Image x:Name="Thumbnail" />
             <Label Text="Select An Image" FontSize="18" />
         </FlexLayout>
     </Border>
+    <components:ErrorMessage x:Name="ErrorMessage" />
+    </VerticalStackLayout>
 </ContentView>

@@ -4,7 +4,6 @@ public partial class ImagePicker : ContentView
 {
     public event EventHandler? BeginLoading;
     public event EventHandler? EndLoading;
-    public event EventHandler<Stream?>? ImageChanged;
     
     private Stream? _imageStream;
 
@@ -15,7 +14,9 @@ public partial class ImagePicker : ContentView
         {
             _imageStream = value;
             Thumbnail.Source = ImageSource.FromStream(() => _imageStream);
-            ImageChanged?.Invoke(this, value);
+            
+            var isValid = _imageStream != null;
+            ErrorMessage.Text = isValid ? "" : "Please select an image.";
         }
     }
     

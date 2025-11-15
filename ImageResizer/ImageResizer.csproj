@@ -89,7 +89,4 @@
 		<Compile Remove="**\*.net.cs" />
 		<None Include="**\*.net.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
 	</ItemGroup>
-	<ItemGroup>
-	  <Folder Include="Models\" />
-	</ItemGroup>
 </Project>
