@@ -115,11 +115,12 @@ public partial class WidthsInput : ContentView
 
         var screenWidthInput = new ImageResizer.Views.TextInput
         (
-	        "",
-	        FormElementHelpers.CreateRequiredFieldValidator("test"),
-	        FormElementHelpers.AllowOnlyDigits
+            "",
+            ValidateNewScreenWidth,
+            FormElementHelpers.AllowOnlyDigits
         )
         {
+            LabelText = "Add a new screen width:",
             MaxLength = _maxWidth.ToString().Length
         };
 
@@ -166,12 +167,17 @@ public partial class WidthsInput : ContentView
         {
             MaxLength = _maxWidth.ToString().Length
         };
-        
-        var outerContainer = new VerticalStackLayout();
-        outerContainer.Children.Add(defaultScreenWidthInput);
+
+        var defaultScreenWidthLabel = new Label()
+        {
+            Text = "Default"
+        };
+
+        var defaultScreenWidthInputContainer = new HorizontalStackLayout();
+        defaultScreenWidthInputContainer.Children.Add(defaultScreenWidthLabel);
+        defaultScreenWidthInputContainer.Children.Add(defaultScreenWidthInput);
         
         var screenWidthInputsContainer = new VerticalStackLayout();
-        outerContainer.Children.Add(screenWidthInputsContainer);
         
         DynamicListFactory.MakeDynamic<ScreenAndImageWidth>(screenWidthInputsContainer, _screenAndImageWidths, (screenAndImageWidth) =>
         {
@@ -217,7 +223,11 @@ public partial class WidthsInput : ContentView
         
             return widthInputContainer;
         });
-        
+
+
+        var outerContainer = new VerticalStackLayout();
+        outerContainer.Children.Add(defaultScreenWidthInputContainer);
+        outerContainer.Children.Add(screenWidthInputsContainer);
         MainLayout.Children.Add(outerContainer);
     }
 }
