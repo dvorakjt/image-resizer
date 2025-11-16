@@ -1,7 +1,8 @@
 using System.ComponentModel;
+using ImageResizer.ViewModels;
 using Microsoft.Maui.Layouts;
 
-namespace ImageResizer.Components;
+namespace ImageResizer.Views;
 
 public struct CheckboxGroupItem
 {

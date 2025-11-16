@@ -2,8 +2,8 @@
 
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="ImageResizer.Components.DensitiesInput">
-    <VerticalStackLayout x:Name="DensitiesInputLayout">
-        
+             x:Class="ImageResizer.Views.WidthsInput"
+             x:Name="WidthsInputCompoonent">
+    <VerticalStackLayout x:Name="MainLayout">
     </VerticalStackLayout>
 </ContentView>

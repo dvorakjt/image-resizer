@@ -1,7 +1,8 @@
 using NetVips;
 using System.ComponentModel;
+using ImageResizer.ViewModels;
 
-namespace ImageResizer.Components;
+namespace ImageResizer.Views;
 
 public partial class ImagePicker : ContentView, IFormElement<Stream?>, IFormElementWithErrorDisplay, INotifyPropertyChanged
 {

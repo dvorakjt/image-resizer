@@ -1,8 +1,4 @@
-﻿using System.Text.RegularExpressions;
-using ImageResizer.Components;
-using ImageResizer.Models;
-using Microsoft.Maui.Layouts;
-using RadioButtonGroup = ImageResizer.Components.RadioButtonGroup;
+﻿using ImageResizer.Views;
 
 namespace ImageResizer;
 
@@ -15,22 +11,19 @@ public partial class MainPage : ContentPage
         InitializeFormElements();
     }
     
+    // REMEMBER -> VALIDATE DENSITIES WIDTH --> should be 5000 or less
     private void InitializeFormElements()
     {
-        var densitiesInput = new DensitiesInput();
-        densitiesInput.StateChanged += (s, e) =>
+        var widthsInput = new WidthsInput();
+
+        widthsInput.StateChanged += (sender, args) =>
         {
-            Console.WriteLine(e.State.Value.BaseWidth);
-            Console.WriteLine(e.State.IsValid);
-            foreach (var density in e.State.Value.SelectedDensities)
-            {
-                Console.WriteLine(density);
-            }
-
-            Console.WriteLine();
+            Console.WriteLine(args.State.Value.DefaultWidth);
+            Console.WriteLine(args.State.Value.WidthComparisonMode);
+            Console.WriteLine(args.State.IsValid);
         };
-
-        FormLayout.Children.Add(densitiesInput);
+        
+        FormLayout.Children.Add(widthsInput);
     }
 }
 

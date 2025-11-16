@@ -1,8 +1,9 @@
 using System.ComponentModel;
+using ImageResizer.ViewModels;
 
-namespace ImageResizer.Components;
+namespace ImageResizer.Views;
 
-public partial class TextInput : ContentView, IFormElement<string>, ISettableFormElement<string>, IFormElementWithErrorDisplay, INotifyPropertyChanged
+public partial class TextInput : ContentView, IFormElement<string>, IResettableFormElement, IFormElementWithErrorDisplay, INotifyPropertyChanged
 {
     public static BindableProperty LabelTextProperty =
         BindableProperty.Create("LabelText", typeof(string), typeof(TextInput), "");
@@ -45,12 +46,14 @@ public partial class TextInput : ContentView, IFormElement<string>, ISettableFor
 
     private readonly Func<string, ValidatorFuncResult> _validationFunc;
     private readonly Func<string, string> _filterInput;
+    private string _defaultValue;
     private bool _isPristine = true;
     
     public TextInput(string defaultValue, Func<string, ValidatorFuncResult> validationFunc, Func<string, string>? filterInput = null)
     {
         InitializeComponent();
         
+        _defaultValue = defaultValue;
         _validationFunc = validationFunc;
         
         if(filterInput == null)
@@ -68,8 +71,20 @@ public partial class TextInput : ContentView, IFormElement<string>, ISettableFor
             validationResult.Message
         );
     }
+
+    public void Reset()
+    {
+        IsErrorMessageVisible = false;
+        _isPristine = true;
+        SetValue(_defaultValue);
+    }
+
+    public void RevealErrors()
+    {
+        IsErrorMessageVisible = true;
+    }
     
-    public void SetValue(string value)
+    private void SetValue(string value)
     {
         var filteredValue = _filterInput(value);
         var validationResult = _validationFunc(filteredValue);
@@ -79,11 +94,6 @@ public partial class TextInput : ContentView, IFormElement<string>, ISettableFor
             validationResult.IsValid,
             validationResult.Message
         );
-    }
-
-    public void RevealErrors()
-    {
-        IsErrorMessageVisible = true;
     }
     
     private void OnEntryTextChanged(object sender, TextChangedEventArgs e)

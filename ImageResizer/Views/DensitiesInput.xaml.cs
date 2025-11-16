@@ -1,7 +1,8 @@
 using System.ComponentModel;
 using ImageResizer.Models;
+using ImageResizer.ViewModels;
 
-namespace ImageResizer.Components;
+namespace ImageResizer.Views;
 
 public struct DensitiesInputValue
 {
@@ -40,7 +41,8 @@ public partial class DensitiesInput : ContentView, IFormElement<DensitiesInputVa
 
         _baseWidthInput.StateChanged += (sender, e) =>
         {
-            int? parsedBaseWidth = e.State.Value.Length > 0 ? int.Parse(e.State.Value) : null;
+            var canParseInt = int.TryParse(e.State.Value, out var baseWidth);
+            int? parsedBaseWidth = canParseInt ? baseWidth : null;
 
             State = new FormElementState<DensitiesInputValue>
             {

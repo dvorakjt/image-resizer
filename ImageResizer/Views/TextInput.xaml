@@ -2,12 +2,12 @@
 
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:components="clr-namespace:ImageResizer.Components"
-             x:Class="ImageResizer.Components.TextInput"
+             xmlns:views="clr-namespace:ImageResizer.Views"
+             x:Class="ImageResizer.Views.TextInput"
              x:Name="TextInputComponent">
     <VerticalStackLayout>
         <Label Text="{Binding Source={x:Reference TextInputComponent}, Path=LabelText}" />
         <Entry TextChanged="OnEntryTextChanged" Text="{Binding Source={x:Reference TextInputComponent}, Path=Value}" />
-        <components:ErrorMessage IsVisible="{Binding Source={x:Reference TextInputComponent}, Path=IsErrorMessageVisible}" Text="{Binding Source={x:Reference TextInputComponent}, Path=ErrorMessageText}" />
+        <views:ErrorMessage IsVisible="{Binding Source={x:Reference TextInputComponent}, Path=IsErrorMessageVisible}" Text="{Binding Source={x:Reference TextInputComponent}, Path=ErrorMessageText}" />
     </VerticalStackLayout>
 </ContentView>

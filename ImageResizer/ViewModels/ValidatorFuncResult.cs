@@ -1,4 +1,4 @@
-namespace ImageResizer.Components;
+namespace ImageResizer.ViewModels;
 
 public class ValidatorFuncResult
 {

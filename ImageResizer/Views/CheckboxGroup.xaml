@@ -2,7 +2,7 @@
 
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="ImageResizer.Components.CheckboxGroup"
+             x:Class="ImageResizer.Views.CheckboxGroup"
              x:Name="CheckboxGroupComponent">
     <VerticalStackLayout>
         <Label Text="{Binding Source={x:Reference CheckboxGroupComponent}, Path=LabelText}" HorizontalOptions="Center"/>

@@ -1,6 +1,7 @@
 using System.ComponentModel;
+using ImageResizer.ViewModels;
 
-namespace ImageResizer.Components;
+namespace ImageResizer.Views;
 
 public struct RadioButtonGroupItem
 {

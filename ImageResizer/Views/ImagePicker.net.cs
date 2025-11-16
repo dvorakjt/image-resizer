@@ -1,4 +1,4 @@
-namespace ImageResizer.Components;
+namespace ImageResizer.Views;
 
 public partial class ImagePicker
 {

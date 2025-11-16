@@ -2,7 +2,7 @@ using AppKit;
 using UIKit;
 using UniformTypeIdentifiers;
 
-namespace ImageResizer.Components;
+namespace ImageResizer.Views;
 
 public partial class ImagePicker
 {
