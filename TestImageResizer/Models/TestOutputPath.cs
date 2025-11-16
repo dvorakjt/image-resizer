@@ -1,7 +1,6 @@
 using ImageResizer.Models;
 
-
-namespace TestImageResizer;
+namespace TestImageResizer.Models;
 
 public class TestOutputPath
 {

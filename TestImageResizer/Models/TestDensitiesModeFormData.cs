@@ -1,8 +1,7 @@
-using ImageResizer.Models;
-using NetVips;
 using HtmlAgilityPack;
+using ImageResizer.Models;
 
-namespace TestImageResizer;
+namespace TestImageResizer.Models;
 
 public class TestDensitiesModeFormData
 {

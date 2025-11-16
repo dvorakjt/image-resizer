@@ -5,8 +5,7 @@
              x:Class="ImageResizer.MainPage">
     <ScrollView>
         <FlexLayout Direction="Column" AlignItems="Center" x:Name="FormLayout">
-            <Label Text="Image Resizer" />
-            <views:ImagePicker />
+            <views:DynamicListTest></views:DynamicListTest>
         </FlexLayout>
     </ScrollView>
 </ContentPage>

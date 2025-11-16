@@ -1,12 +1,12 @@
-using ImageResizer.Models;
 using HtmlAgilityPack;
+using ImageResizer.Models;
 
-namespace TestImageResizer;
+namespace TestImageResizer.Models;
 
-public class TestMediaQueryModeFormData
+public class TestWidthsModeFormData
 {
     [Fact]
-    public async Task TestMediaQueryModeFormDataSave()
+    public async Task TestWidthsModeFormDataSave()
     {
         var filename = Guid.NewGuid().ToString();
         var pathToPublicDir = Environment.CurrentDirectory;
@@ -15,7 +15,7 @@ public class TestMediaQueryModeFormData
         
         try
         {
-            using var originalImage = NetVips.Image.Black(1200, 1200);
+            using var originalImage = NetVips.Image.Black(400, 400);
             var bytes = originalImage.WriteToBuffer(".jpg");
             var versionNumber = 1;
             var altText = "A black square";
@@ -25,20 +25,12 @@ public class TestMediaQueryModeFormData
             imageFormats.Add(new WebPImageFormatData(100, 1));
             imageFormats.Add(new JPGImageFormatData(100));
 
-            var mediaQueries = new List<MediaQueryWithImageWidth>();
-            mediaQueries.Add(new MediaQueryWithImageWidth("(max-width: 100px) and (max-resolution: 1x)", 100));
-            mediaQueries.Add(new MediaQueryWithImageWidth("(max-width: 150px) and (max-resolution: 1.5x)", 150));
-            mediaQueries.Add(new MediaQueryWithImageWidth("(max-width: 200px) and (max-resolution: 2x)", 200));
-            mediaQueries.Add(new MediaQueryWithImageWidth("(max-width: 300px) and (max-resolution: 3x)", 300));
-            mediaQueries.Add(new MediaQueryWithImageWidth("(max-width: 400px) and (max-resolution: 4x)", 400));
+            var widths = new Dictionary<int, int>();
+            widths.Add(100, 100);
+            widths.Add(200, 200);
+            widths.Add(300, 300);
             
-            // Simulate CSS rule that changes image width on larger screens
-            mediaQueries.Add(new MediaQueryWithImageWidth("(max-width: 400px) and (max-resolution: 1x)", 300));
-            mediaQueries.Add(new MediaQueryWithImageWidth("(max-width: 600px) and (max-resolution: 1.5x)", 450));
-            mediaQueries.Add(new MediaQueryWithImageWidth("(max-width: 800px) and (max-resolution: 2x)", 600));
-            mediaQueries.Add(new MediaQueryWithImageWidth("(max-width: 1200px) and (max-resolution: 3x)", 900));
-            
-            var formData = new MediaQueryModeFormData(
+            var formData = new WidthsModeFormData(
                 bytes,
                 filename,
                 versionNumber,
@@ -46,8 +38,9 @@ public class TestMediaQueryModeFormData
                 pathFromPublicDir,
                 altText,
                 imageFormats,
+                WidthComparisonMode.LTE,
                 originalImage.Width,
-                mediaQueries);
+                widths);
 
             var pictureTag = await formData.Save();
             var pictureElement = new HtmlDocument();
