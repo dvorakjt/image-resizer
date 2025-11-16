@@ -131,21 +131,4 @@ public class TestLiveSortedList
             Assert.Equal(_sortedList[i], liveSortedList.ElementAt(i));
         }
     }
-
-    [Fact]
-    public void TestEventsAreEmittedWhenTheListIsChanged()
-    {
-        var liveSortedList = new LiveSortedList<string>();
-        bool addedItem = false;
-
-        NotifyCollectionChangedEventHandler expectAdditionToTriggerEvent = (sender, e) =>
-        {
-            addedItem = true;
-        };
-        
-        liveSortedList.CollectionChanged += expectAdditionToTriggerEvent;
-        liveSortedList.Add("Zebra");
-        liveSortedList.CollectionChanged -= expectAdditionToTriggerEvent;
-        Assert.True(addedItem);
-    }
 }

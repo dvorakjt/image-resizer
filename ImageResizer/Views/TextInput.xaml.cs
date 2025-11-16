@@ -17,6 +17,18 @@ public partial class TextInput : ContentView, IFormElement<string>, IResettableF
         }
     }
     
+    public static BindableProperty MaxLengthProperty =
+        BindableProperty.Create("MaxLength", typeof(int), typeof(TextInput), int.MaxValue);
+
+    public int MaxLength
+    {
+        get => (int)GetValue(MaxLengthProperty);
+        set {
+            SetValue(MaxLengthProperty, value);
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MaxLength)));
+        }
+    }
+    
     public event EventHandler<FormElementStateChangedEventArgs<string>>? StateChanged;
     public event PropertyChangedEventHandler? PropertyChanged;
     

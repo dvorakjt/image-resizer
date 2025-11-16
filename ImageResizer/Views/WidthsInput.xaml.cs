@@ -8,14 +8,17 @@ namespace ImageResizer.Views;
 public class WidthInput : TextInput
 {
     public WidthInput() : base("",
-        FormElementHelpers.CreateMinMaxValidator(1, 20_000, "Please enter a valid image width (min. 1, max. 20,000)."),
-        FormElementHelpers.AllowOnlyDigits){}
+        FormElementHelpers.CreateMinMaxValidator(1, 20_000, "Please enter a valid width (min. 1, max. 20,000)."),
+        FormElementHelpers.AllowOnlyDigits)
+    {
+        MaxLength = 5;
+    }
 }
 
-public struct ScreenAndImageWidths : IComparable<ScreenAndImageWidths>
+public class ScreenAndImageWidths : IComparable<ScreenAndImageWidths>
 {
     public required int ScreenWidth { get; init; }
-    public int? ImageWidth { get; init; }
+    public int? ImageWidth { get; set; }
     
     public int CompareTo(ScreenAndImageWidths other)
     {
@@ -30,11 +33,9 @@ public struct WidthsInputValue
     public required IEnumerable<ScreenAndImageWidths> ScreenAndImageWidthsList { get; init; }
 }
 
-public partial class WidthsInput : ContentView, IFormElement<WidthsInputValue>, IFormElementWithErrorDisplay, INotifyCollectionChanged
+public partial class WidthsInput : ContentView, IFormElement<WidthsInputValue>, IFormElementWithErrorDisplay
 { 
     public event EventHandler<FormElementStateChangedEventArgs<WidthsInputValue>>? StateChanged;
-    public event EventHandler<PropertyChangedEventArgs>? PropertyChanged;
-    public event NotifyCollectionChangedEventHandler? CollectionChanged;
 
     public FormElementState<WidthsInputValue> State
     {
@@ -56,43 +57,44 @@ public partial class WidthsInput : ContentView, IFormElement<WidthsInputValue>, 
         }
     }
 
+    private ILiveSortedList<ScreenAndImageWidths> ScreenAndImageWidthsList = new LiveSortedList<ScreenAndImageWidths>()
+        { IsReversed = true };
+    
     private WidthComparisonMode WidthComparisonMode
     {
         get;
         set
         {
             field = value;
+            ScreenAndImageWidthsList.IsReversed = field == WidthComparisonMode.LTE;
             StateChanged?.Invoke(this, new FormElementStateChangedEventArgs<WidthsInputValue>(State));
-            CollectionChanged?.Invoke(this,
-                new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Move, ScreenAndImageWidthsList));
         }
     } = WidthComparisonMode.LTE;
-  
-    public IEnumerable<ScreenAndImageWidths> ScreenAndImageWidthsList
-    {
-        get
-        {
-            var sorted = field.Order();
-            return WidthComparisonMode == WidthComparisonMode.GTE ? sorted : sorted.Reverse();
-        }
-        set
-        {
-            field = value;
-           
-            CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset, ScreenAndImageWidthsList));
-        }
-    } = new List<ScreenAndImageWidths>();
-
+    
     private Layout _widthInputsLayout;
-
     private TextInput _defaultImageWidthInput;
-    private readonly int _minWidth = 1;
-    private readonly int _maxWidth = 20_000;
     
     public WidthsInput()
     {
         InitializeComponent();
+        WatchScreenWidthsList();
         InitializeChildComponents();
+    }
+
+    // There is no need to watch the ListReset event because the state update is already triggered when the 
+    // mode is changed.
+    private void WatchScreenWidthsList()
+    {
+        ScreenAndImageWidthsList.ItemAdded += (sender, e) =>
+        {
+            Console.WriteLine("Adding screen width");
+            StateChanged?.Invoke(this, new FormElementStateChangedEventArgs<WidthsInputValue>(State));
+        };
+
+        ScreenAndImageWidthsList.ItemRemoved += (sender, e) =>
+        {
+            StateChanged?.Invoke(this, new FormElementStateChangedEventArgs<WidthsInputValue>(State));
+        };
     }
 
     private void InitializeChildComponents()
@@ -120,14 +122,14 @@ public partial class WidthsInput : ContentView, IFormElement<WidthsInputValue>, 
             LabelText = "Select the media query to use for each screen width"
         };
 
+        modeInput.StateChanged += (sender, e) =>
+        {
+            WidthComparisonMode = e.State.Value == WidthComparisonMode.LTE.ToString() ? WidthComparisonMode.LTE :  WidthComparisonMode.GTE;
+        };
+
         var screenWidthInputContainer = new HorizontalStackLayout();
         
-        var screenWidthInput = new TextInput("",
-            ValidateScreenWidthInputValue,
-            FormElementHelpers.AllowOnlyDigits)
-        {
-            LabelText = "Add a screen width."
-        };
+        var screenWidthInput = new WidthInput();
 
         var addScreenWidthButton = new Button()
         {
@@ -138,57 +140,67 @@ public partial class WidthsInput : ContentView, IFormElement<WidthsInputValue>, 
         {
             if (screenWidthInput.State.IsValid && int.TryParse(screenWidthInput.Value, out var width))
             {
-                ScreenAndImageWidthsList = ScreenAndImageWidthsList.Append(new ScreenAndImageWidths
-                {
-                    ScreenWidth = width
-                });
-                
+                ScreenAndImageWidthsList.Add(new ScreenAndImageWidths { ScreenWidth = width });
                 screenWidthInput.Reset();
             }
             else
             {
                 screenWidthInput.RevealErrors();
             }
+            
+            Console.WriteLine(ScreenAndImageWidthsList.Count());
         };
 
         screenWidthInputContainer.Children.Add(screenWidthInput);
         screenWidthInputContainer.Children.Add(addScreenWidthButton);
         
+     
+        /* just creating this so there are no errors for now */        
+        _defaultImageWidthInput = new WidthInput();
+
         _widthInputsLayout = new VerticalStackLayout();
         
-        var widthInputsHeader = new HorizontalStackLayout();
-        
-        widthInputsHeader.Children.Add(new Label
+        DynamicListFactory.MakeDynamic<ILiveSortedList<ScreenAndImageWidths>, ScreenAndImageWidths>(_widthInputsLayout, ScreenAndImageWidthsList, (screenAndImageWidth) =>
         {
-            Text = "Screen Widths"
-        });
-        
-        widthInputsHeader.Children.Add(new Label
-        {
-            Text = "Image Widths"
-        });
-        
-        _widthInputsLayout.Children.Add(widthInputsHeader);
-        
-        var defaultImageWidthContainer = new HorizontalStackLayout();
-        defaultImageWidthContainer.Children.Add(new Label
-        {
-            Text = "Default"
-        });
-        
-        _defaultImageWidthInput = new WidthInput();
-        defaultImageWidthContainer.Children.Add(_defaultImageWidthInput);
-        _widthInputsLayout.Children.Add(defaultImageWidthContainer);
-        
-        BindableLayout.SetItemsSource(_widthInputsLayout, ScreenAndImageWidthsList);
-        BindableLayout.SetItemTemplate(_widthInputsLayout, new DataTemplate(() =>
-        {
-            Console.WriteLine(this.BindingContext);
-            return new Label()
+            var row = new HorizontalStackLayout();
+            var widthInputLabel = new Label()
             {
-                Text = "Hello"
+                Text = screenAndImageWidth.ScreenWidth.ToString()
             };
-        }));
+            
+            row.Children.Add(widthInputLabel);
+            
+            var input = new WidthInput();
+            input.StateChanged += (sender, e) =>
+            {
+                if (e.State.IsValid && int.TryParse(e.State.Value, out var width))
+                {
+                    screenAndImageWidth.ImageWidth = width;
+                }
+                else
+                {
+                    screenAndImageWidth.ImageWidth = null;
+                }
+                StateChanged?.Invoke(this, new FormElementStateChangedEventArgs<WidthsInputValue>(State));
+            };
+            
+            row.Children.Add(input);
+            
+            var removeWidthButton = new Button()
+            {
+                Text = "-"
+            };
+            
+            removeWidthButton.Clicked += (sender, e) =>
+            {
+                ScreenAndImageWidthsList.Remove(screenAndImageWidth);
+                StateChanged?.Invoke(this, new FormElementStateChangedEventArgs<WidthsInputValue>(State));
+            };
+            
+            row.Children.Add(removeWidthButton);
+
+            return row;
+        });
         
         MainLayout.Children.Add(label);
         MainLayout.Children.Add(modeInput);

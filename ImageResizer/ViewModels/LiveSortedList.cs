@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Specialized;
 
 namespace ImageResizer.ViewModels;
 
@@ -9,29 +8,24 @@ public class LiveSortedList<T> : ILiveSortedList<T> where T : IComparable<T>
     public event EventHandler<ListItemRemovedEventArgs>? ItemRemoved;
     public event EventHandler? ListReset;
 
-    private readonly IList<T> _items = new List<T>();
-
-    private IList<T> Items
-    {
-        get
+    public bool IsReversed { get; set
         {
-            return (IsReversed ? _items.OrderByDescending(item => item) : _items.OrderBy(item => item)).ToList();;
-        }
-    }
+            var reversed = value;
 
-    public bool IsReversed
-    {
-        get;
-        set
-        {
-            field = value;
-            ListReset?.Invoke(this, EventArgs.Empty);
+            if (field != reversed)
+            {
+                field = reversed;
+                _items.Reverse();
+                ListReset?.Invoke(this, EventArgs.Empty);
+            }
         }
-    } = false;
+}
 
+    private List<T> _items = new List<T>();
+    
     public IEnumerator<T> GetEnumerator()
     {
-        return Items.GetEnumerator();
+        return _items.GetEnumerator();
     }
 
     IEnumerator IEnumerable.GetEnumerator()
@@ -41,21 +35,34 @@ public class LiveSortedList<T> : ILiveSortedList<T> where T : IComparable<T>
 
     public void Add(T item)
     {
-        _items.Add(item);
-        ItemAdded?.Invoke(this, new ListItemAddedEventArgs<T>
-        {
-            NewItem = item,
-            NewIndex = Items.IndexOf(item)
-        });
+        var newIndex = InsertInPlace(item);
+        ItemAdded?.Invoke(this, new ListItemAddedEventArgs<T>{ NewItem = item, NewIndex = newIndex} );
     }
-
     public void Remove(T item)
     {
-        int oldIndex = Items.IndexOf(item);
-        _items.RemoveAt(oldIndex);
-        ItemRemoved?.Invoke(this, new ListItemRemovedEventArgs()
+        var index = _items.IndexOf(item);
+        _items.RemoveAt(index);
+        ItemRemoved?.Invoke(this, new ListItemRemovedEventArgs { OldIndex = index });
+    }
+
+    private int InsertInPlace(T item)
+    {
+        int i = 0;
+
+        for (; i < _items.Count; i++)
         {
-            OldIndex = oldIndex
-        });
+            if (CompareItems(item, _items[i]) < 0)
+            {
+                break;
+            }
+        }
+        
+        _items.Insert(i, item);
+        return i;
+    }
+
+    private int CompareItems(T a, T b)
+    {
+        return IsReversed ? b.CompareTo(a) : a.CompareTo(b);
     }
 }
