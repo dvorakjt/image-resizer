@@ -24,8 +24,10 @@ public struct WidthsInputValue
 public partial class WidthsInput : ContentView, IFormElement<WidthsInputValue>, IFormElementWithErrorDisplay
 {
 	private static WidthComparisonMode _defaultWidthComparisonMode = WidthComparisonMode.MaxWidths;
+    private static int _maxScreenAndImageWidths = 30;
     private static int _minWidth = 1;
     private static int _maxWidth = 40_000;
+    
     public event EventHandler<FormElementStateChangedEventArgs<WidthsInputValue>>? StateChanged;
     public FormElementState<WidthsInputValue> State
     {
@@ -187,6 +189,8 @@ public partial class WidthsInput : ContentView, IFormElement<WidthsInputValue>, 
         
         addScreenWidthButton.Clicked += (sender, e) =>
         {
+            if (_screenAndImageWidths.Count() >= _maxScreenAndImageWidths) return; 
+            
             if (screenWidthInput.State.IsValid && int.TryParse(screenWidthInput.Value, out var width))
             {
                 _screenAndImageWidths.Add(new ScreenAndImageWidth { ScreenWidth = width });
@@ -198,8 +202,24 @@ public partial class WidthsInput : ContentView, IFormElement<WidthsInputValue>, 
                 screenWidthInput.RevealErrors();
             }
         };
+        
+        void toggleAddScreenWidthButton_IsEnabled()
+        {
+            addScreenWidthButton.IsEnabled = _screenAndImageWidths.Count() <=  _maxScreenAndImageWidths;
+        }
+        
+        toggleAddScreenWidthButton_IsEnabled();
+        
+        _screenAndImageWidths.ItemAdded += (sender, e) =>
+        {
+            toggleAddScreenWidthButton_IsEnabled();
+        };
 
-
+        _screenAndImageWidths.ItemRemoved += (sender, e) =>
+        {
+           toggleAddScreenWidthButton_IsEnabled();
+        };
+        
         var screenWidthInputContainer = new HorizontalStackLayout();
         screenWidthInputContainer.Children.Add(screenWidthInput);
         screenWidthInputContainer.Children.Add(addScreenWidthButton);

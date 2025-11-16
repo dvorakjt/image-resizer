@@ -12,6 +12,9 @@ public struct DensitiesInputValue
 
 public partial class DensitiesInput : ContentView, IFormElement<DensitiesInputValue>, IFormElementWithErrorDisplay
 {
+    private static int _minBaseWidth = 1;
+    private static int _maxBaseWidth = 10_000;
+    
     public event EventHandler<FormElementStateChangedEventArgs<DensitiesInputValue>>? StateChanged;
     
     public FormElementState<DensitiesInputValue> State
@@ -32,11 +35,21 @@ public partial class DensitiesInput : ContentView, IFormElement<DensitiesInputVa
 
         _baseWidthInput = new TextInput(
             "",
-            FormElementHelpers.CreateRequiredFieldValidator("Please enter a base width."),
+            (value) =>
+            {
+                var canParse = int.TryParse(value, out var width);
+                bool isValid = canParse && width >= _minBaseWidth && width <= _maxBaseWidth;
+ 
+                return new ValidatorFuncResult(
+                    isValid,
+                    isValid ? "" : $"Please enter a valid base width (min. {_minBaseWidth}, max. {_maxBaseWidth})."
+                );
+            },
             FormElementHelpers.AllowOnlyDigits
         )
         {
-            LabelText = "Base Width"
+            LabelText = "Base Width",
+            MaxLength = _maxBaseWidth.ToString().Length,
         };
 
         _baseWidthInput.StateChanged += (sender, e) =>

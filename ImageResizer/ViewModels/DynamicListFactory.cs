@@ -19,6 +19,13 @@ public class DynamicListFactory
             layout.Children.RemoveAt(e.OldIndex);
         };
 
+        items.ItemMoved += (sender, e) =>
+        {
+            var item = layout.Children[e.OldIndex];
+            layout.Children.Remove(item);
+            layout.Children.Insert(e.NewIndex, item);
+        };
+
         items.ListReset += (sender, e) =>
         {
             layout.Children.Clear();
