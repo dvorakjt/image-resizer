@@ -2,8 +2,7 @@ namespace ImageResizer.ViewModels;
 
 public class DynamicListFactory
 {
-    public static void MakeDynamic<U, V>(Layout layout, U items, Func<V, View> mappingFunc) 
-        where U : IEnumerable<V>, INotifyListItemAdded<V>, INotifyListItemRemoved, INotifyListItemReset
+    public static void MakeDynamic<V>(Layout layout, ILiveList<V> items, Func<V, View> mappingFunc)
     {
         foreach (var item in items)
         {

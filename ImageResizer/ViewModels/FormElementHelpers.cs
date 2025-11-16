@@ -41,8 +41,24 @@ public class FormElementHelpers
 
     public static string AllowOnlyDigits(string value)
     {
-        var chars = value.ToCharArray();
-        var digits = chars.Where(c => c >= '0' && c <= '9');
-        return string.Join("", digits);
+        var result = "";
+        var detectedNonZeroDigit = false;
+        
+        foreach (var c in value)
+        {
+            if (char.IsDigit(c))
+            {
+                if (c != '0')
+                {
+                    detectedNonZeroDigit = true;
+                    result += c;
+                } else if (detectedNonZeroDigit)
+                {
+                    result += c;
+                }
+            }
+        }
+
+        return result;
     }
 }

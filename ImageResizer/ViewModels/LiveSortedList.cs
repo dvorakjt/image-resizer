@@ -5,6 +5,7 @@ namespace ImageResizer.ViewModels;
 public class LiveSortedList<T> : ILiveSortedList<T> where T : IComparable<T>
 {
     public event EventHandler<ListItemAddedEventArgs<T>>? ItemAdded;
+    public event EventHandler<ListItemMovedEventArgs>? ItemMoved;
     public event EventHandler<ListItemRemovedEventArgs>? ItemRemoved;
     public event EventHandler? ListReset;
 
@@ -43,6 +44,11 @@ public class LiveSortedList<T> : ILiveSortedList<T> where T : IComparable<T>
         var index = _items.IndexOf(item);
         _items.RemoveAt(index);
         ItemRemoved?.Invoke(this, new ListItemRemovedEventArgs { OldIndex = index });
+    }
+
+    public void Move(T item, int toIndex)
+    {
+        throw new NotImplementedException();
     }
 
     private int InsertInPlace(T item)

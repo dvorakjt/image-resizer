@@ -38,7 +38,7 @@ public class TestWidthsModeFormData
                 pathFromPublicDir,
                 altText,
                 imageFormats,
-                WidthComparisonMode.LTE,
+                WidthComparisonMode.MaxWidths,
                 originalImage.Width,
                 widths);
 

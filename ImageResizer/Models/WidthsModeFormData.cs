@@ -49,7 +49,7 @@ public WidthsModeFormData(
     private string CreateSrcSet(string ext)
     {
         var imageWidths = GetImageWidths().ToList();
-        imageWidths.Sort((a, b) => WidthComparisonMode == WidthComparisonMode.LTE ? a.CompareTo(b) : b.CompareTo(a));
+        imageWidths.Sort((a, b) => WidthComparisonMode == WidthComparisonMode.MaxWidths ? a.CompareTo(b) : b.CompareTo(a));
         
         var sources = imageWidths.Select(imageWidth =>
             $"{OutputPath.ToRelativeFilePathString(imageWidth, ext)} {imageWidth}w"
@@ -60,7 +60,7 @@ public WidthsModeFormData(
 
     private string CreateSizes()
     {
-        var mediaQuery = WidthComparisonMode == WidthComparisonMode.LTE ? "max-width" : "min-width";
+        var mediaQuery = WidthComparisonMode == WidthComparisonMode.MaxWidths ? "max-width" : "min-width";
         var sizes =
             Widths.Keys.Select(screenWidth => $"({mediaQuery}: {screenWidth}px) {Widths[screenWidth]}px").ToList();
         sizes.Add($"{DefaultImageWidth}px");

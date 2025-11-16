@@ -1,176 +1,193 @@
-using System.Collections.Specialized;
-using System.ComponentModel;
-using ImageResizer.Models;
+﻿using ImageResizer.Models;
 using ImageResizer.ViewModels;
 
 namespace ImageResizer.Views;
 
-public class WidthInput : TextInput
+public class ScreenAndImageWidth : IComparable<ScreenAndImageWidth>
 {
-    public WidthInput() : base("",
-        FormElementHelpers.CreateMinMaxValidator(1, 20_000, "Please enter a valid width (min. 1, max. 20,000)."),
-        FormElementHelpers.AllowOnlyDigits)
-    {
-        MaxLength = 5;
-    }
-}
+	public required int ScreenWidth { get; init; }
+	public int? ImageWidth { get; set; }
 
-public class ScreenAndImageWidths : IComparable<ScreenAndImageWidths>
-{
-    public required int ScreenWidth { get; init; }
-    public int? ImageWidth { get; set; }
-    
-    public int CompareTo(ScreenAndImageWidths other)
-    {
-        return this.ScreenWidth.CompareTo(other.ScreenWidth);
-    }
+	public int CompareTo(ScreenAndImageWidth other)
+	{
+		return ScreenWidth.CompareTo(other.ScreenWidth);
+	}
 }
 
 public struct WidthsInputValue
 {
-    public required WidthComparisonMode  WidthComparisonMode { get; init; }
-    public int? DefaultWidth { get; init; }
-    public required IEnumerable<ScreenAndImageWidths> ScreenAndImageWidthsList { get; init; }
+	public int? DefaultWidth { get; init; }
+	public WidthComparisonMode WidthComparisonMode { get; init; }
+	public IEnumerable<ScreenAndImageWidth> ScreenAndImageWidths { get; init; }
 }
 
-public partial class WidthsInput : ContentView, IFormElement<WidthsInputValue>, IFormElementWithErrorDisplay
-{ 
-    public event EventHandler<FormElementStateChangedEventArgs<WidthsInputValue>>? StateChanged;
+public partial class WidthsInput : ContentView
+{
+	private static WidthComparisonMode _defaultWidthComparisonMode = WidthComparisonMode.MaxWidths;
+    private static int _minWidth = 1;
+    private static int _maxWidth = 40_000;
 
-    public FormElementState<WidthsInputValue> State
-    {
-        get
-        {
-            var canParseDefaultWidth = int.TryParse(_defaultImageWidthInput.State.Value, out var defaultWidth);
-            var isValid = true; //_defaultImageWidthInput.State.IsValid && WidthInputs.All(i => i.State.IsValid);
+	private WidthComparisonMode WidthComparisonMode
+	{
+		get;
+		set
+		{
+			field = value;
+			_screenAndImageWidths.IsReversed = value == WidthComparisonMode.MaxWidths;
+		}
+	} = _defaultWidthComparisonMode;
 
-            return new FormElementState<WidthsInputValue>
+	private ILiveSortedList<ScreenAndImageWidth> _screenAndImageWidths = new LiveSortedList<ScreenAndImageWidth>()
+	{
+		IsReversed = _defaultWidthComparisonMode == WidthComparisonMode.MaxWidths
+	};
+
+	public WidthsInput()
+	{
+		InitializeComponent();
+        InitInternalComponents();
+	}
+
+	private void InitInternalComponents()
+	{
+		InitializeModeInput();
+		InitializeNewScreenWidthInput();
+	    InitializeWidthsInputs();
+	}
+
+	private void InitializeModeInput()
+	{
+       var modeInput = new RadioButtonGroup(
+       [
+           new RadioButtonGroupItem()
             {
-                Value = new WidthsInputValue
-                {
-                    WidthComparisonMode = WidthComparisonMode,
-                    DefaultWidth = canParseDefaultWidth ? defaultWidth : default(int?),
-                    ScreenAndImageWidthsList = ScreenAndImageWidthsList
-                },
-                IsValid = isValid,
-            };
-        }
-    }
-
-    private ILiveSortedList<ScreenAndImageWidths> ScreenAndImageWidthsList = new LiveSortedList<ScreenAndImageWidths>()
-        { IsReversed = true };
-    
-    private WidthComparisonMode WidthComparisonMode
-    {
-        get;
-        set
-        {
-            field = value;
-            ScreenAndImageWidthsList.IsReversed = field == WidthComparisonMode.LTE;
-            StateChanged?.Invoke(this, new FormElementStateChangedEventArgs<WidthsInputValue>(State));
-        }
-    } = WidthComparisonMode.LTE;
-    
-    private Layout _widthInputsLayout;
-    private TextInput _defaultImageWidthInput;
-    
-    public WidthsInput()
-    {
-        InitializeComponent();
-        WatchScreenWidthsList();
-        InitializeChildComponents();
-    }
-
-    // There is no need to watch the ListReset event because the state update is already triggered when the 
-    // mode is changed.
-    private void WatchScreenWidthsList()
-    {
-        ScreenAndImageWidthsList.ItemAdded += (sender, e) =>
-        {
-            Console.WriteLine("Adding screen width");
-            StateChanged?.Invoke(this, new FormElementStateChangedEventArgs<WidthsInputValue>(State));
-        };
-
-        ScreenAndImageWidthsList.ItemRemoved += (sender, e) =>
-        {
-            StateChanged?.Invoke(this, new FormElementStateChangedEventArgs<WidthsInputValue>(State));
-        };
-    }
-
-    private void InitializeChildComponents()
-    {
-        var label = new Label()
-        {
-            Text = "Widths"
-        };
-
-        var modeInput = new RadioButtonGroup(
-        [
-            new RadioButtonGroupItem()
-            {
-                Content = "Max-Width",
-                Value = WidthComparisonMode.LTE.ToString()
+                Content = "Max-Widths",
+                Value = WidthComparisonMode.MaxWidths.ToString()
             },
             new RadioButtonGroupItem()
             {
-                Content = "Min-Width",
-                Value = WidthComparisonMode.GTE.ToString()
+                Content = "Min-Widths",
+                Value = WidthComparisonMode.MinWidths.ToString()
             },
-
-        ], WidthComparisonMode.LTE.ToString(), "WidthComparisonModeGroup")
+ 
+        ], _defaultWidthComparisonMode.ToString(), "WidthComparisonModeGroup")
         {
-            LabelText = "Select the media query to use for each screen width"
+            LabelText = "Select the media query to use for each screen width:"
         };
-
+ 
         modeInput.StateChanged += (sender, e) =>
         {
-            WidthComparisonMode = e.State.Value == WidthComparisonMode.LTE.ToString() ? WidthComparisonMode.LTE :  WidthComparisonMode.GTE;
+            WidthComparisonMode = e.State.Value == WidthComparisonMode.MaxWidths.ToString() ? 
+				WidthComparisonMode.MaxWidths : 
+				WidthComparisonMode.MinWidths;
         };
+ 
+		MainLayout.Children.Add(modeInput);
+    }
 
-        var screenWidthInputContainer = new HorizontalStackLayout();
+	private void InitializeNewScreenWidthInput() {
+        ValidatorFuncResult ValidateNewScreenWidth(string value)
+        {
+            var canParse = int.TryParse(value, out var width);
         
-        var screenWidthInput = new WidthInput();
+            if (canParse && width >= _minWidth && width <= _maxWidth)
+            {
+                if (_screenAndImageWidths.All(w => w.ScreenWidth != width))
+                {
+                    return new ValidatorFuncResult(
+                        true,
+                        ""
+                    );
+                }
+        
+                return new ValidatorFuncResult(
+                    false,
+                    "Duplicate screen width."
+                );
+            }
+        
+        
+            return new ValidatorFuncResult(
+                false,
+                $"Please enter a valid screen width (min. {_minWidth}, max. {_maxWidth})."
+            );
+        }
+
+        var screenWidthInput = new ImageResizer.Views.TextInput
+        (
+	        "",
+	        FormElementHelpers.CreateRequiredFieldValidator("test"),
+	        FormElementHelpers.AllowOnlyDigits
+        )
+        {
+            MaxLength = _maxWidth.ToString().Length
+        };
 
         var addScreenWidthButton = new Button()
         {
             Text = "+"
         };
-
+        
         addScreenWidthButton.Clicked += (sender, e) =>
         {
             if (screenWidthInput.State.IsValid && int.TryParse(screenWidthInput.Value, out var width))
             {
-                ScreenAndImageWidthsList.Add(new ScreenAndImageWidths { ScreenWidth = width });
+                _screenAndImageWidths.Add(new ScreenAndImageWidth { ScreenWidth = width });
                 screenWidthInput.Reset();
             }
             else
             {
                 screenWidthInput.RevealErrors();
             }
-            
-            Console.WriteLine(ScreenAndImageWidthsList.Count());
         };
 
+
+        var screenWidthInputContainer = new HorizontalStackLayout();
         screenWidthInputContainer.Children.Add(screenWidthInput);
         screenWidthInputContainer.Children.Add(addScreenWidthButton);
-        
-     
-        /* just creating this so there are no errors for now */        
-        _defaultImageWidthInput = new WidthInput();
+        MainLayout.Children.Add(screenWidthInputContainer);
+	}
 
-        _widthInputsLayout = new VerticalStackLayout();
-        
-        DynamicListFactory.MakeDynamic<ILiveSortedList<ScreenAndImageWidths>, ScreenAndImageWidths>(_widthInputsLayout, ScreenAndImageWidthsList, (screenAndImageWidth) =>
+	private void InitializeWidthsInputs() 
+    {
+        Func<string, ValidatorFuncResult> validateImageWidth = (value) =>
         {
-            var row = new HorizontalStackLayout();
+            var canParse = int.TryParse(value, out var width);
+            bool isValid = canParse && width >= _minWidth && width <= _maxWidth;
+ 
+            return new ValidatorFuncResult(
+                isValid,
+                isValid ? "" : $"Please enter a valid image width (min. {_minWidth}, max. {_maxWidth})."
+            );
+ 
+        };
+        
+        var defaultScreenWidthInput = new TextInput("", validateImageWidth, FormElementHelpers.AllowOnlyDigits)
+        {
+            MaxLength = _maxWidth.ToString().Length
+        };
+        
+        var outerContainer = new VerticalStackLayout();
+        outerContainer.Children.Add(defaultScreenWidthInput);
+        
+        var screenWidthInputsContainer = new VerticalStackLayout();
+        outerContainer.Children.Add(screenWidthInputsContainer);
+        
+        DynamicListFactory.MakeDynamic<ScreenAndImageWidth>(screenWidthInputsContainer, _screenAndImageWidths, (screenAndImageWidth) =>
+        {
+            var widthInputContainer = new HorizontalStackLayout();
             var widthInputLabel = new Label()
             {
                 Text = screenAndImageWidth.ScreenWidth.ToString()
             };
-            
-            row.Children.Add(widthInputLabel);
-            
-            var input = new WidthInput();
+        
+            widthInputContainer.Children.Add(widthInputLabel);
+        
+            var input = new TextInput("", validateImageWidth, FormElementHelpers.AllowOnlyDigits)
+            {
+                MaxLength = _maxWidth.ToString().Length
+            };
+        
             input.StateChanged += (sender, e) =>
             {
                 if (e.State.IsValid && int.TryParse(e.State.Value, out var width))
@@ -181,62 +198,26 @@ public partial class WidthsInput : ContentView, IFormElement<WidthsInputValue>, 
                 {
                     screenAndImageWidth.ImageWidth = null;
                 }
-                StateChanged?.Invoke(this, new FormElementStateChangedEventArgs<WidthsInputValue>(State));
             };
-            
-            row.Children.Add(input);
-            
+        
+            widthInputContainer.Children.Add(input);
+        
             var removeWidthButton = new Button()
             {
                 Text = "-"
             };
-            
+        
             removeWidthButton.Clicked += (sender, e) =>
             {
-                ScreenAndImageWidthsList.Remove(screenAndImageWidth);
-                StateChanged?.Invoke(this, new FormElementStateChangedEventArgs<WidthsInputValue>(State));
+                _screenAndImageWidths.Remove(screenAndImageWidth);
             };
-            
-            row.Children.Add(removeWidthButton);
-
-            return row;
+        
+            widthInputContainer.Children.Add(removeWidthButton);
+        
+        
+            return widthInputContainer;
         });
         
-        MainLayout.Children.Add(label);
-        MainLayout.Children.Add(modeInput);
-        MainLayout.Children.Add(screenWidthInputContainer);
-        MainLayout.Children.Add(_widthInputsLayout);
-    }
-    
-    public void RevealErrors()
-    {
-        throw new NotImplementedException();
-    }
-
-    private ValidatorFuncResult ValidateScreenWidthInputValue(string value)
-    {
-        var canParse = int.TryParse(value, out var width);
-
-        if (canParse)
-        {
-            if (State.Value.ScreenAndImageWidthsList.All(w => w.ScreenWidth != width))
-            {
-                return new ValidatorFuncResult(
-                    true,
-                    ""
-                );
-            }
-
-            return new ValidatorFuncResult(
-                false,
-                "Duplicate screen width."
-            );
-        }
-
-
-        return new ValidatorFuncResult(
-            false,
-            "Please enter a screen width."
-        );
+        MainLayout.Children.Add(outerContainer);
     }
 }

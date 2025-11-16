@@ -65,23 +65,37 @@ public partial class TextInput : ContentView, IFormElement<string>, IResettableF
     {
         InitializeComponent();
         
+        Console.WriteLine("Beginning constructor.");
+        
         _defaultValue = defaultValue;
         _validationFunc = validationFunc;
+        
+        Console.WriteLine("Constructor 2.");
         
         if(filterInput == null)
         {
             filterInput = val => val;
         }
         
+        Console.WriteLine("Constructor 3.");
+        
         _filterInput = filterInput;
-           
-        var validationResult = _validationFunc(_filterInput(defaultValue));
+        
+        var filteredInput = _filterInput(defaultValue);
+        
+        Console.WriteLine("Constructor 4.");
+        
+        var validationResult = _validationFunc(filteredInput);
+        
+        Console.WriteLine("Constructor 5.");
 
         State = new FormElementState<string>(
             defaultValue,
             validationResult.IsValid,
             validationResult.Message
         );
+        
+        Console.WriteLine("Ending constructor.");
     }
 
     public void Reset()
