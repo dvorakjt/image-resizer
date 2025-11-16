@@ -131,4 +131,42 @@ public class TestSortedLiveList
             Assert.Equal(_sortedList[i], liveSortedList.ElementAt(i));
         }
     }
+    
+    
+    [Fact]
+    public void TestAddingAnItemEmitsAnEvent()
+    {
+        var list = new SortedLiveList<string>();
+        bool addedItem = false;
+        list.ItemAdded += (sender, args) => addedItem = true;
+        Assert.False(addedItem);
+        
+        list.Add("Aardvark");
+        Assert.True(addedItem);
+    }
+    
+    [Fact]
+    public void TestRemovingAnItemEmitsAnEvent()
+    {
+        var list = new SortedLiveList<string>();
+        bool removedItem = false;
+        list.ItemRemoved += (sender, args) => removedItem = true;
+        list.Add("Aardvark");
+        Assert.False(removedItem);
+        
+        list.Remove("Aardvark");
+        Assert.True(removedItem);
+    }
+    
+    [Fact]
+    public void TestReversingTheListEmitsAnEvent()
+    {
+        var list = new SortedLiveList<string>();
+        bool resetList = false;
+        list.ListReset += (sender, args) => resetList = true;
+        Assert.False(resetList);
+        
+        list.IsReversed = true;
+        Assert.True(resetList);
+    }
 }

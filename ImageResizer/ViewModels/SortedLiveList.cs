@@ -50,6 +50,16 @@ public class SortedLiveList<T> : ISortedLiveList<T> where T : IComparable<T>
     {
         throw new NotImplementedException();
     }
+    
+    public int IndexOf(T item)
+    {
+        for (int i = 0; i < _items.Count; i++)
+        {
+            if (_items[i].Equals(item)) return i;
+        }
+
+        return -1;
+    }
 
     private int InsertInPlace(T item)
     {

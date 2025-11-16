@@ -23,8 +23,10 @@ public interface ILiveList<T> : IEnumerable<T>
     event EventHandler<ListItemMovedEventArgs> ItemMoved;
     event EventHandler<ListItemRemovedEventArgs> ItemRemoved;
     event EventHandler ListReset;
+    
     void Add(T item);
     void Move(T item, int toIndex);
     void Remove(T item);
+    int IndexOf(T item);
 }
 

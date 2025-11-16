@@ -63,14 +63,14 @@ public partial class WidthsInput : ContentView, IFormElement<WidthsInputValue>, 
 		set
 		{
 			field = value;
-			_screenAndImageWidths.IsReversed = value == WidthComparisonMode.MaxWidths;
+			_screenAndImageWidths.IsReversed = value == WidthComparisonMode.MinWidths;
             StateChanged?.Invoke(this, new FormElementStateChangedEventArgs<WidthsInputValue>(State));
 		}
 	} = _defaultWidthComparisonMode;
 
 	private ISortedLiveList<ScreenAndImageWidth> _screenAndImageWidths = new SortedLiveList<ScreenAndImageWidth>()
 	{
-		IsReversed = _defaultWidthComparisonMode == WidthComparisonMode.MaxWidths
+		IsReversed = _defaultWidthComparisonMode == WidthComparisonMode.MinWidths,
 	};
 
     private IEnumerable<TextInput> ScreenAndImageWidthTextInputs
@@ -291,8 +291,8 @@ public partial class WidthsInput : ContentView, IFormElement<WidthsInputValue>, 
 
 
         var outerContainer = new VerticalStackLayout();
-        outerContainer.Children.Add(defaultScreenWidthInputContainer);
         outerContainer.Children.Add(_screenAndImageWidthInputsContainer);
+        outerContainer.Children.Add(defaultScreenWidthInputContainer);
         MainLayout.Children.Add(outerContainer);
     }
 }
