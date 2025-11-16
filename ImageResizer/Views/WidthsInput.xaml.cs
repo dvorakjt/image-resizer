@@ -21,7 +21,7 @@ public struct WidthsInputValue
 	public IEnumerable<ScreenAndImageWidth> ScreenAndImageWidths { get; init; }
 }
 
-public partial class WidthsInput : ContentView, IFormElement<WidthsInputValue>
+public partial class WidthsInput : ContentView, IFormElement<WidthsInputValue>, IFormElementWithErrorDisplay
 {
 	private static WidthComparisonMode _defaultWidthComparisonMode = WidthComparisonMode.MaxWidths;
     private static int _minWidth = 1;
@@ -94,7 +94,17 @@ public partial class WidthsInput : ContentView, IFormElement<WidthsInputValue>
         InitInternalComponents();
 	}
 
-	private void InitInternalComponents()
+    public void RevealErrors()
+    {
+        _defaultImageWidthInput.RevealErrors();
+
+        foreach (var input in ScreenAndImageWidthTextInputs)
+        {
+            input.RevealErrors();
+        }
+    }
+
+    private void InitInternalComponents()
 	{
 		InitializeModeInput();
 		InitializeNewScreenWidthInput();

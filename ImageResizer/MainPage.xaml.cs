@@ -16,6 +16,18 @@ public partial class MainPage : ContentPage
         };
         
         FormLayout.Children.Add(widthsInput);
+        
+        var revealErrorsButton = new Button
+        {
+            Text = "Reveal"
+        };
+
+        revealErrorsButton.Clicked += (sender, e) =>
+        {
+            widthsInput.RevealErrors();
+        };
+        
+        FormLayout.Children.Add(revealErrorsButton);
     }
    
 }
