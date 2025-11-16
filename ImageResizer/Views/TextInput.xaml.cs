@@ -59,7 +59,6 @@ public partial class TextInput : ContentView, IFormElement<string>, IResettableF
     private readonly Func<string, ValidatorFuncResult> _validationFunc;
     private readonly Func<string, string> _filterInput;
     private string _defaultValue;
-    private bool _isPristine = true;
     
     public TextInput(string defaultValue, Func<string, ValidatorFuncResult> validationFunc, Func<string, string>? filterInput = null)
     {
@@ -101,18 +100,7 @@ public partial class TextInput : ContentView, IFormElement<string>, IResettableF
     public void Reset()
     {
         IsErrorMessageVisible = false;
-        _isPristine = true;
-        SetValue(_defaultValue);
-    }
-
-    public void RevealErrors()
-    {
-        IsErrorMessageVisible = true;
-    }
-    
-    private void SetValue(string value)
-    {
-        var filteredValue = _filterInput(value);
+        var filteredValue = _filterInput(_defaultValue);
         var validationResult = _validationFunc(filteredValue);
 
         State = new FormElementState<string>(
@@ -121,16 +109,26 @@ public partial class TextInput : ContentView, IFormElement<string>, IResettableF
             validationResult.Message
         );
     }
+
+    public void RevealErrors()
+    {
+        IsErrorMessageVisible = true;
+    }
+    
     
     private void OnEntryTextChanged(object sender, TextChangedEventArgs e)
     {
-        SetValue(e.NewTextValue);
-        
-        if (_isPristine)
-        {
-            _isPristine = false;
-        }
-        else
+        var filteredValue = _filterInput(e.NewTextValue);
+        var changed = State.Value != filteredValue;
+        var validationResult = _validationFunc(filteredValue);
+
+        State = new FormElementState<string>(
+            filteredValue,
+            validationResult.IsValid,
+            validationResult.Message
+        );
+
+        if (changed)
         {
             RevealErrors();
         }
