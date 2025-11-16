@@ -37,7 +37,7 @@ public partial class WidthsInput : ContentView
 		}
 	} = _defaultWidthComparisonMode;
 
-	private ILiveSortedList<ScreenAndImageWidth> _screenAndImageWidths = new LiveSortedList<ScreenAndImageWidth>()
+	private ISortedLiveList<ScreenAndImageWidth> _screenAndImageWidths = new SortedLiveList<ScreenAndImageWidth>()
 	{
 		IsReversed = _defaultWidthComparisonMode == WidthComparisonMode.MaxWidths
 	};

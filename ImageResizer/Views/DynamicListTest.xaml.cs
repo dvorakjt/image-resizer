@@ -9,7 +9,7 @@ namespace ImageResizer.Views;
 
 public partial class DynamicListTest : ContentView
 {
-    public ILiveSortedList<string> Animals = new LiveSortedList<string>{        
+    public ISortedLiveList<string> Animals = new SortedLiveList<string>{        
         "Fish",
         "Gharial",
         "Hawk",

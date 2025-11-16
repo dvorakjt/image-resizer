@@ -3,7 +3,7 @@ using ImageResizer.ViewModels;
 
 namespace TestImageResizer.ViewModels;
 
-public class TestLiveSortedList
+public class TestSortedLiveList
 {
     private static IReadOnlyList<string> _sortedList = new List<string>()
     {
@@ -18,7 +18,7 @@ public class TestLiveSortedList
     [Fact]
     public void TestAddingAnItemAddsAnItem()
     {
-        var liveSortedList = new LiveSortedList<string>();
+        var liveSortedList = new SortedLiveList<string>();
         
         liveSortedList.Add(_sortedList[3]);
         liveSortedList.Add(_sortedList[1]);
@@ -36,7 +36,7 @@ public class TestLiveSortedList
     [Fact]
     public void TestRemovingAnItemRemovesAnItem()
     {
-        var liveSortedList = new LiveSortedList<string>();
+        var liveSortedList = new SortedLiveList<string>();
         liveSortedList.Add("Zebra");
 
         Assert.Contains("Zebra", liveSortedList);
@@ -48,7 +48,7 @@ public class TestLiveSortedList
     [Fact]
     public void TestReversingTheListReversesTheList()
     {
-        var liveSortedList = new LiveSortedList<string>();
+        var liveSortedList = new SortedLiveList<string>();
         
         liveSortedList.Add(_sortedList[3]);
         liveSortedList.Add(_sortedList[1]);
@@ -73,7 +73,7 @@ public class TestLiveSortedList
     [Fact]
     public void TestTheListRemainsReversedWhenAddingANewItem()
     {
-        var liveSortedList = new LiveSortedList<string>();
+        var liveSortedList = new SortedLiveList<string>();
         liveSortedList.IsReversed = true;
 
         foreach (var item in _reversedList)
@@ -89,7 +89,7 @@ public class TestLiveSortedList
     [Fact]
     public void TestTheListRemainsReversedWhenRemovingAnItem()
     {
-        var liveSortedList = new LiveSortedList<string>();
+        var liveSortedList = new SortedLiveList<string>();
         liveSortedList.IsReversed = true;
 
         foreach (var item in _sortedList)
@@ -111,7 +111,7 @@ public class TestLiveSortedList
     [Fact]
     public void TestTheListReturnsToItsNormalSortOrderWhenUnReversed()
     {
-        var liveSortedList = new LiveSortedList<string>();
+        var liveSortedList = new SortedLiveList<string>();
         liveSortedList.IsReversed = true;
 
         foreach (var item in _sortedList)

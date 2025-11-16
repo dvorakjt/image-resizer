@@ -2,7 +2,7 @@ using System.Collections;
 
 namespace ImageResizer.ViewModels;
 
-public class LiveSortedList<T> : ILiveSortedList<T> where T : IComparable<T>
+public class SortedLiveList<T> : ISortedLiveList<T> where T : IComparable<T>
 {
     public event EventHandler<ListItemAddedEventArgs<T>>? ItemAdded;
     public event EventHandler<ListItemMovedEventArgs>? ItemMoved;
