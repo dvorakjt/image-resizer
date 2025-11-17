@@ -15,6 +15,19 @@ public partial class MainPage : ContentPage
         var mq = new MediaQueriesInput();
         FormLayout.Children.Add(mq);
 
+        var qualityAndEffortInput = new QualityAndEffortInput
+        (
+            (0, 100),
+            (0, 9),
+            50,
+            4
+        )
+        {
+            LabelText = "AVIF Options"
+        };
+        
+        FormLayout.Children.Add(qualityAndEffortInput);
+
         // var imagePicker = new ImagePicker()
         // {
         //    Margin = new Thickness(0,0,0,10),

@@ -4,7 +4,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ImageResizer.Views.QualityAndEffortInput"
              x:Name="QualityAndEffortInputComponent">
-    <VerticalStackLayout x:Name="MainLayout">
-        <Label Text="{Binding Source={x:Reference QualityAndEffortInputComponent}, Path=LabelText}" />
+    <VerticalStackLayout >
+        <Label 
+            Text="{Binding Source={x:Reference QualityAndEffortInputComponent}, Path=LabelText}" 
+            StyleClass="SubHeading" 
+            Margin="0,0,0,10"
+            />
+        <HorizontalStackLayout x:Name="InputElementsContainer"></HorizontalStackLayout>
     </VerticalStackLayout>
 </ContentView>

@@ -79,17 +79,22 @@ public partial class QualityAndEffortInput : ContentView, IFormElement<QualityAn
     {
         var (minQuality, maxQuality) = minMaxQuality;
         var (minEffort, maxEffort) = minMaxEffort;
+        var margin = 2;
+        var inputElementWidth = (AppDimensions.CONTENT_WIDTH - margin) / 2;
 
         _qualityInput = new TextInput
         (
             _defaultQuality.ToString(),
             FormElementHelpers.CreateMinMaxValidator(minQuality, maxQuality,
-                $"Please enter a value between {minQuality} and {maxQuality}."),
+                $"Min. {minQuality}, max. {maxQuality}"),
             FormElementHelpers.AllowOnlyDigits
         )
         {
             LabelText = "Quality",
             MaxLength = maxQuality.ToString().Length,
+            MinimumWidthRequest = inputElementWidth,
+            MaximumWidthRequest = inputElementWidth,
+            Margin = new Thickness(0, 0, margin, 0)
         };
 
         _qualityInput.StateChanged += (sender, args) =>
@@ -97,18 +102,20 @@ public partial class QualityAndEffortInput : ContentView, IFormElement<QualityAn
             StateChanged?.Invoke(this, new FormElementStateChangedEventArgs<QualityAndEffort>(State));
         };
         
-        MainLayout.Children.Add(_qualityInput);
+        InputElementsContainer.Children.Add(_qualityInput);
 
         _effortInput = new TextInput
         (
             _defaultEffort.ToString(),
             FormElementHelpers.CreateMinMaxValidator(minEffort, maxEffort,
-                $"Please enter a value between {minEffort} and {maxEffort}."),
+                $"Min. {minEffort}, max. {maxEffort}"),
             FormElementHelpers.AllowOnlyDigits
         )
         {
             LabelText = "Effort",
             MaxLength = maxEffort.ToString().Length,
+            MinimumWidthRequest = inputElementWidth,
+            MaximumWidthRequest = inputElementWidth,
         };
 
         _effortInput.StateChanged += (sender, args) =>
@@ -116,7 +123,7 @@ public partial class QualityAndEffortInput : ContentView, IFormElement<QualityAn
             StateChanged?.Invoke(this, new FormElementStateChangedEventArgs<QualityAndEffort>(State));
         };
         
-        MainLayout.Children.Add(_effortInput);
+        InputElementsContainer.Children.Add(_effortInput);
     }
 
     public void RevealErrors()
