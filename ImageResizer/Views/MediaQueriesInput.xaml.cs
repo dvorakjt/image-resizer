@@ -21,6 +21,8 @@ public partial class MediaQueriesInput : ContentView, IFormElement<MediaQueriesI
     private static int _maxQueries = 30;
     private static int _minWidth = 1;
     private static int _maxWidth = 40_000;
+    private static int _addAndRemoveButtonSize = 46;
+    private static int _marginBetweenInputElements = 2;
     
     public event EventHandler<FormElementStateChangedEventArgs<MediaQueriesInputValue>>? StateChanged;
     public FormElementState<MediaQueriesInputValue> State

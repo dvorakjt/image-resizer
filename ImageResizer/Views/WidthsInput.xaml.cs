@@ -285,6 +285,29 @@ public partial class WidthsInput : ContentView, IFormElement<WidthsInputValue>, 
         defaultScreenWidthInputContainer.Children.Add(defaultScreenWidthLabel);
         defaultScreenWidthInputContainer.Children.Add(_defaultImageWidthInput);
         
+        var screenWidthLabel = new Label()
+        {
+            Text = "Screen widths",
+            FontSize = 12,
+            MinimumWidthRequest = labelWidth,
+            MaximumWidthRequest = labelWidth,
+            Margin = new Thickness(0, 0, _marginBetweenInputElements, 0),
+        };
+
+        var imageWidthsLabel = new Label()
+        {
+            Text = "Image Widths",
+            FontSize = 12
+        };
+
+        var header = new HorizontalStackLayout()
+        {
+            Margin = new Thickness(0,4),
+        };
+        
+        header.Children.Add(screenWidthLabel);
+        header.Children.Add(imageWidthsLabel);
+        
         _screenAndImageWidthInputsContainer = new VerticalStackLayout();
         
         DynamicListFactory.MakeDynamic<ScreenAndImageWidth>(_screenAndImageWidthInputsContainer, _screenAndImageWidths, (screenAndImageWidth) =>
@@ -352,6 +375,7 @@ public partial class WidthsInput : ContentView, IFormElement<WidthsInputValue>, 
 
 
         var outerContainer = new VerticalStackLayout();
+        outerContainer.Children.Add(header);
         outerContainer.Children.Add(_screenAndImageWidthInputsContainer);
         outerContainer.Children.Add(defaultScreenWidthInputContainer);
         MainLayout.Children.Add(outerContainer);
