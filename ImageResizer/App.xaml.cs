@@ -12,10 +12,10 @@
         {
             return new Window(new MainPage())
             {
-                Width = 540,
-                Height = 768,
-                MinimumWidth = 412,
-                MinimumHeight = 540
+                Width = AppDimensions.DEFAULT_WIDTH,
+                Height = AppDimensions.DEFAULT_HEIGHT,
+                MinimumWidth = AppDimensions.MIN_WIDTH,
+                MinimumHeight = AppDimensions.MIN_HEIGHT,
             };
         }
 
@@ -24,17 +24,8 @@
             Microsoft.Maui.Handlers.EntryHandler.Mapper.AppendToMapping("RemoveNativeFocusStyles", (handler, view) =>
             {
 #if MACCATALYST
+                // Remove the border that appears around in-focus Entry elements on Mac
                 handler.PlatformView.BorderStyle = UIKit.UITextBorderStyle.None;
-#endif
-
-#if WINDOWS
-                handler.PlatformView.BorderThickness = new Microsoft.UI.Xaml.Thickness()
-                {
-                    Bottom = 0,
-                    Top = 0,
-                    Left = 0,
-                    Right = 0,
-                };
 #endif
             });
         }

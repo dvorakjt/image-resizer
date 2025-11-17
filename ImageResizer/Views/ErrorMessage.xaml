@@ -3,6 +3,13 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ImageResizer.Views.ErrorMessage"
-             x:Name="ErrorMessageComponent">
-    <Label Text="{Binding Source={x:Reference ErrorMessageComponent}, Path=Text}" />
+             x:Name="ErrorMessageComponent"
+             MinimumHeightRequest="18"
+             MaximumHeightRequest="18"
+             >
+    <Label 
+        Text="{Binding Source={x:Reference ErrorMessageComponent}, Path=Text}" 
+        IsVisible="{Binding Source={x:Reference ErrorMessageComponent}, Path=IsVisible}" 
+        StyleClass="Error"
+        />
 </ContentView>

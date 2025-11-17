@@ -11,4 +11,10 @@
         <Setter Property="FontFamily" Value="IBMPlexSansBold" />
         <Setter Property="FontSize" Value="28" />
     </Style>
+    
+    <Style TargetType="Label" Class="Error">
+        <Setter Property="FontFamily" Value="IBMPlexSansRegular" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="TextColor" Value="Red" />
+    </Style>
 </ResourceDictionary>

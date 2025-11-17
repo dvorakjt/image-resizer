@@ -6,8 +6,16 @@
              x:Class="ImageResizer.Views.ImagePicker"
              x:Name="ImagePickerComponent">
     <VerticalStackLayout>
-    <Border Stroke="White" StrokeThickness="4">
-        <FlexLayout WidthRequest="350" HeightRequest="350" Direction="Column" AlignItems="Center" JustifyContent="Center">
+    <Border>
+        <FlexLayout 
+            Direction="Column" 
+            AlignItems="Center" 
+            JustifyContent="Center"
+            MinimumWidthRequest="368"
+            MinimumHeightRequest="368"
+            MaximumWidthRequest="368"
+            MaximumHeightRequest="368"
+            >
             <FlexLayout.GestureRecognizers>
                 <TapGestureRecognizer Tapped="OnTapped"/>
                 <DropGestureRecognizer DragOver="OnDragOver" Drop="OnDrop"></DropGestureRecognizer>
@@ -16,6 +24,9 @@
             <Label Text="Select An Image" FontSize="18" />
         </FlexLayout>
     </Border>
-        <views:ErrorMessage IsVisible="{Binding Source={x:Reference ImagePickerComponent}, Path=IsErrorMessageVisible}" Text="{Binding Source={x:Reference ImagePickerComponent}, Path=ErrorMessageText}" />
+        <views:ErrorMessage
+            IsVisible="{Binding Source={x:Reference ImagePickerComponent}, Path=IsErrorMessageVisible}" 
+            Text="{Binding Source={x:Reference ImagePickerComponent}, Path=ErrorMessageText}" 
+            />
     </VerticalStackLayout>
 </ContentView>

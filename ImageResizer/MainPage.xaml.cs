@@ -10,7 +10,13 @@ public partial class MainPage : ContentPage
     {
         InitializeComponent();
 
-        var imagePicker = new ImagePicker();
+        var imagePicker = new ImagePicker()
+        {
+           Margin = new Thickness(0,0,0,20),
+        };
+        
+        FormLayout.Children.Add(imagePicker);
+        
         var altTextInput = new TextInput
         (
             "",
@@ -18,14 +24,11 @@ public partial class MainPage : ContentPage
         )
         {
             LabelText = "Alt Text",
-            MinimumWidthRequest = 412 - 48,
-            MaximumWidthRequest = 412 - 48
+            MinimumWidthRequest = AppDimensions.CONTENT_WIDTH,
+            MaximumWidthRequest = AppDimensions.CONTENT_WIDTH,
         };
         
         FormLayout.Children.Add(altTextInput);
-
-        var custom = new CustomEntry();
-        FormLayout.Children.Add(custom);
     }
    
 }
