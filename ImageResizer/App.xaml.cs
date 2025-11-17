@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-
-namespace ImageResizer
+﻿namespace ImageResizer
 {
     public partial class App : Application
     {
@@ -23,10 +21,20 @@ namespace ImageResizer
 
         private void InitializeHandlers()
         {
-            Microsoft.Maui.Handlers.EntryHandler.Mapper.AppendToMapping("MyCustomization", (handler, view) =>
+            Microsoft.Maui.Handlers.EntryHandler.Mapper.AppendToMapping("RemoveNativeFocusStyles", (handler, view) =>
             {
-#if IOS || MACCATALYST
+#if MACCATALYST
                 handler.PlatformView.BorderStyle = UIKit.UITextBorderStyle.None;
+#endif
+
+#if WINDOWS
+                handler.PlatformView.BorderThickness = new Microsoft.UI.Xaml.Thickness()
+                {
+                    Bottom = 0,
+                    Top = 0,
+                    Left = 0,
+                    Right = 0,
+                };
 #endif
             });
         }

@@ -17,7 +17,9 @@ public partial class MainPage : ContentPage
             FormElementHelpers.CreateRequiredFieldValidator("Please enter some alt text")
         )
         {
-            LabelText = "Alt Text"
+            LabelText = "Alt Text",
+            MinimumWidthRequest = 412 - 48,
+            MaximumWidthRequest = 412 - 48
         };
         
         FormLayout.Children.Add(altTextInput);
