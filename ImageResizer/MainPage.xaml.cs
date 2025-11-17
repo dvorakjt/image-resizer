@@ -12,8 +12,10 @@ public partial class MainPage : ContentPage
     {
         InitializeComponent();
         SetFormWidth();
+        var imageSection = ImageSectionFactory.CreateImageSection();
+        FormLayout.Children.Add(imageSection.SectionLayout);
         var formatsSection = FormatsSectionFactory.CreateFormatsSection();
-        FormLayout.Children.Add(formatsSection.Section);
+        FormLayout.Children.Add(formatsSection.SectionLayout);
     }
 
     private void SetFormWidth()

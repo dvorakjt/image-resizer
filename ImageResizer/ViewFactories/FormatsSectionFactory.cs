@@ -6,7 +6,7 @@ namespace ImageResizer.ViewFactories;
 
 public class FormatsSection
 {
-    public Layout Section { get; init; }
+    public Layout SectionLayout { get; init; }
     public CheckboxGroup SelectedFormats { get; init;  }
     public QualityAndEffortInput AVIFOptionsInput { get; init; }
     public QualityAndEffortInput WebPOptionsInput { get; init; }
@@ -17,9 +17,9 @@ public static class FormatsSectionFactory
 {
     public static FormatsSection CreateFormatsSection()
     {
-        var sectionContainer = new VerticalStackLayout();
-        sectionContainer.MinimumWidthRequest = AppDimensions.CONTENT_WIDTH;
-        sectionContainer.MaximumWidthRequest = AppDimensions.CONTENT_WIDTH;
+        var sectionLayout = new VerticalStackLayout();
+        sectionLayout.MinimumWidthRequest = AppDimensions.CONTENT_WIDTH;
+        sectionLayout.MaximumWidthRequest = AppDimensions.CONTENT_WIDTH;
 
         var heading = new Label()
         {
@@ -27,7 +27,7 @@ public static class FormatsSectionFactory
             StyleClass = ["SubHeading1"],
         };
 
-        sectionContainer.Children.Add(heading);
+        sectionLayout.Children.Add(heading);
 
         var selectedFormats = new CheckboxGroup
         (
@@ -58,21 +58,21 @@ public static class FormatsSectionFactory
             Margin = new Thickness(0, 0, 0, 10),
         };
         
-        sectionContainer.Children.Add(selectedFormats);
+        sectionLayout.Children.Add(selectedFormats);
 
         var avifFormatOptions = CreateAVIFOptionsInput(selectedFormats);
-        sectionContainer.Children.Add(avifFormatOptions);
+        sectionLayout.Children.Add(avifFormatOptions);
 
         var webPFormatOptions = CreateWebPOptionsInput(selectedFormats);
-        sectionContainer.Children.Add(webPFormatOptions);
+        sectionLayout.Children.Add(webPFormatOptions);
 
         var jpgQualityInput = CreateJPGQualityInput(selectedFormats);
         var jpgOptions = CreateJPGOptionsSection(jpgQualityInput);
-        sectionContainer.Children.Add(jpgOptions);
+        sectionLayout.Children.Add(jpgOptions);
 
         return new FormatsSection()
         {
-            Section = sectionContainer,
+            SectionLayout = sectionLayout,
             SelectedFormats = selectedFormats,
             AVIFOptionsInput = avifFormatOptions,
             WebPOptionsInput = webPFormatOptions,
@@ -132,6 +132,7 @@ public static class FormatsSectionFactory
         )
         {
             LabelText = "Quality",
+            MaxLength = 3
         };
         
         return jpgQualityInput;
