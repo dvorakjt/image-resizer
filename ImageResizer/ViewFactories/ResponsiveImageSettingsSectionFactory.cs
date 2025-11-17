@@ -17,7 +17,7 @@ public static class ResponsiveImageSettingsSectionFactory
 {
     public static ResponsiveImageSettingsSection Create()
     {
-        var sectionLayout = SectionLayoutFactory.CreateSectionLayout();
+        var sectionLayout = SectionLayoutFactory.Create();
         var heading = CreateHeading();
         sectionLayout.Add(heading);
         

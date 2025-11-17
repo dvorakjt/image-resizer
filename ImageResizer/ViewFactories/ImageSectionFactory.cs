@@ -14,7 +14,7 @@ public static class ImageSectionFactory
 {
     public static ImageSection Create()
     {
-        var sectionLayout = SectionLayoutFactory.CreateSectionLayout();
+        var sectionLayout = SectionLayoutFactory.Create();
         var imagePicker = new ImagePicker()
         {
             Margin = new Thickness(0, 0, 0, 10)

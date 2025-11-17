@@ -17,7 +17,7 @@ public static class FormatsSectionFactory
 {
     public static FormatsSection Create()
     {
-        var sectionLayout = SectionLayoutFactory.CreateSectionLayout();
+        var sectionLayout = SectionLayoutFactory.Create();
         var heading = CreateHeading();
         sectionLayout.Children.Add(heading);
 

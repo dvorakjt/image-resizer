@@ -2,7 +2,7 @@ namespace ImageResizer.ViewFactories;
 
 public static class SectionLayoutFactory
 {
-    public static Layout CreateSectionLayout()
+    public static Layout Create()
     {
         var sectionLayout = new VerticalStackLayout();
         sectionLayout.MinimumWidthRequest = AppDimensions.CONTENT_WIDTH;
