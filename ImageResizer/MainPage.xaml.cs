@@ -13,7 +13,7 @@ public partial class MainPage : ContentPage
 
         var imagePicker = new ImagePicker()
         {
-           Margin = new Thickness(0,0,0,20),
+           Margin = new Thickness(0,0,0,10),
         };
         
         FormLayout.Children.Add(imagePicker);
@@ -53,6 +53,15 @@ public partial class MainPage : ContentPage
 
         var densities = new DensitiesInput();
         FormLayout.Children.Add(densities);
+
+        var radio = new IRRadioButton()
+        {
+            IsChecked = true,
+            LabelText = "My Radio",
+            Margin = new Thickness(20)
+        };
+        
+        FormLayout.Add(radio);
     }
    
 }

@@ -54,21 +54,23 @@ public partial class RadioButtonGroup : ContentView, IFormElement<string>, INoti
 
         foreach (var item in items)
         {
-            var radioButton = new RadioButton()
+            var radioButton = new IRRadioButton()
             {
-                Content = item.Content,
-                Value = item.Value,
+                LabelText = item.Content,
                 GroupName = groupName,
                 IsChecked = item.Value == defaultValue
             };
 
             radioButton.CheckedChanged += (object sender, CheckedChangedEventArgs e) =>
             {
-                State = new FormElementState<string>
+                if (e.Value)
                 {
-                    Value = item.Value,
-                    IsValid = true
-                };
+                    State = new FormElementState<string>
+                    {
+                        Value = item.Value,
+                        IsValid = true
+                    };
+                }
             };
             
             RadioButtonGroupLayout.Children.Add(radioButton);
