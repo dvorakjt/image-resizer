@@ -10,6 +10,7 @@ public partial class MainPage : ContentPage
     public MainPage()
     {
         InitializeComponent();
+        SetFormWidth();
 
         var imagePicker = new ImagePicker()
         {
@@ -32,22 +33,38 @@ public partial class MainPage : ContentPage
         
         FormLayout.Children.Add(altTextInput);
 
+        var modeHeading = new Label()
+        {
+            Text = "Mode",
+            StyleClass = ["SubHeading"],
+            Margin = new Thickness(0, 0, 0, 10),
+            HorizontalOptions = LayoutOptions.Start
+        };
+        
+        FormLayout.Children.Add(modeHeading);
+
         var modeInput = new RadioButtonGroup([
             new RadioButtonGroupItem()
             {
                 Content = "Densities",
                 Value = ResponsivenessMode.Densities.ToString(),
             },
-            new RadioButtonGroupItem() {
+            new RadioButtonGroupItem()
+            {
                 Content = "Widths",
                 Value = ResponsivenessMode.Widths.ToString()
             },
             new RadioButtonGroupItem()
             {
-                Content = "MediaQueries",
+                Content = "Media Queries",
                 Value = ResponsivenessMode.MediaQueries.ToString(),
             }
-        ], ResponsivenessMode.Densities.ToString(), "ResponsivenessMode");
+        ], ResponsivenessMode.Densities.ToString(), "ResponsivenessMode")
+        {
+            MinimumWidthRequest = AppDimensions.CONTENT_WIDTH,
+            MaximumWidthRequest = AppDimensions.CONTENT_WIDTH,
+            Margin = new Thickness(0, 0, 0, 20),
+        };
         
         FormLayout.Children.Add(modeInput);
 
@@ -63,6 +80,11 @@ public partial class MainPage : ContentPage
         
         FormLayout.Add(radio);
     }
-   
+
+    private void SetFormWidth()
+    {
+        FormLayout.MinimumWidthRequest = AppDimensions.CONTENT_WIDTH;
+        FormLayout.MaximumWidthRequest = AppDimensions.CONTENT_WIDTH;
+    }
 }
 

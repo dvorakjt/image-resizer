@@ -9,11 +9,14 @@
         <Label Text="{Binding Source={x:Reference TextInputComponent}, Path=LabelText}" />
         <Border
             Stroke="{Binding Source={x:Reference TextInputComponent}, Path=BorderColor}"
+            Padding="2"
             >
             <Entry 
                 TextChanged="OnEntryTextChanged" 
                 Text="{Binding Source={x:Reference TextInputComponent}, Path=Value}" 
                 MaxLength="{Binding Source={x:Reference TextInputComponent}, Path=MaxLength}"
+                MinimumHeightRequest="40"
+                MaximumHeightRequest="40"
             />
         </Border>
         <views:ErrorMessage 

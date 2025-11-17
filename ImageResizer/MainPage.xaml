@@ -4,8 +4,10 @@
              xmlns:views="clr-namespace:ImageResizer.Views"
              x:Class="ImageResizer.MainPage">
     <ScrollView>
-        <FlexLayout Direction="Column" AlignItems="Center" x:Name="FormLayout">
-            <Label Text="Image Resizer" StyleClass="Heading" Margin="0,0,0,20" />
+        <FlexLayout Direction="Column" AlignItems="Center" >
+            <VerticalStackLayout x:Name="FormLayout">
+                <Label Text="Image Resizer" StyleClass="Heading" Margin="0,0,0,20" />
+            </VerticalStackLayout>
         </FlexLayout>
     </ScrollView>
 </ContentPage>

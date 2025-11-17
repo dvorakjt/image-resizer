@@ -5,8 +5,5 @@
              x:Class="ImageResizer.Views.RadioButtonGroup"
              x:Name="RadioButtonGroupComponent"
              >
-    <VerticalStackLayout>
-        <Label Text="{Binding Source={x:Reference RadioButtonGroupComponent}, Path=LabelText}" HorizontalOptions="Center"/>
-        <HorizontalStackLayout x:Name="RadioButtonGroupLayout"></HorizontalStackLayout>
-    </VerticalStackLayout>
+        <FlexLayout x:Name="RadioButtonGroupLayout" JustifyContent="SpaceBetween"></FlexLayout>
 </ContentView>
