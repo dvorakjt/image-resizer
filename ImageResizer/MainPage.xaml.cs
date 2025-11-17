@@ -1,7 +1,6 @@
 ﻿using ImageResizer.ViewFactories;
 using ImageResizer.ViewModels;
 using ImageResizer.Views;
-using RadioButtonGroup = ImageResizer.Views.RadioButtonGroup;
 
 namespace ImageResizer;
 
@@ -12,10 +11,8 @@ public partial class MainPage : ContentPage
     {
         InitializeComponent();
         SetFormWidth();
-        var imageSection = ImageSectionFactory.CreateImageSection();
-        FormLayout.Children.Add(imageSection.SectionLayout);
-        var formatsSection = FormatsSectionFactory.CreateFormatsSection();
-        FormLayout.Children.Add(formatsSection.SectionLayout);
+        var responsiveImageSettingsSection = ResponsiveImageSettingsSectionFactory.Create();
+        FormLayout.Children.Add(responsiveImageSettingsSection.SectionLayout);
     }
 
     private void SetFormWidth()

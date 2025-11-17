@@ -9,7 +9,7 @@ public struct RadioButtonGroupItem
     public string Value;
 }
 
-public partial class RadioButtonGroup : ContentView, IFormElement<string>, INotifyPropertyChanged
+public partial class IRRadioButtonGroup : ContentView, IFormElement<string>, INotifyPropertyChanged
 {
     public static BindableProperty LabelTextProperty =
         BindableProperty.Create("LabelText", typeof(string), typeof(TextInput), "");
@@ -38,7 +38,7 @@ public partial class RadioButtonGroup : ContentView, IFormElement<string>, INoti
         }
     }
 
-    public RadioButtonGroup(IList<RadioButtonGroupItem> items, string defaultValue, string groupName)
+    public IRRadioButtonGroup(IList<RadioButtonGroupItem> items, string defaultValue, string groupName)
     {
         if (items.Count() == 0)
         {

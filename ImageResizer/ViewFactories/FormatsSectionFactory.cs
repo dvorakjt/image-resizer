@@ -15,18 +15,10 @@ public class FormatsSection
 
 public static class FormatsSectionFactory
 {
-    public static FormatsSection CreateFormatsSection()
+    public static FormatsSection Create()
     {
-        var sectionLayout = new VerticalStackLayout();
-        sectionLayout.MinimumWidthRequest = AppDimensions.CONTENT_WIDTH;
-        sectionLayout.MaximumWidthRequest = AppDimensions.CONTENT_WIDTH;
-
-        var heading = new Label()
-        {
-            Text = "Formats",
-            StyleClass = ["SubHeading1"],
-        };
-
+        var sectionLayout = SectionLayoutFactory.CreateSectionLayout();
+        var heading = CreateHeading();
         sectionLayout.Children.Add(heading);
 
         var selectedFormats = new CheckboxGroup
@@ -78,6 +70,16 @@ public static class FormatsSectionFactory
             WebPOptionsInput = webPFormatOptions,
             JPGQualityInput = jpgQualityInput
         };
+    }
+
+    private static Label CreateHeading()
+    {
+        var heading = new Label()
+        {
+            Text = "Formats",
+            StyleClass = ["SubHeading1"],
+        };
+        return heading;
     }
 
     private static QualityAndEffortInput CreateAVIFOptionsInput(CheckboxGroup selectedFormats)
@@ -140,10 +142,7 @@ public static class FormatsSectionFactory
 
     private static Layout CreateJPGOptionsSection(TextInput jpgOptionsInput)
     {
-        var section = new VerticalStackLayout()
-        {
-            Margin = new Thickness(0, 0, 0, 10),
-        };
+        var section = new VerticalStackLayout();
 
         var heading = new Label()
         {

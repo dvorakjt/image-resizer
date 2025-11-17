@@ -117,7 +117,7 @@ public partial class WidthsInput : ContentView, IFormElement<WidthsInputValue>, 
 
 	private void InitializeModeInput()
 	{
-       var modeInput = new RadioButtonGroup(
+       var modeInput = new IRRadioButtonGroup(
        [
            new RadioButtonGroupItem()
             {

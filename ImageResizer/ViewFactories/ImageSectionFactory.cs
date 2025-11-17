@@ -12,10 +12,9 @@ public class ImageSection
 
 public static class ImageSectionFactory
 {
-    public static ImageSection CreateImageSection()
+    public static ImageSection Create()
     {
-        var sectionLayout = new VerticalStackLayout();
-
+        var sectionLayout = SectionLayoutFactory.CreateSectionLayout();
         var imagePicker = new ImagePicker()
         {
             Margin = new Thickness(0, 0, 0, 10)
