@@ -128,6 +128,7 @@ public partial class QualityAndEffortInput : ContentView, IFormElement<QualityAn
 
     public void RevealErrors()
     {
-        throw new NotImplementedException();
+        _qualityInput.RevealErrors();
+        _effortInput.RevealErrors();
     }
 }

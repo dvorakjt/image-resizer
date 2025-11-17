@@ -1,6 +1,7 @@
 using NetVips;
 using System.ComponentModel;
 using ImageResizer.ViewModels;
+using Image = Microsoft.Maui.Controls.Image;
 
 namespace ImageResizer.Views;
 
@@ -15,8 +16,9 @@ public partial class ImagePicker : ContentView, IFormElement<Stream?>, IFormElem
         private set
         {
             field = value;
-            StateChanged?.Invoke(this, new FormElementStateChangedEventArgs<Stream?>(field));
+            SetImageSize();
             Thumbnail.Source = ImageSource.FromStream(() => field.Value);
+            StateChanged?.Invoke(this, new FormElementStateChangedEventArgs<Stream?>(field));
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ErrorMessageText)));
         }
     } = new FormElementState<Stream?>
@@ -54,6 +56,14 @@ public partial class ImagePicker : ContentView, IFormElement<Stream?>, IFormElem
         ImageContainer.MaximumWidthRequest = AppDimensions.CONTENT_WIDTH;
         ImageContainer.MinimumHeightRequest = AppDimensions.CONTENT_WIDTH;
         ImageContainer.MaximumHeightRequest = AppDimensions.CONTENT_WIDTH;
+    }
+
+    private void SetImageSize()
+    {
+        Thumbnail.MinimumWidthRequest = AppDimensions.CONTENT_WIDTH;
+        Thumbnail.MaximumWidthRequest = AppDimensions.CONTENT_WIDTH;
+        Thumbnail.MinimumHeightRequest = AppDimensions.CONTENT_WIDTH;
+        Thumbnail.MaximumHeightRequest = AppDimensions.CONTENT_WIDTH;
     }
 
     private async void OnTapped(object sender, EventArgs e)

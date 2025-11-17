@@ -17,7 +17,7 @@
                 <TapGestureRecognizer Tapped="OnTapped"/>
                 <DropGestureRecognizer DragOver="OnDragOver" Drop="OnDrop"></DropGestureRecognizer>
             </FlexLayout.GestureRecognizers>
-            <Image x:Name="Thumbnail" />
+            <Image x:Name="Thumbnail" Aspect="AspectFit" />
             <Label Text="Select An Image" FontSize="18" />
         </FlexLayout>
     </Border>
