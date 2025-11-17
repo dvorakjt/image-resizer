@@ -17,4 +17,11 @@
         <Setter Property="FontSize" Value="14" />
         <Setter Property="TextColor" Value="Red" />
     </Style>
+    
+    <Style TargetType="Button">
+        <Setter Property="BackgroundColor" Value="Black" />
+        <Setter Property="TextColor" Value="White" />
+        <Setter Property="CornerRadius" Value="2" />
+        <Setter Property="FontFamily" Value="IBMPlexSansRegular" />
+    </Style>
 </ResourceDictionary>

@@ -27,6 +27,8 @@ public partial class WidthsInput : ContentView, IFormElement<WidthsInputValue>, 
     private static int _maxScreenAndImageWidths = 30;
     private static int _minWidth = 1;
     private static int _maxWidth = 40_000;
+    private static int _addAndRemoveButtonSize = 46;
+    private static int _marginBetweenInputElements = 2;
     
     public event EventHandler<FormElementStateChangedEventArgs<WidthsInputValue>>? StateChanged;
     public FormElementState<WidthsInputValue> State
@@ -171,6 +173,7 @@ public partial class WidthsInput : ContentView, IFormElement<WidthsInputValue>, 
             );
         }
 
+        var screenWidthInputWidth = AppDimensions.CONTENT_WIDTH - _addAndRemoveButtonSize - _marginBetweenInputElements;
         var screenWidthInput = new ImageResizer.Views.TextInput
         (
             "",
@@ -179,12 +182,21 @@ public partial class WidthsInput : ContentView, IFormElement<WidthsInputValue>, 
         )
         {
             LabelText = "Add a new screen width:",
-            MaxLength = _maxWidth.ToString().Length
+            MaxLength = _maxWidth.ToString().Length,
+            MinimumWidthRequest = screenWidthInputWidth,
+            MaximumWidthRequest = screenWidthInputWidth,
+            Margin = new Thickness(0,0,_marginBetweenInputElements,0),
         };
 
         var addScreenWidthButton = new Button()
         {
-            Text = "+"
+            Text = "+",
+            MinimumWidthRequest = _addAndRemoveButtonSize,
+            MaximumWidthRequest = _addAndRemoveButtonSize,
+            MinimumHeightRequest = _addAndRemoveButtonSize,
+            MaximumHeightRequest = _addAndRemoveButtonSize,
+            VerticalOptions = LayoutOptions.Start,
+            Margin = new Thickness(0,23,0,0),
         };
         
         addScreenWidthButton.Clicked += (sender, e) =>
@@ -203,24 +215,29 @@ public partial class WidthsInput : ContentView, IFormElement<WidthsInputValue>, 
             }
         };
         
-        void toggleAddScreenWidthButton_IsEnabled()
+        void ToggleAddScreenWidthButton_IsEnabled()
         {
             addScreenWidthButton.IsEnabled = _screenAndImageWidths.Count() <=  _maxScreenAndImageWidths;
         }
         
-        toggleAddScreenWidthButton_IsEnabled();
+        ToggleAddScreenWidthButton_IsEnabled();
         
         _screenAndImageWidths.ItemAdded += (sender, e) =>
         {
-            toggleAddScreenWidthButton_IsEnabled();
+            ToggleAddScreenWidthButton_IsEnabled();
         };
 
         _screenAndImageWidths.ItemRemoved += (sender, e) =>
+        { 
+            screenWidthInput.Revalidate();
+            ToggleAddScreenWidthButton_IsEnabled();
+        };
+
+        var screenWidthInputContainer = new HorizontalStackLayout()
         {
-           toggleAddScreenWidthButton_IsEnabled();
+            Margin = new Thickness(0, 0, 0, 10),
         };
         
-        var screenWidthInputContainer = new HorizontalStackLayout();
         screenWidthInputContainer.Children.Add(screenWidthInput);
         screenWidthInputContainer.Children.Add(addScreenWidthButton);
         MainLayout.Children.Add(screenWidthInputContainer);
@@ -234,6 +251,10 @@ public partial class WidthsInput : ContentView, IFormElement<WidthsInputValue>, 
             _maxWidth,
             $"Please enter a valid image width (min. {_minWidth}, max. {_maxWidth})."
         );
+
+        var labelWidth = 100;
+        var inputElementWidth = 
+            AppDimensions.CONTENT_WIDTH - labelWidth - _addAndRemoveButtonSize - 2 * _marginBetweenInputElements;
         
         _defaultImageWidthInput = new TextInput
         (
@@ -242,7 +263,9 @@ public partial class WidthsInput : ContentView, IFormElement<WidthsInputValue>, 
             FormElementHelpers.AllowOnlyDigits
         )
         {
-            MaxLength = _maxWidth.ToString().Length
+            MaxLength = _maxWidth.ToString().Length,
+            MinimumWidthRequest = inputElementWidth,
+            MaximumWidthRequest = inputElementWidth,
         };
 
         _defaultImageWidthInput.StateChanged += (sender, e) =>
@@ -252,7 +275,10 @@ public partial class WidthsInput : ContentView, IFormElement<WidthsInputValue>, 
 
         var defaultScreenWidthLabel = new Label()
         {
-            Text = "Default"
+            Text = "Default",
+            MinimumWidthRequest = labelWidth,
+            MaximumWidthRequest = labelWidth,
+            Margin = new Thickness(0, 0, _marginBetweenInputElements, 0),
         };
 
         var defaultScreenWidthInputContainer = new HorizontalStackLayout();
@@ -266,7 +292,10 @@ public partial class WidthsInput : ContentView, IFormElement<WidthsInputValue>, 
             var widthInputContainer = new HorizontalStackLayout();
             var widthInputLabel = new Label()
             {
-                Text = screenAndImageWidth.ScreenWidth.ToString()
+                Text = screenAndImageWidth.ScreenWidth.ToString(),
+                MinimumWidthRequest = labelWidth,
+                MaximumWidthRequest = labelWidth,
+                Margin = new Thickness(0,0,_marginBetweenInputElements,0),
             };
         
             widthInputContainer.Children.Add(widthInputLabel);
@@ -278,7 +307,10 @@ public partial class WidthsInput : ContentView, IFormElement<WidthsInputValue>, 
                 FormElementHelpers.AllowOnlyDigits
             )
             {
-                MaxLength = _maxWidth.ToString().Length
+                MaxLength = _maxWidth.ToString().Length,
+                MinimumWidthRequest = inputElementWidth,
+                MaximumWidthRequest = inputElementWidth,
+                Margin = new Thickness(0,0,_marginBetweenInputElements,0),
             };
         
             input.StateChanged += (sender, e) =>
@@ -299,7 +331,12 @@ public partial class WidthsInput : ContentView, IFormElement<WidthsInputValue>, 
         
             var removeWidthButton = new Button()
             {
-                Text = "-"
+                Text = "-",
+                MinimumWidthRequest = _addAndRemoveButtonSize,
+                MaximumWidthRequest = _addAndRemoveButtonSize,
+                MinimumHeightRequest = _addAndRemoveButtonSize,
+                MaximumHeightRequest = _addAndRemoveButtonSize,
+                VerticalOptions = LayoutOptions.Start,
             };
         
             removeWidthButton.Clicked += (sender, e) =>
@@ -309,8 +346,7 @@ public partial class WidthsInput : ContentView, IFormElement<WidthsInputValue>, 
             };
         
             widthInputContainer.Children.Add(removeWidthButton);
-        
-        
+            
             return widthInputContainer;
         });
 

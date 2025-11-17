@@ -68,17 +68,17 @@ public partial class MainPage : ContentPage
         
         FormLayout.Children.Add(modeInput);
 
-        var densities = new DensitiesInput();
+        var densities = new DensitiesInput()
+        {
+            Margin = new Thickness(0, 0, 0, 20),
+        };
         FormLayout.Children.Add(densities);
 
-        var radio = new IRRadioButton()
+        var widths = new WidthsInput()
         {
-            IsChecked = true,
-            LabelText = "My Radio",
-            Margin = new Thickness(20)
+            Margin = new Thickness(0, 0, 0, 20),
         };
-        
-        FormLayout.Add(radio);
+        FormLayout.Children.Add(widths);
     }
 
     private void SetFormWidth()

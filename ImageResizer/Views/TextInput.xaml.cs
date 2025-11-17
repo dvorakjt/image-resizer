@@ -110,6 +110,18 @@ public partial class TextInput : ContentView, IFormElement<string>, IResettableF
     {
         IsErrorMessageVisible = true;
     }
+
+    public void Revalidate()
+    {
+        var validationResult = _validationFunc(State.Value);
+
+        State = new FormElementState<string>()
+        {
+            Value = State.Value,
+            IsValid = validationResult.IsValid,
+            ErrorMessage = validationResult.Message
+        };
+    }
     
     
     private void OnEntryTextChanged(object sender, TextChangedEventArgs e)

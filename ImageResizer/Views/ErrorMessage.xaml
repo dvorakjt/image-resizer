@@ -4,8 +4,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ImageResizer.Views.ErrorMessage"
              x:Name="ErrorMessageComponent"
-             MinimumHeightRequest="18"
-             MaximumHeightRequest="18"
+             MinimumHeightRequest="36"
+             MaximumHeightRequest="36"
              >
     <Label 
         Text="{Binding Source={x:Reference ErrorMessageComponent}, Path=Text}" 
