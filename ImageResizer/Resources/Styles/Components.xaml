@@ -7,9 +7,16 @@
         <Setter Property="HorizontalTextAlignment" Value="Center" />
     </Style>
 
-    <Style TargetType="Label" Class="SubHeading">
+    <Style TargetType="Label" Class="SubHeading1">
         <Setter Property="FontFamily" Value="IBMPlexSansBold" />
         <Setter Property="FontSize" Value="28" />
+        <Setter Property="Margin" Value="0,0,0,10" />
+    </Style>
+    
+    <Style TargetType="Label" Class="SubHeading2">
+        <Setter Property="FontFamily" Value="IBMPlexSansBold" />
+        <Setter Property="FontSize" Value="22" />
+        <Setter Property="Margin" Value="0,0,0,10" />
     </Style>
     
     <Style TargetType="Label" Class="Error">

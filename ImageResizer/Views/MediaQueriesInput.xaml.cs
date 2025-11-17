@@ -101,7 +101,7 @@ public partial class MediaQueriesInput : ContentView, IFormElement<MediaQueriesI
         var heading = new Label()
         {
             Text = "Media Queries",
-            StyleClass = ["SubHeading"]
+            StyleClass = ["SubHeading2"]
         };
 
         var addMediaQueryButton = new Button()
