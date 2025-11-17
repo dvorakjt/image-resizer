@@ -1,3 +1,5 @@
+using ILayout = Microsoft.Maui.Controls.ILayout;
+
 namespace ImageResizer.ViewModels;
 
 public class DynamicListFactory
@@ -11,7 +13,8 @@ public class DynamicListFactory
 
         items.ItemAdded += (sender, e) =>
         {
-            layout.Children.Insert(e.NewIndex, mappingFunc(e.NewItem));
+            var newElement = mappingFunc(e.NewItem);
+            layout.Children.Insert(e.NewIndex, newElement);
         };
 
         items.ItemRemoved += (sender, e) =>

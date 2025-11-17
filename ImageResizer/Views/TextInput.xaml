@@ -7,11 +7,15 @@
              x:Name="TextInputComponent">
     <VerticalStackLayout>
         <Label Text="{Binding Source={x:Reference TextInputComponent}, Path=LabelText}" />
-        <Entry 
-            TextChanged="OnEntryTextChanged" 
-            Text="{Binding Source={x:Reference TextInputComponent}, Path=Value}" 
-            MaxLength="{Binding Source={x:Reference TextInputComponent}, Path=MaxLength}"
+        <Border
+            Stroke="{Binding Source={x:Reference TextInputComponent}, Path=BorderColor}"
+            >
+            <Entry 
+                TextChanged="OnEntryTextChanged" 
+                Text="{Binding Source={x:Reference TextInputComponent}, Path=Value}" 
+                MaxLength="{Binding Source={x:Reference TextInputComponent}, Path=MaxLength}"
             />
+        </Border>
         <views:ErrorMessage 
             IsVisible="{Binding Source={x:Reference TextInputComponent}, Path=IsErrorMessageVisible}"
             Text="{Binding Source={x:Reference TextInputComponent}, Path=ErrorMessageText}" 

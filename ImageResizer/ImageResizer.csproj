@@ -91,5 +91,6 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <Folder Include="Resources\AppIcon\" />
+	  <Folder Include="Resources\Images\" />
 	</ItemGroup>
 </Project>

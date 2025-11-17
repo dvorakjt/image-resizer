@@ -41,19 +41,27 @@ public partial class TextInput : ContentView, IFormElement<string>, IResettableF
             StateChanged?.Invoke(this, new FormElementStateChangedEventArgs<string>(field));
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Value)));
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ErrorMessageText)));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(BorderColor)));
         }
     }
 
     public string Value { get => State.Value; }
     public string ErrorMessageText { get => State.ErrorMessage ?? ""; }
+
     public bool IsErrorMessageVisible
     {
         get;
-        private set
+        set
         {
             field = value;
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsErrorMessageVisible)));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(BorderColor)));
         }
+    } = false;
+
+    public Color BorderColor
+    {
+        get => !State.IsValid && IsErrorMessageVisible ? Color.Parse("Red") : Color.Parse("Black");
     }
 
     private readonly Func<string, ValidatorFuncResult> _validationFunc;

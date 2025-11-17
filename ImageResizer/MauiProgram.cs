@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using UIKit;
 
 namespace ImageResizer
 {
@@ -10,10 +11,12 @@ namespace ImageResizer
             builder
                 .UseMauiApp<App>()
                 .ConfigureFonts(fonts =>
-                {
-                    fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
-                    fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-                });
+            {
+                fonts.AddFont("IBMPlexSans-Regular.ttf", "OpenSansRegular");
+                fonts.AddFont("IBMPlexSans-SemiBold.ttf", "IBMPlexSansSemiBold");
+                fonts.AddFont("IBMPlexSans-Bold.ttf", "IBMPlexSansBold");
+            });
+                
 
 #if DEBUG
     		builder.Logging.AddDebug();

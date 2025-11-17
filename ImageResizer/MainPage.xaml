@@ -5,6 +5,7 @@
              x:Class="ImageResizer.MainPage">
     <ScrollView>
         <FlexLayout Direction="Column" AlignItems="Center" x:Name="FormLayout">
+            <Label ClassId="special-label" Text="Image Resizer"/>
         </FlexLayout>
     </ScrollView>
 </ContentPage>

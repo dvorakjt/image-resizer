@@ -7,6 +7,7 @@ namespace ImageResizer
         public App()
         {
             InitializeComponent();
+            InitializeHandlers();
         }
 
         protected override Window CreateWindow(IActivationState? activationState)
@@ -18,6 +19,16 @@ namespace ImageResizer
                 MinimumWidth = 412,
                 MinimumHeight = 540
             };
+        }
+
+        private void InitializeHandlers()
+        {
+            Microsoft.Maui.Handlers.EntryHandler.Mapper.AppendToMapping("MyCustomization", (handler, view) =>
+            {
+#if IOS || MACCATALYST
+                handler.PlatformView.BorderStyle = UIKit.UITextBorderStyle.None;
+#endif
+            });
         }
     }
 }
