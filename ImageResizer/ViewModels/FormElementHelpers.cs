@@ -48,14 +48,15 @@ public class FormElementHelpers
         {
             if (char.IsDigit(c))
             {
-                if (c != '0')
+                if (c == '0')
                 {
-                    detectedNonZeroDigit = true;
-                    result += c;
-                } else if (detectedNonZeroDigit)
-                {
-                    result += c;
-                }
+                    if (!detectedNonZeroDigit)
+                    {
+                        return "0";
+                    }
+                } else detectedNonZeroDigit = true;
+
+                result += c;
             }
         }
 

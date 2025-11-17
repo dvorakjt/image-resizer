@@ -226,21 +226,21 @@ public partial class WidthsInput : ContentView, IFormElement<WidthsInputValue>, 
         MainLayout.Children.Add(screenWidthInputContainer);
 	}
 
-	private void InitializeWidthsInputs() 
+	private void InitializeWidthsInputs()
     {
-        Func<string, ValidatorFuncResult> validateImageWidth = (value) =>
-        {
-            var canParse = int.TryParse(value, out var width);
-            bool isValid = canParse && width >= _minWidth && width <= _maxWidth;
- 
-            return new ValidatorFuncResult(
-                isValid,
-                isValid ? "" : $"Please enter a valid image width (min. {_minWidth}, max. {_maxWidth})."
-            );
- 
-        };
+        var validateImageWidth = FormElementHelpers.CreateMinMaxValidator
+        (
+            _minWidth,
+            _maxWidth,
+            $"Please enter a valid image width (min. {_minWidth}, max. {_maxWidth})."
+        );
         
-        _defaultImageWidthInput = new TextInput("", validateImageWidth, FormElementHelpers.AllowOnlyDigits)
+        _defaultImageWidthInput = new TextInput
+        (
+            "",
+            validateImageWidth,
+            FormElementHelpers.AllowOnlyDigits
+        )
         {
             MaxLength = _maxWidth.ToString().Length
         };
@@ -271,7 +271,12 @@ public partial class WidthsInput : ContentView, IFormElement<WidthsInputValue>, 
         
             widthInputContainer.Children.Add(widthInputLabel);
         
-            var input = new TextInput("", validateImageWidth, FormElementHelpers.AllowOnlyDigits)
+            var input = new TextInput
+            (
+                "",
+                validateImageWidth,
+                FormElementHelpers.AllowOnlyDigits
+            )
             {
                 MaxLength = _maxWidth.ToString().Length
             };

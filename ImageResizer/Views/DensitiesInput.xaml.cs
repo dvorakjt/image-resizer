@@ -35,16 +35,12 @@ public partial class DensitiesInput : ContentView, IFormElement<DensitiesInputVa
 
         _baseWidthInput = new TextInput(
             "",
-            (value) =>
-            {
-                var canParse = int.TryParse(value, out var width);
-                bool isValid = canParse && width >= _minBaseWidth && width <= _maxBaseWidth;
- 
-                return new ValidatorFuncResult(
-                    isValid,
-                    isValid ? "" : $"Please enter a valid base width (min. {_minBaseWidth}, max. {_maxBaseWidth})."
-                );
-            },
+            FormElementHelpers.CreateMinMaxValidator
+            (
+                _minBaseWidth, 
+                _maxBaseWidth, 
+                $"Please enter a valid base width (min. {_minBaseWidth}, max. {_maxBaseWidth})."
+            ),
             FormElementHelpers.AllowOnlyDigits
         )
         {
