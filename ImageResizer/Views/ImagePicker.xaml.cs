@@ -40,11 +40,20 @@ public partial class ImagePicker : ContentView, IFormElement<Stream?>, IFormElem
     public ImagePicker()
     {
         InitializeComponent();
+        SetImageContainerSize();
     }
 
     public void RevealErrors()
     {
         IsErrorMessageVisible = true;
+    }
+
+    private void SetImageContainerSize()
+    {
+        ImageContainer.MinimumWidthRequest = AppDimensions.CONTENT_WIDTH;
+        ImageContainer.MaximumWidthRequest = AppDimensions.CONTENT_WIDTH;
+        ImageContainer.MinimumHeightRequest = AppDimensions.CONTENT_WIDTH;
+        ImageContainer.MaximumHeightRequest = AppDimensions.CONTENT_WIDTH;
     }
 
     private async void OnTapped(object sender, EventArgs e)

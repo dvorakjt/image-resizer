@@ -11,10 +11,7 @@
             Direction="Column" 
             AlignItems="Center" 
             JustifyContent="Center"
-            MinimumWidthRequest="368"
-            MinimumHeightRequest="368"
-            MaximumWidthRequest="368"
-            MaximumHeightRequest="368"
+            x:Name="ImageContainer"
             >
             <FlexLayout.GestureRecognizers>
                 <TapGestureRecognizer Tapped="OnTapped"/>

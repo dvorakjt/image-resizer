@@ -12,7 +12,9 @@ public partial class MainPage : ContentPage
         InitializeComponent();
         SetFormWidth();
 
-        
+        var mq = new MediaQueriesInput();
+        FormLayout.Children.Add(mq);
+
         // var imagePicker = new ImagePicker()
         // {
         //    Margin = new Thickness(0,0,0,10),
@@ -75,11 +77,11 @@ public partial class MainPage : ContentPage
         // };
         // FormLayout.Children.Add(densities);
         //
-        var widths = new WidthsInput()
+        /*var widths = new WidthsInput()
         {
             Margin = new Thickness(0, 0, 0, 20),
         };
-        FormLayout.Children.Add(widths);
+        FormLayout.Children.Add(widths);*/
     }
 
     private void SetFormWidth()

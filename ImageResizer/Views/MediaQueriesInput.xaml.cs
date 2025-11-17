@@ -75,6 +75,7 @@ public partial class MediaQueriesInput : ContentView, IFormElement<MediaQueriesI
 	public MediaQueriesInput()
 	{
 		InitializeComponent();
+        SetWidth();
         InitHeader();
         InitInputElements();
 	}
@@ -89,16 +90,23 @@ public partial class MediaQueriesInput : ContentView, IFormElement<MediaQueriesI
         }
     }
 
+    private void SetWidth()
+    {
+        MainLayout.MinimumWidthRequest = AppDimensions.CONTENT_WIDTH;
+        MainLayout.MaximumWidthRequest = AppDimensions.CONTENT_WIDTH;
+    }
+
     private void InitHeader()
     {
         var heading = new Label()
         {
             Text = "Media Queries",
+            StyleClass = ["SubHeading"]
         };
 
         var addMediaQueryButton = new Button()
         {
-            Text = "Add New Query"
+            Text = "Add New"
         };
 
         addMediaQueryButton.Clicked += (sender, args) =>
@@ -127,12 +135,11 @@ public partial class MediaQueriesInput : ContentView, IFormElement<MediaQueriesI
         {
             toggleAddMediaQueryButton_IsEnabled();
         };
-        
-        
 
         var header = new FlexLayout()
         {
-            JustifyContent = FlexJustify.SpaceBetween
+            JustifyContent = FlexJustify.SpaceBetween,
+            Margin = new Thickness(0, 0, 0, 10)
         };
 
         header.Children.Add(heading);
@@ -149,23 +156,32 @@ public partial class MediaQueriesInput : ContentView, IFormElement<MediaQueriesI
  
             return new ValidatorFuncResult(
                 isValid,
-                isValid ? "" : $"Please enter a valid image width (min. {_minWidth}, max. {_maxWidth})."
+                isValid ? "" : $"Invalid: min. {_minWidth}, max. {_maxWidth}"
             );
+        };
+
+        var mediaQueryInputWidth = 310;
+        var screenWidthInputWidth = 
+            AppDimensions.CONTENT_WIDTH - mediaQueryInputWidth - _addAndRemoveButtonSize - 2 * _marginBetweenInputElements;
+        
+        var defaultScreenWidthLabel = new Label()
+        {
+            Text = "Default",
+            MinimumWidthRequest = mediaQueryInputWidth,
+            MaximumWidthRequest = mediaQueryInputWidth,
+            Margin = new Thickness(0, 0, _marginBetweenInputElements, 0)
         };
         
         _defaultImageWidthInput = new TextInput("", validateImageWidth, FormElementHelpers.AllowOnlyDigits)
         {
-            MaxLength = _maxWidth.ToString().Length
+            MaxLength = _maxWidth.ToString().Length,
+            MinimumWidthRequest = screenWidthInputWidth,
+            MaximumWidthRequest = screenWidthInputWidth
         };
 
         _defaultImageWidthInput.StateChanged += (sender, e) =>
         {
             StateChanged?.Invoke(this, new FormElementStateChangedEventArgs<MediaQueriesInputValue>(State));
-        };
-
-        var defaultScreenWidthLabel = new Label()
-        {
-            Text = "Default"
         };
 
         var defaultScreenWidthInputContainer = new HorizontalStackLayout();
@@ -180,7 +196,10 @@ public partial class MediaQueriesInput : ContentView, IFormElement<MediaQueriesI
             var mediaQueryInput = new TextInput(mediaQueryAndImageWidth.MediaQuery,
                 FormElementHelpers.CreateRequiredFieldValidator("Please enter a media query."))
             {
-                MaxLength = 255
+                MaxLength = 255,
+                MinimumWidthRequest = mediaQueryInputWidth,
+                MaximumWidthRequest = mediaQueryInputWidth,
+                Margin = new Thickness(0, 0, _marginBetweenInputElements, 0)
             };
 
             mediaQueryInput.StateChanged += (sender, e) =>
@@ -193,7 +212,10 @@ public partial class MediaQueriesInput : ContentView, IFormElement<MediaQueriesI
         
             var imageWidthInput = new TextInput("", validateImageWidth, FormElementHelpers.AllowOnlyDigits)
             {
-                MaxLength = _maxWidth.ToString().Length
+                MaxLength = _maxWidth.ToString().Length,
+                MinimumWidthRequest = screenWidthInputWidth,
+                MaximumWidthRequest = screenWidthInputWidth,
+                Margin = new Thickness(0, 0, _marginBetweenInputElements, 0)
             };
         
             imageWidthInput.StateChanged += (sender, e) =>
@@ -214,7 +236,12 @@ public partial class MediaQueriesInput : ContentView, IFormElement<MediaQueriesI
             
             var removeItemButton = new Button()
             {
-                Text = "-"
+                Text = "-",
+                MinimumWidthRequest = _addAndRemoveButtonSize,
+                MaximumWidthRequest = _addAndRemoveButtonSize,
+                MinimumHeightRequest = _addAndRemoveButtonSize,
+                MaximumHeightRequest = _addAndRemoveButtonSize,
+                VerticalOptions = LayoutOptions.Start
             };
         
             removeItemButton.Clicked += (sender, e) =>
