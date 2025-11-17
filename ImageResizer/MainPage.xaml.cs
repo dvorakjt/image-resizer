@@ -37,20 +37,32 @@ public partial class MainPage : ContentPage
         _outputSection = OutputSectionFactory.Create();
         rightPane.Children.Add(_outputSection.SectionLayout);
         
+        var submitButton = CreateSubmitButton();
+        rightPane.Children.Add(submitButton);
+        
         FormLayout.Children.Add(rightPane);
     }
     
     private Layout CreatePane()
     {
-        var padding = 24;
+        var padding = 12;
         var paneWidth = AppDimensions.CONTENT_WIDTH + padding * 2;
         var pane = new VerticalStackLayout()
         {
-            Padding = new Thickness(24),
-            MinimumWidthRequest = AppDimensions.CONTENT_WIDTH + 48,
-            MaximumWidthRequest = AppDimensions.CONTENT_WIDTH + 48
+            Padding = new Thickness(12),
+            MinimumWidthRequest = paneWidth,
+            MaximumWidthRequest = paneWidth
         };
         return pane;
+    }
+
+    private Button CreateSubmitButton()
+    {
+        return new Button()
+        {
+            Text = "Resize",
+            StyleClass = ["Submit"]
+        };
     }
 }
 
