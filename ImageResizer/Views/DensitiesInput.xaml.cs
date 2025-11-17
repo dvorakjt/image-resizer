@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using ImageResizer.Models;
 using ImageResizer.ViewModels;
+using Microsoft.Maui.Layouts;
 
 namespace ImageResizer.Views;
 
@@ -32,7 +33,24 @@ public partial class DensitiesInput : ContentView, IFormElement<DensitiesInputVa
     public DensitiesInput()
     {
         InitializeComponent();
+        SetWidth();
+        InitializeBaseWidthInput();
+        InitializeCheckboxGroup();
+    }
+    
+    public void RevealErrors()
+    {
+        _baseWidthInput.RevealErrors();
+    }
 
+    private void SetWidth()
+    {
+        MainLayout.MinimumWidthRequest =  AppDimensions.CONTENT_WIDTH;
+        MainLayout.MaximumWidthRequest = AppDimensions.CONTENT_WIDTH;
+    }
+
+    private void InitializeBaseWidthInput()
+    {
         _baseWidthInput = new TextInput(
             "",
             FormElementHelpers.CreateMinMaxValidator
@@ -46,6 +64,8 @@ public partial class DensitiesInput : ContentView, IFormElement<DensitiesInputVa
         {
             LabelText = "Base Width",
             MaxLength = _maxBaseWidth.ToString().Length,
+            MinimumWidthRequest = AppDimensions.CONTENT_WIDTH,
+            MaximumWidthRequest = AppDimensions.CONTENT_WIDTH
         };
 
         _baseWidthInput.StateChanged += (sender, e) =>
@@ -63,39 +83,56 @@ public partial class DensitiesInput : ContentView, IFormElement<DensitiesInputVa
                 IsValid = parsedBaseWidth != null
             };
         };
+        
+        MainLayout.Children.Add(_baseWidthInput);
+    }
 
+    private void InitializeCheckboxGroup()
+    {
         var checkboxGroup = new CheckboxGroup(
             [
-                new CheckboxGroupItem { Value = "1x", Label = "1x", IsChecked = true, IsFrozen = true },
-                new CheckboxGroupItem { Value = "1.5x", Label = "1.5x", IsChecked = true },
-                new CheckboxGroupItem { Value = "2x", Label = "2x", IsChecked = true },
-                new CheckboxGroupItem { Value = "3x", Label = "3x", IsChecked = true },
-                new CheckboxGroupItem { Value = "4x", Label = "4x", IsChecked = true },
+                new CheckboxGroupItem
+                {
+                    Value = Density.OneX.ToHtmlString(), 
+                    Label = Density.OneX.ToHtmlString(),
+                    IsChecked = true, 
+                    IsFrozen = true
+                },
+                new CheckboxGroupItem
+                {
+                    Value = Density.OneDot5X.ToHtmlString(), 
+                    Label = Density.OneDot5X.ToHtmlString(),
+                    IsChecked = true, 
+                },
+                new CheckboxGroupItem
+                {
+                    Value = Density.TwoX.ToHtmlString(), 
+                    Label = Density.TwoX.ToHtmlString(),
+                    IsChecked = true, 
+                },
+                new CheckboxGroupItem
+                {
+                    Value = Density.ThreeX.ToHtmlString(), 
+                    Label = Density.ThreeX.ToHtmlString(),
+                    IsChecked = true, 
+                },
+                new CheckboxGroupItem
+                {
+                    Value = Density.FourX.ToHtmlString(), 
+                    Label = Density.FourX.ToHtmlString(),
+                    IsChecked = true, 
+                },
             ]
         )
         {
-            LabelText = "Densities"
+            LabelText = "Densities",
         };
 
         checkboxGroup.StateChanged += (sender, e) =>
         {
-            IEnumerable<Density> selectedDensities = e.State.Value.Select(d =>
+            IEnumerable<Density> selectedDensities = e.State.Value.Select(density =>
             {
-                switch (d)
-                {
-                    case "1x":
-                        return Density.OneX;
-                    case "1.5x":
-                        return Density.OneDot5X;
-                    case "2x":
-                        return Density.TwoX;
-                    case "3x":
-                        return Density.ThreeX;
-                    case "4x":
-                        return Density.FourX;
-                    default:
-                        throw new InvalidEnumArgumentException("Density must be either 1x, 1.5x, 2x, 3x, or 4x");
-                }
+                return Enum.GetValues<Density>().First(d => d.ToHtmlString() == density);
             });
 
             State = new FormElementState<DensitiesInputValue>
@@ -119,12 +156,6 @@ public partial class DensitiesInput : ContentView, IFormElement<DensitiesInputVa
             IsValid = State.IsValid
         };
         
-        DensitiesInputLayout.Children.Add(_baseWidthInput);
-        DensitiesInputLayout.Children.Add(checkboxGroup);
-    }
-    
-    public void RevealErrors()
-    {
-        _baseWidthInput.RevealErrors();
+        MainLayout.Children.Add(checkboxGroup);
     }
 }

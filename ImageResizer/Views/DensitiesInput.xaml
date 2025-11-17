@@ -3,7 +3,7 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ImageResizer.Views.DensitiesInput">
-    <VerticalStackLayout x:Name="DensitiesInputLayout">
-        
+    <VerticalStackLayout x:Name="MainLayout">
+        <Label Text="Densities" StyleClass="SubHeading" Margin="0,0,0,10" />
     </VerticalStackLayout>
 </ContentView>

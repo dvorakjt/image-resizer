@@ -5,7 +5,7 @@
              x:Class="ImageResizer.Views.CheckboxGroup"
              x:Name="CheckboxGroupComponent">
     <VerticalStackLayout>
-        <Label Text="{Binding Source={x:Reference CheckboxGroupComponent}, Path=LabelText}" HorizontalOptions="Center"/>
-        <FlexLayout x:Name="CheckboxesLayout" Direction="{Binding Source={x:Reference CheckboxGroupComponent}, Path=Direction}"></FlexLayout>
+        <Label Text="{Binding Source={x:Reference CheckboxGroupComponent}, Path=LabelText}" />
+        <FlexLayout x:Name="CheckboxesLayout" Direction="Row" HorizontalOptions="Fill" JustifyContent="SpaceBetween"></FlexLayout>
     </VerticalStackLayout>
 </ContentView>
