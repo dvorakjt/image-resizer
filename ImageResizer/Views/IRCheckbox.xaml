@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ImageResizer.Views.IRCheckbox"
+             x:Name="IRCheckboxComponent">
+    <FlexLayout AlignItems="Center" MinimumHeightRequest="44" MaximumHeightRequest="44">
+        <FlexLayout.GestureRecognizers>
+            <TapGestureRecognizer Tapped="OnClicked" />
+        </FlexLayout.GestureRecognizers>
+        <AbsoluteLayout Margin="0,0,2,0">
+            <Border 
+                AbsoluteLayout.LayoutBounds="0,0,24,24"
+                Stroke="{Binding Source={x:Reference IRCheckboxComponent}, Path=TextBorderAndCheckmarkColor}"
+                >
+                <BoxView 
+                    Color="White"
+                    MinimumWidthRequest="24"
+                    MinimumHeightRequest="24" 
+                    MaximumWidthRequest="24"
+                    MaximumHeightRequest="24" 
+                    />
+            </Border>
+            <FlexLayout 
+                AbsoluteLayout.LayoutBounds="0,0,24,24"
+                AlignItems="Center" 
+                JustifyContent="Center"
+                >
+                <BoxView 
+                    WidthRequest="16" 
+                    HeightRequest="16" 
+                    Color="{Binding Source={x:Reference IRCheckboxComponent}, Path=TextBorderAndCheckmarkColor}"
+                    IsVisible="{Binding Source={x:Reference IRCheckboxComponent}, Path=IsChecked}"></BoxView>
+            </FlexLayout>
+        </AbsoluteLayout>
+        <Label 
+            Text="{Binding Source={x:Reference IRCheckboxComponent}, Path=LabelText}" 
+            TextColor="{Binding Source={x:Reference IRCheckboxComponent}, Path=TextBorderAndCheckmarkColor}"
+            />
+    </FlexLayout>
+</ContentView>

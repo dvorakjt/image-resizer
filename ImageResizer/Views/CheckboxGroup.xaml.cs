@@ -65,8 +65,9 @@ public partial class CheckboxGroup : ContentView, IFormElement<IEnumerable<strin
         {
             var container = new HorizontalStackLayout();
 
-            var checkbox = new CheckBox()
+            var checkbox = new IRCheckbox()
             {
+                LabelText = item.Label,
                 IsChecked = item.IsChecked,
                 IsEnabled = !item.IsFrozen
             };
@@ -95,15 +96,8 @@ public partial class CheckboxGroup : ContentView, IFormElement<IEnumerable<strin
                     IsValid = true
                 };
             };
-
-            var label = new Label()
-            {
-                Text = item.Label,
-            };
             
-            container.Children.Add(checkbox);
-            container.Children.Add(label);
-            CheckboxesLayout.Children.Add(container);
+            CheckboxesLayout.Children.Add(checkbox);
         }
 
         State = new FormElementState<IEnumerable<string>>{
