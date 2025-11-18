@@ -6,21 +6,20 @@
              x:Name="IRRadioButtonComponent">
     <HorizontalStackLayout 
         HeightRequest="18"
-        Spacing="2"
+        
         >
         <HorizontalStackLayout.GestureRecognizers>
             <TapGestureRecognizer Tapped="OnTapped" />
         </HorizontalStackLayout.GestureRecognizers>
-        <AbsoluteLayout HorizontalOptions="Start" HeightRequest="18">
+        <AbsoluteLayout WidthRequest="18" HeightRequest="18">
             <Border 
                 AbsoluteLayout.LayoutBounds="0,0,18,18"
                 StrokeShape="Ellipse"
                 Stroke="Black"
-                
             >
-                <BoxView 
-                    WidthRequest="18"
-                    HeightRequest="18"
+                <BoxView
+                    AbsoluteLayout.LayoutBounds="0,0,18,18"
+                    Color="White"
                     CornerRadius="9"
                 />
             </Border>
