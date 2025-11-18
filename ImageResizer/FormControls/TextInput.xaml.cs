@@ -23,8 +23,8 @@ public partial class TextInput : ContentView, IFormElement<string>
     (
         string defaultValue, 
         Func<string, ValidatorResult> validate, 
-        int maxLength, 
-        bool allowZero
+        int maxLength = int.MaxValue,
+        bool allowZero = true
     )
     {
         return new TextInput(defaultValue, validate, maxLength, true, allowZero);
@@ -83,7 +83,7 @@ public partial class TextInput : ContentView, IFormElement<string>
             if (value) ClearErrorStyles();
             field = value;
         }
-    }
+    } = true;
 
     private Entry _entryElement;
     private readonly string _defaultValue;
@@ -112,7 +112,16 @@ public partial class TextInput : ContentView, IFormElement<string>
     
     public void Revalidated()
     {
-        throw new NotImplementedException();
+        StateChanged?.Invoke(this, State);
+        SetErrorMessageText();
+
+        if (State.IsValid)
+        {
+            ClearErrorStyles();
+        } else if (!IsPristine)
+        {
+            ApplyErrorStyles();
+        }
     }
 
     public void DisplayErrors()
@@ -139,6 +148,7 @@ public partial class TextInput : ContentView, IFormElement<string>
             HorizontalOptions = LayoutOptions.Fill
         };
         
+        var oldValue = _entryElement.Text;
         _entryElement.TextChanged += (sender, e) =>
         {
             if (_isNumeric && !FormControlHelpers.IsIntegerOrEmptyString(e.NewTextValue, _allowZero))
@@ -147,25 +157,28 @@ public partial class TextInput : ContentView, IFormElement<string>
                 return;
             }
             
-            OnEntryTextChanged();
+            StateChanged?.Invoke(this, State);
+            SetErrorMessageText();
+            var valueChanged = _entryElement.Text != oldValue;
+            oldValue = _entryElement.Text;
+
+            if (IsPristine)
+            {
+                IsPristine = !valueChanged;
+                return;
+            }
+            
+            if (State.IsValid)
+            {
+                ClearErrorStyles();
+            }
+            else
+            {
+                ApplyErrorStyles();
+            }
         };
         
         Border.Content = _entryElement;
-    }
-
-    private void OnEntryTextChanged()
-    {
-        StateChanged?.Invoke(this, State);
-        SetErrorMessageText();
-
-        if (IsPristine)
-        {
-            IsPristine = false;
-        }
-        else if (!State.IsValid)
-        {
-            ApplyErrorStyles();
-        }
     }
 
     private void SetErrorMessageText()
