@@ -4,11 +4,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ImageResizer.FormControls.IRCheckbox"
              x:Name="IRCheckboxComponent">
-    <HorizontalStackLayout HeightRequest="18" Spacing="2">
+    <HorizontalStackLayout HeightRequest="18" Spacing="2" HorizontalOptions="Start">
         <HorizontalStackLayout.GestureRecognizers>
             <TapGestureRecognizer Tapped="OnTapped" />
         </HorizontalStackLayout.GestureRecognizers>
-        <AbsoluteLayout>
+        <AbsoluteLayout HorizontalOptions="Start">
             <Border 
                 AbsoluteLayout.LayoutBounds="0,0,18,18"
                 Stroke="{Binding Source={x:Reference IRCheckboxComponent}, Path=TextBorderAndCheckmarkColor}"
@@ -34,6 +34,7 @@
         <Label 
             Text="{Binding Source={x:Reference IRCheckboxComponent}, Path=LabelText}" 
             TextColor="{Binding Source={x:Reference IRCheckboxComponent}, Path=TextBorderAndCheckmarkColor}"
+            HorizontalOptions="Start"
             />
     </HorizontalStackLayout>
 </ContentView>

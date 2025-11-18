@@ -7,37 +7,44 @@ public partial class MainPage : ContentPage
     public MainPage()
     {
         InitializeComponent();
-        var textInput = new TextInputBuilder().Build();
-        MainLayout.Children.Add(textInput);
-        
-        var cb1 = new IRCheckbox()
+        var checkboxGroup = new CheckboxGroup(
+            [
+                new CheckboxGroupItem
+                {
+                    Value = Density.OneX.ToHtmlString(), 
+                    Label = Density.OneX.ToHtmlString(),
+                    IsChecked = true, 
+                    IsFrozen = true
+                },
+                new CheckboxGroupItem
+                {
+                    Value = Density.OneDot5X.ToHtmlString(), 
+                    Label = Density.OneDot5X.ToHtmlString(),
+                    IsChecked = true, 
+                },
+                new CheckboxGroupItem
+                {
+                    Value = Density.TwoX.ToHtmlString(), 
+                    Label = Density.TwoX.ToHtmlString(),
+                    IsChecked = true, 
+                },
+                new CheckboxGroupItem
+                {
+                    Value = Density.ThreeX.ToHtmlString(), 
+                    Label = Density.ThreeX.ToHtmlString(),
+                    IsChecked = true, 
+                },
+                new CheckboxGroupItem
+                {
+                    Value = Density.FourX.ToHtmlString(), 
+                    Label = Density.FourX.ToHtmlString(),
+                    IsChecked = true, 
+                },
+            ]
+        )
         {
-            IsChecked = true,
-            LabelText = "Starts Checked and Enabled"
+            LabelText = "Densities",
         };
-        
-        var cb2 = new IRCheckbox()
-        {
-            IsChecked = false,
-            LabelText = "Starts Unchecked and Enabled"
-        };
-
-        var cb3 = new IRCheckbox()
-        {
-            IsEnabled = false,
-            LabelText = "Starts Unchecked and Disabled"
-        };
-
-        var cb4 = new IRCheckbox()
-        {
-            IsChecked = true,
-            IsEnabled = false,
-            LabelText = "Starts Checked and Disabled"
-        };
-        
-        MainLayout.Children.Add(cb1);
-        MainLayout.Children.Add(cb2);
-        MainLayout.Children.Add(cb3);
-        MainLayout.Children.Add(cb4);
+        MainLayout.Children.Add(checkboxGroup);
     }
 }

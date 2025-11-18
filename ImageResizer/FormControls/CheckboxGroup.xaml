@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ImageResizer.FormControls.CheckboxGroup"
+             x:Name="CheckboxGroupComponent">
+    <VerticalStackLayout HorizontalOptions="Fill" HeightRequest="41" Spacing="5"> 
+        <Label 
+            Text="{Binding Source={x:Reference CheckboxGroupComponent}, Path=LabelText}" 
+            HorizontalOptions="Start" 
+            />
+        <HorizontalStackLayout 
+            x:Name="CheckboxesLayout" 
+            HorizontalOptions="Start"
+            HeightRequest="18"
+            Spacing="36"
+            />
+    </VerticalStackLayout>
+</ContentView>
