@@ -3,57 +3,8 @@ using ImageResizer.DataModel;
 
 namespace ImageResizer.FormControls;
 
-/// <summary>
-/// A simple text input that can also display error messages and a label. Can accept a validation function and can be
-/// configured to modify input before setting the value of the underlying entry element. 
-/// </summary>
 public partial class TextInput : ContentView, IFormElement<string>
 {
-    public static TextInput Create
-    (
-        string defaultValue, 
-        Func<string, ValidatorResult> validate, 
-        int maxLength = int.MaxValue
-    )
-    {
-        return new TextInput(defaultValue, validate, maxLength, false, true);
-    }
-    
-    public static TextInput CreateNumeric
-    (
-        string defaultValue, 
-        Func<string, ValidatorResult> validate, 
-        int maxLength = int.MaxValue,
-        bool allowZero = true
-    )
-    {
-        return new TextInput(defaultValue, validate, maxLength, true, allowZero);
-    }
-    
-    public static BindableProperty LabelTextProperty = BindableProperty.Create
-        (
-            nameof(LabelText), 
-            typeof(string), 
-            typeof(TextInput), 
-            ""
-        );
-
-    public string LabelText
-    {
-        get => (string)GetValue(LabelTextProperty);
-        set
-        {
-            SetValue(LabelTextProperty, value);
-            OnPropertyChanged(nameof(LabelText));
-            OnPropertyChanged(nameof(ShowLabel));
-        }
-    }
-
-    public bool ShowLabel
-    {
-        get => !LabelText.IsWhiteSpace();
-    }
-
     public IFormElementState<string> State
     {
         get;
@@ -101,6 +52,7 @@ public partial class TextInput : ContentView, IFormElement<string>
     
     public TextInput
     (
+        string? labelText,
         string defaultValue,
         Func<string, IValidatorResult> validate,
         int maxLength,
@@ -122,6 +74,11 @@ public partial class TextInput : ContentView, IFormElement<string>
         _isNumeric = isNumeric;
         _allowZero = allowZero;
 
+        if (labelText != null)
+        {
+            CreateLabelAndSetRootElementHeight(labelText);
+        }
+        
         CreateEntryElement(maxLength);
     }
     
@@ -153,6 +110,16 @@ public partial class TextInput : ContentView, IFormElement<string>
     {
         IsPristine = true;
         _entryElement.Text = _defaultValue;
+    }
+
+    private void CreateLabelAndSetRootElementHeight(string labelText)
+    {
+        RootLayout.HeightRequest = 63;
+        var label = new Label
+        {
+            Text = labelText,
+        };
+        RootLayout.Children.Insert(0, label);
     }
 
     private void CreateEntryElement(int maxLength)
@@ -196,10 +163,5 @@ public partial class TextInput : ContentView, IFormElement<string>
     {
         Border.Stroke = Color.Parse("Black");
         ErrorMessage.IsVisible = false;
-    }
-
-    private void OnPropertyChanged(string propertyName)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }
