@@ -1,8 +1,7 @@
 namespace ImageResizer.DataModel;
 
-public interface IState<out T>
+public interface IValidatorResult
 {
-    T Value { get; }
     bool IsValid { get; }
     string ErrorMessage { get; }
 }

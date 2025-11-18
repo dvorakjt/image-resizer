@@ -20,7 +20,6 @@ public static class MauiProgram
         Microsoft.Maui.Handlers.EntryHandler.Mapper.AppendToMapping("RemoveNativeFocusStyles", (handler, view) =>
         {
             handler.PlatformView.BorderStyle = UIKit.UITextBorderStyle.None;
-
         });
 #endif
 
