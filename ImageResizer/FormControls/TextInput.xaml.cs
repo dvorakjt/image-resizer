@@ -53,22 +53,30 @@ public partial class TextInput : ContentView, IFormElement<string>
     {
         get => !LabelText.IsWhiteSpace();
     }
-    
+
     public IFormElementState<string> State
     {
-        get
+        get;
+        private set
         {
-            var value = _entryElement.Text;
-            var validatorResult = _validate(value);
+            field = value;
+            StateChanged?.Invoke(this, field);
+            SetErrorMessageText();
 
-            var state = new FormElementState<string>()
+            if (IsPristine)
             {
-                Value = value,
-                IsValid = validatorResult.IsValid,
-                ErrorMessage = validatorResult.ErrorMessage,
-            };
+                IsPristine = field.Value == _defaultValue;
+                return;
+            }
 
-            return state;
+            if (!value.IsValid)
+            {
+                ApplyErrorStyles();
+            }
+            else
+            {
+                ClearErrorStyles();
+            }
         }
     }
 
@@ -102,6 +110,13 @@ public partial class TextInput : ContentView, IFormElement<string>
     {
         InitializeComponent();
 
+        if (isNumeric && !FormControlHelpers.IsIntegerOrEmptyString(defaultValue, allowZero))
+        {
+            throw new ArgumentException(
+                "A numeric input must have a numeric default or an empty string."
+            );
+        }
+
         _defaultValue = defaultValue;
         _validate = validate;
         _isNumeric = isNumeric;
@@ -110,18 +125,19 @@ public partial class TextInput : ContentView, IFormElement<string>
         CreateEntryElement(maxLength);
     }
     
-    public void Revalidated()
+    public void Revalidate()
     {
-        StateChanged?.Invoke(this, State);
-        SetErrorMessageText();
+        var newValue = _entryElement.Text;
+        var validatorResult = _validate(newValue);
 
-        if (State.IsValid)
+        var newState = new FormElementState<string>()
         {
-            ClearErrorStyles();
-        } else if (!IsPristine)
-        {
-            ApplyErrorStyles();
-        }
+            Value = newValue,
+            IsValid = validatorResult.IsValid,
+            ErrorMessage = validatorResult.ErrorMessage,
+        };
+
+        State =  newState;
     }
 
     public void DisplayErrors()
@@ -148,7 +164,6 @@ public partial class TextInput : ContentView, IFormElement<string>
             HorizontalOptions = LayoutOptions.Fill
         };
         
-        var oldValue = _entryElement.Text;
         _entryElement.TextChanged += (sender, e) =>
         {
             if (_isNumeric && !FormControlHelpers.IsIntegerOrEmptyString(e.NewTextValue, _allowZero))
@@ -156,31 +171,16 @@ public partial class TextInput : ContentView, IFormElement<string>
                 ((Entry)sender).Text = FormControlHelpers.ToIntegerOrEmptyString(e.NewTextValue, _allowZero);
                 return;
             }
-            
-            StateChanged?.Invoke(this, State);
-            SetErrorMessageText();
-            var valueChanged = _entryElement.Text != oldValue;
-            oldValue = _entryElement.Text;
 
-            if (IsPristine)
-            {
-                IsPristine = !valueChanged;
-                return;
-            }
-            
-            if (State.IsValid)
-            {
-                ClearErrorStyles();
-            }
-            else
-            {
-                ApplyErrorStyles();
-            }
+            Revalidate();
         };
         
         Border.Content = _entryElement;
+        
+        // Calling revalidate to set the initial state.
+        Revalidate();
     }
-
+    
     private void SetErrorMessageText()
     {
         ErrorMessage.Text = State.ErrorMessage;

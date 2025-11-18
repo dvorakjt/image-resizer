@@ -11,7 +11,7 @@ public interface IFormElement<out T>
 {
     IFormElementState<T> State { get; }
     event EventHandler<IFormElementState<T>> StateChanged;
-    void Revalidated();
+    void Revalidate();
     void DisplayErrors();
     void Reset();
 }

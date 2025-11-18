@@ -16,10 +16,11 @@
             Stroke="Black"
             >
         </Border>
-        
-        <Label 
-            IsVisible="False"
-            x:Name="ErrorMessage"
-            />
+        <StackLayout>
+            <Label 
+                IsVisible="False"
+                x:Name="ErrorMessage"
+                />
+        </StackLayout>
     </VerticalStackLayout>
 </ContentView>
