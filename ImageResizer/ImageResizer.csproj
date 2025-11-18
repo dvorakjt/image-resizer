@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFrameworks>net10.0-maccatalyst</TargetFrameworks>
+        <TargetFrameworks>net10.0;net10.0-maccatalyst</TargetFrameworks>
         <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net10.0-windows10.0.19041.0</TargetFrameworks>
 
         <!-- Note for MacCatalyst:
@@ -11,7 +11,7 @@
         either BOTH runtimes must be indicated or ONLY macatalyst-x64. -->
         <!-- For example: <RuntimeIdentifiers>maccatalyst-x64;maccatalyst-arm64</RuntimeIdentifiers> -->
 
-        <OutputType>Exe</OutputType>
+        <OutputType Condition="'$(TargetFramework)' != 'net10.0'">Exe</OutputType>
         <RootNamespace>ImageResizer</RootNamespace>
         <UseMaui>true</UseMaui>
         <SingleProject>true</SingleProject>
@@ -38,8 +38,14 @@
         <TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
     </PropertyGroup>
 
+    <!-- Grant full access to the file system on Mac so images can be read and save -->
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net10.0-maccatalyst|AnyCPU'">
+        <CodesignEntitlements>Platforms\MacCatalyst\Entitlements.plist</CodesignEntitlements>
+    </PropertyGroup>
+
     <ItemGroup>
         <!-- App Icon -->
+        <MauiIcon Include="Resources/AppIcon/appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" ForegroundScale="1.0" />
 
         <!-- Splash Screen -->
 
@@ -57,13 +63,39 @@
         <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)"/>
         <PackageReference Include="Microsoft.Maui.Essentials" Version="$(MauiVersion)"/>
         <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.0"/>
+
+        <!-- NetVips -->
+        <PackageReference Include="NetVips.Native.win-x64" Version="8.17.3" />
+        <PackageReference Include="NetVips.Native.win-x86" Version="8.17.3" />
+        <PackageReference Include="NetVips.Native.win-arm64" Version="8.17.3" />
+        <PackageReference Include="NetVips.Native.osx-x64" Version="8.17.3" />
+        <PackageReference Include="NetVips.Native.osx-arm64" Version="8.17.3" />
+        <PackageReference Include="NetVips" Version="3.1.0" />
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Resources\Fonts\" />
       <Folder Include="Resources\Images\" />
       <Folder Include="Resources\Splash\" />
       <Folder Include="Resources\Styles\" />
     </ItemGroup>
 
+    <!-- Platform-dependent files -->
+    
+    <!-- Mac Catalyst -->
+    <ItemGroup Condition="$(TargetFramework.StartsWith('net10.0-maccatalyst')) != true">
+        <Compile Remove="**\**\*.MacCatalyst.cs" />
+        <None Include="**\**\*.MacCatalyst.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
+    </ItemGroup>
+
+    <!-- Windows -->
+    <ItemGroup Condition="$(TargetFramework.StartsWith('net10.0-windows')) != true">
+        <Compile Remove="**\*.Windows.cs" />
+        <None Include="**\*.Windows.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
+    </ItemGroup>
+
+    <!-- .NET -->
+    <ItemGroup Condition="!($(TargetFramework.StartsWith('net')) == true AND $(TargetFramework.EndsWith('.0')) == true AND $(TargetFramework.Contains('-')) != true)">
+        <Compile Remove="**\*.net.cs" />
+        <None Include="**\*.net.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
+    </ItemGroup>
 </Project>

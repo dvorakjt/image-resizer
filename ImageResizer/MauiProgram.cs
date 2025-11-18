@@ -8,7 +8,21 @@ public static class MauiProgram
     {
         var builder = MauiApp.CreateBuilder();
         builder
-            .UseMauiApp<App>();
+            .UseMauiApp<App>()
+            .ConfigureFonts(fonts =>
+            {
+                fonts.AddFont("IBMPlexSans-Regular.ttf", "OpenSansRegular"); ;
+                fonts.AddFont("IBMPlexSans-Bold.ttf", "IBMPlexSansBold");
+            });
+        
+#if MACCATALYST
+        // Remove the border that appears around in-focus Entry elements on Mac
+        Microsoft.Maui.Handlers.EntryHandler.Mapper.AppendToMapping("RemoveNativeFocusStyles", (handler, view) =>
+        {
+            handler.PlatformView.BorderStyle = UIKit.UITextBorderStyle.None;
+
+        });
+#endif
 
 #if DEBUG
         builder.Logging.AddDebug();
