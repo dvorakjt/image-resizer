@@ -2,6 +2,7 @@
 using ImageResizer.DataModel;
 using ImageResizer.FormGroups.Formats;
 using ImageResizer.FormGroups.Output;
+using ImageResizer.FormGroups.ResponsiveImageSettings;
 
 namespace ImageResizer;
 
@@ -15,5 +16,8 @@ public partial class MainPage : ContentPage
 
         var outputFormGroup = new OutputFormGroup();
         MainLayout.Children.Add(outputFormGroup);
+
+        var densitiesFormGroup = new DensitiesFormGroup();
+        MainLayout.Children.Add(densitiesFormGroup);
     }
 }
