@@ -11,7 +11,7 @@ public class CheckboxGroupItem
     public bool IsFrozen { get; init; }
 }
 
-public partial class CheckboxGroup : ContentView, IFormElement<IEnumerable<string>>, INotifyPropertyChanged
+public partial class CustomCheckboxGroup : ContentView, IFormElement<IEnumerable<string>>, INotifyPropertyChanged
 {
     public static BindableProperty LabelTextProperty =
         BindableProperty.Create(nameof(LabelText), typeof(string), typeof(TextInput), "");
@@ -40,7 +40,7 @@ public partial class CheckboxGroup : ContentView, IFormElement<IEnumerable<strin
 
     private IEnumerable<CheckboxGroupItem> _items;
     
-    public CheckboxGroup(IEnumerable<CheckboxGroupItem> items)
+    public CustomCheckboxGroup(IEnumerable<CheckboxGroupItem> items)
     {
         if (!items.Any())
         {
@@ -58,7 +58,7 @@ public partial class CheckboxGroup : ContentView, IFormElement<IEnumerable<strin
         
         foreach (var item in _items)
         {
-            var checkbox = new IRCheckbox()
+            var checkbox = new CustomCheckbox()
             {
                 LabelText = item.Label,
                 IsChecked = item.IsChecked,
@@ -117,7 +117,7 @@ public partial class CheckboxGroup : ContentView, IFormElement<IEnumerable<strin
         for (int i = 0; i < _items.Count(); i++)
         {
             var item = _items.ElementAt(i);
-            var checkbox = (IRCheckbox)CheckboxesLayout.Children[i];
+            var checkbox = (CustomCheckbox)CheckboxesLayout.Children[i];
             checkbox.IsChecked = item.IsChecked;
             checkbox.IsEnabled = !item.IsFrozen;
         }

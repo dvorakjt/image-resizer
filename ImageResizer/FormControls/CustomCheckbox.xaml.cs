@@ -2,10 +2,10 @@ using System.ComponentModel;
 
 namespace ImageResizer.FormControls;
 
-public partial class IRCheckbox : ContentView, INotifyPropertyChanged
+public partial class CustomCheckbox : ContentView, INotifyPropertyChanged
 {
     public static BindableProperty IsCheckedProperty =
-        BindableProperty.Create(nameof(IsChecked), typeof(bool), typeof(IRCheckbox), false);
+        BindableProperty.Create(nameof(IsChecked), typeof(bool), typeof(CustomCheckbox), false);
 
     public bool IsChecked
     {
@@ -18,7 +18,7 @@ public partial class IRCheckbox : ContentView, INotifyPropertyChanged
     }
     
     public static BindableProperty LabelTextProperty =
-        BindableProperty.Create("LabelText", typeof(string), typeof(IRCheckbox), "");
+        BindableProperty.Create("LabelText", typeof(string), typeof(CustomCheckbox), "");
 
     public string LabelText
     {
@@ -30,7 +30,7 @@ public partial class IRCheckbox : ContentView, INotifyPropertyChanged
     }
     
     public static BindableProperty IsEnabledProperty =
-        BindableProperty.Create(nameof(IsEnabled), typeof(bool), typeof(IRCheckbox), true);
+        BindableProperty.Create(nameof(IsEnabled), typeof(bool), typeof(CustomCheckbox), true);
 
     public bool IsEnabled
     {
@@ -50,7 +50,7 @@ public partial class IRCheckbox : ContentView, INotifyPropertyChanged
     public event EventHandler<CheckedChangedEventArgs> CheckedChanged;
     public event PropertyChangedEventHandler? PropertyChanged;
     
-    public IRCheckbox()
+    public CustomCheckbox()
     {
         InitializeComponent();
     }

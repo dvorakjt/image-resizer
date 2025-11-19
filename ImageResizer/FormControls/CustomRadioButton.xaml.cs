@@ -2,11 +2,11 @@ using System.ComponentModel;
 
 namespace ImageResizer.FormControls;
 
-public partial class IRRadioButton : ContentView, INotifyPropertyChanged
+public partial class CustomRadioButton : ContentView, INotifyPropertyChanged
 {
-    private static Dictionary<string, List<IRRadioButton>> _radioButtonGroups = new Dictionary<string, List<IRRadioButton>>();
+    private static Dictionary<string, List<CustomRadioButton>> _radioButtonGroups = new Dictionary<string, List<CustomRadioButton>>();
 
-    private static void _attachRadioButtonToGroup(IRRadioButton radioButton, string newGroup)
+    private static void _attachRadioButtonToGroup(CustomRadioButton radioButton, string newGroup)
     {
         var oldGroup = _radioButtonGroups.Keys.ToList().Find(k =>
              _radioButtonGroups[k].IndexOf(radioButton) != -1
@@ -18,13 +18,13 @@ public partial class IRRadioButton : ContentView, INotifyPropertyChanged
         
         if (!_radioButtonGroups.ContainsKey(newGroup))
         {
-            _radioButtonGroups.Add(newGroup, new List<IRRadioButton>());
+            _radioButtonGroups.Add(newGroup, new List<CustomRadioButton>());
         }
         
         _radioButtonGroups[newGroup].Add(radioButton);
     }
 
-    private static void _uncheckAllOtherGroupMembers(IRRadioButton radioButton, string group)
+    private static void _uncheckAllOtherGroupMembers(CustomRadioButton radioButton, string group)
     {
         if (_radioButtonGroups.ContainsKey(group))
         {
@@ -39,7 +39,7 @@ public partial class IRRadioButton : ContentView, INotifyPropertyChanged
     }
     
     public static BindableProperty IsCheckedProperty =
-        BindableProperty.Create(nameof(IsChecked), typeof(bool), typeof(IRRadioButton), false);
+        BindableProperty.Create(nameof(IsChecked), typeof(bool), typeof(CustomRadioButton), false);
 
     public bool IsChecked
     {
@@ -58,7 +58,7 @@ public partial class IRRadioButton : ContentView, INotifyPropertyChanged
     }
     
     public static BindableProperty LabelTextProperty =
-        BindableProperty.Create("LabelText", typeof(string), typeof(IRRadioButton), "");
+        BindableProperty.Create("LabelText", typeof(string), typeof(CustomRadioButton), "");
 
     public string LabelText
     {
@@ -70,7 +70,7 @@ public partial class IRRadioButton : ContentView, INotifyPropertyChanged
     }
     
     public static BindableProperty GroupNameProperty =
-        BindableProperty.Create(nameof(GroupName), typeof(string), typeof(IRRadioButton), System.Guid.NewGuid().ToString());
+        BindableProperty.Create(nameof(GroupName), typeof(string), typeof(CustomRadioButton), System.Guid.NewGuid().ToString());
 
     public string GroupName
     {
@@ -85,7 +85,7 @@ public partial class IRRadioButton : ContentView, INotifyPropertyChanged
     public event EventHandler<CheckedChangedEventArgs>? CheckedChanged;
     public new event PropertyChangedEventHandler? PropertyChanged;
     
-    public IRRadioButton()
+    public CustomRadioButton()
     {
         InitializeComponent();
     }

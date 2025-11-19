@@ -7,7 +7,7 @@
     
     <Style TargetType="Label">
         <Setter Property="BackgroundColor" Value="Transparent" />
-        <Setter Property="FontFamily" Value="IBMPlexSansBold" />
+        <Setter Property="FontFamily" Value="IBMPlexSansSemiBold" />
         <Setter Property="FontSize" Value="14" />
         <Setter Property="HeightRequest" Value="18" />
         <Setter Property="TextColor" Value="Black" />

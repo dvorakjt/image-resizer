@@ -1,5 +1,6 @@
 ﻿using ImageResizer.FormControls;
 using ImageResizer.DataModel;
+
 namespace ImageResizer;
 
 public partial class MainPage : ContentPage
@@ -7,21 +8,30 @@ public partial class MainPage : ContentPage
     public MainPage()
     {
         InitializeComponent();
-        var radioButton1 = new IRRadioButton()
-        {
-            LabelText = "Apples",
-            IsChecked = true,
-            GroupName = "Fruits"
-        };
 
-        var radioButton2 = new IRRadioButton()
-        {
-            LabelText = "Oranges",
-            IsChecked = false,
-            GroupName = "Fruits"
-        };
+        var responsivenessModesInput = new CustomRadioButtonGroup
+        (
+            [
+                new RadioButtonGroupItem()
+                {
+                    Content = "Densities",
+                    Value = ImageSwitchingMode.Densities.ToString()
+                },
+                new RadioButtonGroupItem()
+                {
+                    Content = "Widths",
+                    Value = ImageSwitchingMode.Widths.ToString()
+                },
+                new RadioButtonGroupItem()
+                {
+                    Content = "Media Queries",
+                    Value = ImageSwitchingMode.MediaQueries.ToString()
+                }
+            ],
+            ImageSwitchingMode.Densities.ToString(),
+            "ImageSwitchingMode"
+        );
         
-        MainLayout.Children.Add(radioButton1);
-        MainLayout.Children.Add(radioButton2);
+        MainLayout.Children.Add(responsivenessModesInput);
     }
 }
