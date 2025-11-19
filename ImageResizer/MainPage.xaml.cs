@@ -1,6 +1,7 @@
 ﻿using ImageResizer.FormControls;
 using ImageResizer.DataModel;
 using ImageResizer.FormGroups.Formats;
+using ImageResizer.FormGroups.Output;
 
 namespace ImageResizer;
 
@@ -10,6 +11,9 @@ public partial class MainPage : ContentPage
     {
         InitializeComponent();
         var formatsFormGroup = new FormatsFormGroup();
-        MyBorder.Content = formatsFormGroup;
+        MainLayout.Children.Add(formatsFormGroup);
+
+        var outputFormGroup = new OutputFormGroup();
+        MainLayout.Children.Add(outputFormGroup);
     }
 }

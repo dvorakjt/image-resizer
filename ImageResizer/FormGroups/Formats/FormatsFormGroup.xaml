@@ -3,11 +3,15 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ImageResizer.FormGroups.Formats.FormatsFormGroup">
+    <!-- 
+      HeightRequest is required because the height of the contents will change but the height of this component should 
+      not.
+    -->
     <VerticalStackLayout
-        WidthRequest="440" 
+        x:Name="RootLayout"
+        HorizontalOptions="Fill"
         HeightRequest="434" 
         Spacing="18" 
-        x:Name="RootLayout"
         >
         <Label Text="Image Formats" StyleClass="Heading" />
     </VerticalStackLayout>
