@@ -3,7 +3,7 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ImageResizer.FormControls.CustomCheckbox"
-             x:Name="IRCheckboxComponent">
+             x:Name="CustomCheckboxComponent">
     <HorizontalStackLayout HeightRequest="18" Spacing="2" HorizontalOptions="Start">
         <HorizontalStackLayout.GestureRecognizers>
             <TapGestureRecognizer Tapped="OnTapped" />
@@ -11,7 +11,7 @@
         <AbsoluteLayout HorizontalOptions="Start">
             <Border 
                 AbsoluteLayout.LayoutBounds="0,0,18,18"
-                Stroke="{Binding Source={x:Reference IRCheckboxComponent}, Path=TextBorderAndCheckmarkColor}"
+                Stroke="{Binding Source={x:Reference CustomCheckboxComponent}, Path=TextBorderAndCheckmarkColor}"
                 >
                 <BoxView 
                     Color="White"
@@ -27,13 +27,13 @@
                 <BoxView 
                     WidthRequest="12" 
                     HeightRequest="12" 
-                    Color="{Binding Source={x:Reference IRCheckboxComponent}, Path=TextBorderAndCheckmarkColor}"
-                    IsVisible="{Binding Source={x:Reference IRCheckboxComponent}, Path=IsChecked}"></BoxView>
+                    Color="{Binding Source={x:Reference CustomCheckboxComponent}, Path=TextBorderAndCheckmarkColor}"
+                    IsVisible="{Binding Source={x:Reference CustomCheckboxComponent}, Path=IsChecked}"></BoxView>
             </FlexLayout>
         </AbsoluteLayout>
         <Label 
-            Text="{Binding Source={x:Reference IRCheckboxComponent}, Path=LabelText}" 
-            TextColor="{Binding Source={x:Reference IRCheckboxComponent}, Path=TextBorderAndCheckmarkColor}"
+            Text="{Binding Source={x:Reference CustomCheckboxComponent}, Path=LabelText}" 
+            TextColor="{Binding Source={x:Reference CustomCheckboxComponent}, Path=TextBorderAndCheckmarkColor}"
             HorizontalOptions="Start"
             />
     </HorizontalStackLayout>

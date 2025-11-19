@@ -3,10 +3,10 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ImageResizer.FormControls.CustomRadioButton"
-             x:Name="IRRadioButtonComponent">
+             x:Name="CustomRadioButtonComponent">
     <HorizontalStackLayout 
-        HeightRequest="18"
-        
+        HeightRequest="23"
+        Spacing="2"
         >
         <HorizontalStackLayout.GestureRecognizers>
             <TapGestureRecognizer Tapped="OnTapped" />
@@ -33,12 +33,12 @@
                     HeightRequest="12" 
                     CornerRadius="6"
                     Color="Black"
-                    IsVisible="{Binding Source={x:Reference IRRadioButtonComponent}, Path=IsChecked}"></BoxView>
+                    IsVisible="{Binding Source={x:Reference CustomRadioButtonComponent}, Path=IsChecked}"></BoxView>
             </FlexLayout>
         </AbsoluteLayout>
         <Label 
-            Text="{Binding Source={x:Reference IRRadioButtonComponent}, Path=LabelText}" 
-            TextColor="Black"
+            Text="{Binding Source={x:Reference CustomRadioButtonComponent}, Path=LabelText}" 
+            StyleClass="Subheading2"
             HorizontalOptions="Start"
         />
     </HorizontalStackLayout>

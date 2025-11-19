@@ -3,12 +3,12 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ImageResizer.FormControls.CustomRadioButtonGroup"
-             x:Name="RadioButtonGroupComponent"
+             x:Name="CustomRadioButtonGroupComponent"
              >
         <FlexLayout 
             x:Name="RadioButtonGroupLayout" 
             JustifyContent="SpaceBetween"
             HorizontalOptions="Fill"
-            HeightRequest="18"
+            HeightRequest="24"
             />
 </ContentView>
