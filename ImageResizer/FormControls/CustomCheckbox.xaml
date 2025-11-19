@@ -8,15 +8,15 @@
         <HorizontalStackLayout.GestureRecognizers>
             <TapGestureRecognizer Tapped="OnTapped" />
         </HorizontalStackLayout.GestureRecognizers>
-        <AbsoluteLayout HorizontalOptions="Start">
+        <AbsoluteLayout HorizontalOptions="Start" HeightRequest="18" WidthRequest="18">
             <Border 
-                AbsoluteLayout.LayoutBounds="0,0,18,18"
                 Stroke="{Binding Source={x:Reference CustomCheckboxComponent}, Path=TextBorderAndCheckmarkColor}"
+                AbsoluteLayout.LayoutBounds="0,0,18,18"
                 >
                 <BoxView 
                     Color="White"
-                    WidthRequest="18"
-                    HeightRequest="18"
+                    
+                AbsoluteLayout.LayoutBounds="0,0,18,18"
                     />
             </Border>
             <FlexLayout 
