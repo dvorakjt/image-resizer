@@ -5,7 +5,6 @@
              x:Class="ImageResizer.FormControls.TextInput">
     <VerticalStackLayout
         HorizontalOptions="Fill"
-        HeightRequest="45"
         x:Name="RootLayout"
         >
         <Border

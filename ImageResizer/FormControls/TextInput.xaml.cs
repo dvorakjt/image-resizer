@@ -11,38 +11,18 @@ public partial class TextInput : ContentView, IFormElement<string>
         private set
         {
             field = value;
+            
+            /*
+                Always update the text of the error message field so that it appears when revealed either due to user 
+                interaction or because the DisplayErrors() method is called from outside the component.
+            */ 
+            ErrorMessage.Text = field.ErrorMessage;
             StateChanged?.Invoke(this, field);
-            SetErrorMessageText();
-
-            if (IsPristine)
-            {
-                IsPristine = field.Value == _defaultValue;
-                return;
-            }
-
-            if (!value.IsValid)
-            {
-                ApplyErrorStyles();
-            }
-            else
-            {
-                ClearErrorStyles();
-            }
         }
     }
 
     public event EventHandler<IFormElementState<string>>? StateChanged;
     public new event PropertyChangedEventHandler? PropertyChanged;
-
-    private bool IsPristine
-    {
-        get;
-        set
-        {
-            if (value) ClearErrorStyles();
-            field = value;
-        }
-    } = true;
 
     private Entry _entryElement;
     private readonly string _defaultValue;
@@ -76,49 +56,40 @@ public partial class TextInput : ContentView, IFormElement<string>
 
         if (labelText != null)
         {
-            CreateLabelAndSetRootElementHeight(labelText);
+            CreateLabel(labelText);
         }
         
         CreateEntryElement(maxLength);
+        InitializeState();
     }
     
     public void Revalidate()
     {
-        var newValue = _entryElement.Text;
-        var validatorResult = _validate(newValue);
-
-        var newState = new FormElementState<string>()
-        {
-            Value = newValue,
-            IsValid = validatorResult.IsValid,
-            ErrorMessage = validatorResult.ErrorMessage,
-        };
-
-        State =  newState;
+        InitializeState();
     }
 
     public void DisplayErrors()
     {
-        IsPristine = false;
         if (!State.IsValid)
         {
-            ApplyErrorStyles();
+            Border.Stroke = Color.Parse("Red");
+            ErrorMessage.IsVisible = true;
         }
     }
 
     public void Reset()
     {
-        IsPristine = true;
         _entryElement.Text = _defaultValue;
+        HideErrors();
     }
 
-    private void CreateLabelAndSetRootElementHeight(string labelText)
+    private void CreateLabel(string labelText)
     {
-        RootLayout.HeightRequest = 63;
         var label = new Label
         {
             Text = labelText,
         };
+        
         RootLayout.Children.Insert(0, label);
     }
 
@@ -139,27 +110,41 @@ public partial class TextInput : ContentView, IFormElement<string>
                 return;
             }
 
-            Revalidate();
+            var validatorResult = _validate(e.NewTextValue);
+            
+            State = new FormElementState<string>
+            {
+                Value = e.NewTextValue,
+                IsValid = validatorResult.IsValid,
+                ErrorMessage = validatorResult.ErrorMessage,
+            };
+
+            if (State.IsValid)
+            {
+                HideErrors();
+            }
+            else
+            {
+                DisplayErrors();
+            }
         };
         
         Border.Content = _entryElement;
-        
-        // Calling revalidate to set the initial state.
-        Revalidate();
+    }
+
+    private void InitializeState()
+    {
+        var value = _entryElement.Text;
+        var validatorResult = _validate(value);
+        State = new FormElementState<string>
+        {
+            Value = value,
+            IsValid = validatorResult.IsValid,
+            ErrorMessage = validatorResult.ErrorMessage,
+        };
     }
     
-    private void SetErrorMessageText()
-    {
-        ErrorMessage.Text = State.ErrorMessage;
-    }
-
-    private void ApplyErrorStyles()
-    {
-        Border.Stroke = Color.Parse("Red");
-        ErrorMessage.IsVisible = true;
-    }
-
-    private void ClearErrorStyles()
+    private void HideErrors()
     {
         Border.Stroke = Color.Parse("Black");
         ErrorMessage.IsVisible = false;
