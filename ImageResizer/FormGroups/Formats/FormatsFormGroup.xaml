@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ImageResizer.FormGroups.Formats.FormatsFormGroup">
+    <VerticalStackLayout
+        WidthRequest="440" 
+        HeightRequest="434" 
+        Spacing="18" 
+        x:Name="RootLayout"
+        >
+        <Label Text="Image Formats" StyleClass="Heading" />
+    </VerticalStackLayout>
+</ContentView>

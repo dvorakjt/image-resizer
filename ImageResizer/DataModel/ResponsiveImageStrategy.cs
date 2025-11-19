@@ -1,6 +1,6 @@
 namespace ImageResizer.DataModel;
 
-public enum ImageSwitchingMode
+public enum ResponsiveImageStrategy
 {
     Densities,
     Widths,

@@ -84,6 +84,18 @@
     <ItemGroup Condition="$(TargetFramework.StartsWith('net10.0-maccatalyst')) != true">
         <Compile Remove="**\**\*.MacCatalyst.cs" />
         <None Include="**\**\*.MacCatalyst.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
+        <Compile Update="FormGroups\Formats\AVIFOptionsFormGroup.xaml.cs">
+          <DependentUpon>AVIFOptionsFormGroup.xaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="FormGroups\Formats\FormatsFormGroup.xaml.cs">
+          <DependentUpon>FormatOptionsFormGroup.xaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="FormGroups\Formats\WebPOptionsFormGroup.xaml.cs">
+          <DependentUpon>WebPOptionsFormGroup.xaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
     </ItemGroup>
 
     <!-- Windows -->
@@ -96,5 +108,16 @@
     <ItemGroup Condition="!($(TargetFramework.StartsWith('net')) == true AND $(TargetFramework.EndsWith('.0')) == true AND $(TargetFramework.Contains('-')) != true)">
         <Compile Remove="**\*.net.cs" />
         <None Include="**\*.net.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
+    </ItemGroup>
+    <ItemGroup>
+      <MauiXaml Update="FormGroups\Formats\AVIFOptionsFormGroup.xaml">
+        <SubType>Designer</SubType>
+      </MauiXaml>
+      <MauiXaml Update="FormGroups\Formats\FormatsFormGroup.xaml">
+        <SubType>Designer</SubType>
+      </MauiXaml>
+      <MauiXaml Update="FormGroups\Formats\WebPOptionsFormGroup.xaml">
+        <SubType>Designer</SubType>
+      </MauiXaml>
     </ItemGroup>
 </Project>
