@@ -8,9 +8,6 @@
         HorizontalOptions="Fill"
         Spacing="18"
         >
-        <Label
-            Text="Densities"
-            StyleClass="Subheading1"
-            />
+        <Label Text="Densities" StyleClass="Subheading1" />
     </VerticalStackLayout>
 </ContentView>

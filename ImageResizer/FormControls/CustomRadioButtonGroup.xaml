@@ -5,9 +5,9 @@
              x:Class="ImageResizer.FormControls.CustomRadioButtonGroup"
              x:Name="CustomRadioButtonGroupComponent"
              >
-        <FlexLayout 
+    <FlexLayout 
             x:Name="RadioButtonGroupLayout" 
-            JustifyContent="SpaceBetween"
+            JustifyContent="{Binding Source={x:Reference CustomRadioButtonGroupComponent}, Path=JustifyContent}"
             HorizontalOptions="Fill"
             HeightRequest="24"
             />

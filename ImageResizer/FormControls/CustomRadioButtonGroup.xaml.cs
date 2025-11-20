@@ -1,9 +1,10 @@
 using System.ComponentModel;
 using ImageResizer.DataModel;
+using Microsoft.Maui.Layouts;
 
 namespace ImageResizer.FormControls;
 
-public struct RadioButtonGroupItem
+public struct CustomRadioButtonGroupItem
 {
     public string Content;
     public string Value;
@@ -11,15 +12,16 @@ public struct RadioButtonGroupItem
 
 public partial class CustomRadioButtonGroup : ContentView, IFormElement<string>, INotifyPropertyChanged
 {
-    public static BindableProperty LabelTextProperty =
-        BindableProperty.Create("LabelText", typeof(string), typeof(TextInput), "");
+    public static BindableProperty JustifyContentProperty =
+        BindableProperty.Create(nameof(JustifyContent), typeof(FlexJustify), typeof(TextInput), FlexJustify.Start);
 
-    public string LabelText
+    public FlexJustify JustifyContent
     {
-        get => (string)GetValue(LabelTextProperty);
-        set {
-            SetValue(LabelTextProperty, value);
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LabelText)));
+        get => (FlexJustify)GetValue(JustifyContentProperty);
+        set
+        {
+            SetValue(JustifyContentProperty, value);
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(JustifyContent)));
         }
     }
     
@@ -39,8 +41,14 @@ public partial class CustomRadioButtonGroup : ContentView, IFormElement<string>,
     }
     
     private CustomRadioButton _defaultRadioButton;
-
-    public CustomRadioButtonGroup(IList<RadioButtonGroupItem> items, string defaultValue, string groupName)
+    
+    public CustomRadioButtonGroup
+    (
+        IList<CustomRadioButtonGroupItem> items, 
+        string defaultValue, 
+        string groupName,
+        double spacing = 0
+    )
     {
         if (items.Count() == 0)
         {
@@ -60,7 +68,8 @@ public partial class CustomRadioButtonGroup : ContentView, IFormElement<string>,
             {
                 LabelText = item.Content,
                 GroupName = groupName,
-                IsChecked = item.Value == defaultValue
+                IsChecked = item.Value == defaultValue,
+                Margin = new Thickness(0, 0, spacing, 0)
             };
 
             if (item.Value == defaultValue)
