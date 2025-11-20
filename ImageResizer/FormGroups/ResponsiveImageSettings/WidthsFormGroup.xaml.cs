@@ -1,12 +1,13 @@
 using ImageResizer.DataModel;
 using ImageResizer.FormControls;
 using ImageResizer.Utils;
+using Microsoft.Maui.Layouts;
 
 namespace ImageResizer.FormGroups.ResponsiveImageSettings;
 
 public partial class WidthsFormGroup : ContentView
 {
-    private CustomRadioButtonGroup _widthOrderStrategyRadioGroup;
+    private CustomRadioButtonGroup _widthThresholdsStrategyRadioGroup;
     private TextInput _newScreenWidthInput;
     private ISortedLiveList<ScreenAndImageWidths> _widths = new SortedLiveList<ScreenAndImageWidths>();
     private readonly int _minWidth = 1;
@@ -21,13 +22,14 @@ public partial class WidthsFormGroup : ContentView
 
     private void InitializeFormControls()
     {
-       InitializeWidthOrderStrategyRadioGroup();
+       InitializeWidthThresholdsStrategyRadioGroup();
        InitializeNewScreenWidthInput();
+       InitializeWidthsList();
     }
 
-    private void InitializeWidthOrderStrategyRadioGroup()
+    private void InitializeWidthThresholdsStrategyRadioGroup()
     {
-        var _widthOrderStrategyLayout = new VerticalStackLayout()
+        var widthThrehsholdsStrategyLayout = new VerticalStackLayout()
         {
             HorizontalOptions = LayoutOptions.Fill,
             Spacing = 5
@@ -35,42 +37,46 @@ public partial class WidthsFormGroup : ContentView
 
         var label = new Label()
         {
-            Text = "Width Order Strategy",
+            Text = "Width Thresholds Strategy",
         };
         
-        _widthOrderStrategyLayout.Children.Add(label);
+        widthThrehsholdsStrategyLayout.Children.Add(label);
 
-        _widthOrderStrategyRadioGroup = new CustomRadioButtonGroup
+        _widthThresholdsStrategyRadioGroup = new CustomRadioButtonGroup
         (
             [
                 new CustomRadioButtonGroupItem
                 {
                     Content = "Max-Widths",
-                    Value = WidthOrderStrategy.MaxWidths.ToString(),
+                    Value = WidthThresholdsStrategy.MaxWidths.ToString(),
 
                 },
                 new CustomRadioButtonGroupItem
                 {
                     Content = "Min-Widths",
-                    Value = WidthOrderStrategy.MinWidths.ToString(),
+                    Value = WidthThresholdsStrategy.MinWidths.ToString(),
                 }
             ],
-            WidthOrderStrategy.MaxWidths.ToString(),
-            "WidthOrderStrategy",
+            WidthThresholdsStrategy.MaxWidths.ToString(),
+            "WidthThresholdsStrategy",
             18
         );
+
+        _widths.IsReversed = _widthThresholdsStrategyRadioGroup.State.Value ==
+                             WidthThresholdsStrategy.MinWidths.ToString();
         
-        _widthOrderStrategyLayout.Children.Add(_widthOrderStrategyRadioGroup);
-        RootLayout.Children.Add(_widthOrderStrategyLayout);
+        _widthThresholdsStrategyRadioGroup.StateChanged += (sender, e) =>
+            _widths.IsReversed = _widthThresholdsStrategyRadioGroup.State.Value ==
+                                 WidthThresholdsStrategy.MinWidths.ToString();
+        
+        widthThrehsholdsStrategyLayout.Children.Add(_widthThresholdsStrategyRadioGroup);
+        RootLayout.Children.Add(widthThrehsholdsStrategyLayout);
     }
 
     private void InitializeNewScreenWidthInput()
     {
-        var newScreenWidthLayout = new HorizontalStackLayout()
-        {
-            HorizontalOptions = LayoutOptions.Fill,
-            Spacing = 2
-        };
+        var newScreenWidthLayout = new HorizontalStackLayout();
+        newScreenWidthLayout.HorizontalOptions = LayoutOptions.Fill;
         
         _newScreenWidthInput = new TextInputBuilder()
             .WithLabel("Add a new screen width")
@@ -78,33 +84,152 @@ public partial class WidthsFormGroup : ContentView
             .WithMaxLength(_maxWidth.ToString().Length)
             .WithValidator(IsValidScreenWidth)
             .Build();
+
+        _newScreenWidthInput.Completed += (sender, e) =>
+        {
+            AddNewScreenWidth();
+            _newScreenWidthInput.Focus();
+        };
         
-        _newScreenWidthInput.HorizontalOptions = LayoutOptions.Fill;
         _widths.ItemRemoved += (sender, e) => _newScreenWidthInput.Revalidate();
+        _newScreenWidthInput.WidthRequest = 406;
+        _newScreenWidthInput.Margin = new Thickness(0,0, 1, 0);
         newScreenWidthLayout.Children.Add(_newScreenWidthInput);
 
         var addNewScreenWidthButton = new Button()
         {
             Text = "+",
-            StyleClass = ["AddOrRemoveButton"] // TODO: ADD THIS STYLE CLASS TO STYLES
+            StyleClass = ["AddOrRemoveButton"]
         };
 
-        addNewScreenWidthButton.Clicked += (sender, e) =>
-        {
-            if (_newScreenWidthInput.State.IsValid && _widths.Count() < _maxWidthCount)
-            {
-                var newWidths = new ScreenAndImageWidths
-                {
-                    ScreenWidth = int.Parse(_newScreenWidthInput.State.Value)
-                };
-
-                _widths.Add(newWidths);
-                _newScreenWidthInput.Reset();
-            }
-        };
-        
+        addNewScreenWidthButton.Clicked += (sender, e) => AddNewScreenWidth();
+        addNewScreenWidthButton.VerticalOptions = LayoutOptions.Start;
+        addNewScreenWidthButton.Margin = new Thickness(0, 18, 0, 0);
         newScreenWidthLayout.Children.Add(addNewScreenWidthButton);
         RootLayout.Children.Add(newScreenWidthLayout);
+    }
+
+    private void InitializeWidthsList()
+    {
+        var outerLayout = new VerticalStackLayout()
+        {
+            HorizontalOptions = LayoutOptions.Fill,
+            Spacing = 5
+        };
+
+        var header = new HorizontalStackLayout()
+        {
+            HorizontalOptions = LayoutOptions.Fill,
+            Spacing = 36
+        };
+
+        var screenWidthsColumnHeading = new Label()
+        {
+            Text = "Screen Width",
+            WidthRequest = 96
+        };
+        header.Children.Add(screenWidthsColumnHeading);
+        
+        
+        var imageWidthsColumnHeading = new Label()
+        {
+            Text = "Image Width",
+        };
+        header.Children.Add(imageWidthsColumnHeading);
+        outerLayout.Children.Add(header);
+
+        var scrollView = new ScrollView()
+        {
+            MaximumHeightRequest = 145,
+            HorizontalOptions = LayoutOptions.Fill,
+        };
+
+        var screenWidthsList = new VerticalStackLayout()
+        {
+            HorizontalOptions = LayoutOptions.Fill,
+            Spacing = 5
+        };
+        
+        scrollView.Content = screenWidthsList;
+        
+        DynamicListFactory.MakeDynamic(screenWidthsList, _widths, (width) =>
+        {
+            var row = new HorizontalStackLayout()
+            {
+                HorizontalOptions = LayoutOptions.Fill,
+                Spacing = 36
+            };
+
+            var screenWidth = new Label()
+            {
+                Text = width.ScreenWidth.ToString(),
+                WidthRequest = 96,
+                HeightRequest = 32,
+                VerticalOptions = LayoutOptions.Start,
+                HorizontalTextAlignment = TextAlignment.Center,
+                VerticalTextAlignment = TextAlignment.Center,
+            };
+            
+            row.Children.Add(screenWidth);
+
+            var imageWidthCell = new HorizontalStackLayout()
+            {
+                WidthRequest = 308,
+                Spacing = 2
+            };
+            
+            row.Children.Add(imageWidthCell);
+
+            var imageWidthInput = new TextInputBuilder()
+                .Numeric()
+                .WithValidator(
+                    FormControlHelpers.CreateMinMaxValidator
+                    (
+                        _minWidth,
+                        _maxWidth,
+                        $"Enter a valid image width (min. {_minWidth}, max. {_maxWidth})"
+                    )
+                )
+                .WithMaxLength(_maxWidth.ToString().Length)
+                .WithWidthRequest(274)
+                .Build();
+
+            imageWidthInput.StateChanged += (sender, e) =>
+            {
+                width.ImageWidth = imageWidthInput.State.IsValid ? int.Parse(imageWidthInput.State.Value) : null;
+            };
+            
+            imageWidthCell.Children.Add(imageWidthInput);
+
+            var removeWidthButton = new Button()
+            {
+                Text = "-",
+                StyleClass = ["RemoveWidthButton"],
+                VerticalOptions = LayoutOptions.Start
+            };
+            
+            removeWidthButton.Clicked +=  (sender, e) => _widths.Remove(width);
+            imageWidthCell.Children.Add(removeWidthButton);
+            return row;
+        });
+        
+        outerLayout.Children.Add(scrollView);
+
+        var defaultWidthInput = new TextInputBuilder()
+            .WithLabel("Default")
+            .Numeric()
+            .WithValidator(
+                FormControlHelpers.CreateMinMaxValidator(
+                    _minWidth,
+                    _maxWidth,
+                    $"Please enter a valid image width (min. {_minWidth}, max. {_maxWidth})"
+                )
+            )
+            .WithMaxLength(_maxWidth.ToString().Length)
+            .Build();
+        
+        outerLayout.Children.Add(defaultWidthInput);
+        RootLayout.Children.Add(outerLayout);
     }
 
     private ValidatorResult IsValidScreenWidth(string value)
@@ -115,7 +240,7 @@ public partial class WidthsFormGroup : ContentView
             return new ValidatorResult
             {
                 IsValid = false,
-                ErrorMessage = $"Enter a valid screen width (min. ${_minWidth}, max. ${_maxWidth})."
+                ErrorMessage = $"Enter a valid screen width (min. {_minWidth}, max. {_maxWidth})"
             };
         }
         
@@ -125,5 +250,19 @@ public partial class WidthsFormGroup : ContentView
             IsValid = !isDuplicateScreenWidth,
             ErrorMessage = isDuplicateScreenWidth ? "Duplicate screen widths are not allowed." : ""
         };
+    }
+    
+    private void AddNewScreenWidth()
+    {
+        if (_newScreenWidthInput.State.IsValid && _widths.Count() < _maxWidthCount)
+        {
+            var newWidths = new ScreenAndImageWidths
+            {
+                ScreenWidth = int.Parse(_newScreenWidthInput.State.Value)
+            };
+
+            _widths.Add(newWidths);
+            _newScreenWidthInput.Reset();
+        }
     }
 }

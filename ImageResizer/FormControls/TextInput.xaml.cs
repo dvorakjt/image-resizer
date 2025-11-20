@@ -22,6 +22,7 @@ public partial class TextInput : ContentView, IFormElement<string>
     }
 
     public event EventHandler<IFormElementState<string>>? StateChanged;
+    public event EventHandler? Completed;
     public new event PropertyChangedEventHandler? PropertyChanged;
 
     private Entry _entryElement;
@@ -83,6 +84,11 @@ public partial class TextInput : ContentView, IFormElement<string>
         HideErrors();
     }
 
+    public new void Focus()
+    {
+        _entryElement.Focus();
+    }
+
     private void CreateLabel(string labelText)
     {
         var label = new Label
@@ -129,6 +135,7 @@ public partial class TextInput : ContentView, IFormElement<string>
             }
         };
         
+        _entryElement.Completed += (sender, e) => Completed?.Invoke(this, e);
         Border.Content = _entryElement;
     }
 

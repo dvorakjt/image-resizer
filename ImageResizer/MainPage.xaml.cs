@@ -19,5 +19,8 @@ public partial class MainPage : ContentPage
 
         var densitiesFormGroup = new DensitiesFormGroup();
         MainLayout.Children.Add(densitiesFormGroup);
+        
+        var widthsFormGroup = new WidthsFormGroup();
+        MainLayout.Children.Add(widthsFormGroup);
     }
 }

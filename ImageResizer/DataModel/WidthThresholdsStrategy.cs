@@ -1,6 +1,6 @@
 namespace ImageResizer.DataModel;
 
-public enum WidthOrderStrategy
+public enum WidthThresholdsStrategy
 {
     MaxWidths,
     MinWidths
