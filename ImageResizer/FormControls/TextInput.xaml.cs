@@ -3,6 +3,26 @@ using ImageResizer.DataModel;
 
 namespace ImageResizer.FormControls;
 
+/// <summary>
+///   A text input with an error message and, optionally, a label. Implements the following features:
+///   <list type="bullet">
+///   <item>Error messages are hidden by default.</item>
+///   <item>When the user enters a value, if that value is invalid, error messages and styles are applied immediately.</item>
+///   <item>When the user presses the return key, if the field is invalid, error messages and styles are applied immediately.</item>
+///   <item>
+///     When the Revalidate method is called, the validator is executed and error styles are applied if the result is
+///     invalid and the input has previously received user input, otherwise these styles are cleared.
+///   </item>
+///   <item>
+///     When the DisplayErrors() method is called, error styles are applied immediately and the error message becomes
+///     visible if it was previously hidden, and thereafter errors will be displayed when the field becomes invalid.
+///   </item>
+///   <item>
+///     When the Reset() method is called, the value of the input is reset to the default value. This value is revalidated
+///     to produce the new state of the input and errors are hidden.
+///   </item>
+/// </list>
+/// </summary>
 public partial class TextInput : ContentView, IFormElement<string>
 {
     public IFormElementState<string> State
@@ -11,12 +31,8 @@ public partial class TextInput : ContentView, IFormElement<string>
         private set
         {
             field = value;
-            
-            /*
-                Always update the text of the error message field so that it appears when revealed either due to user 
-                interaction or because the DisplayErrors() method is called from outside the component.
-            */ 
             ErrorMessage.Text = field.ErrorMessage;
+            ApplyValidityDependentStyles();
             StateChanged?.Invoke(this, field);
         }
     }
@@ -25,11 +41,22 @@ public partial class TextInput : ContentView, IFormElement<string>
     public event EventHandler? Completed;
     public new event PropertyChangedEventHandler? PropertyChanged;
 
+    public bool ShouldDisplayErrors
+    {
+        get;
+        private set
+        {
+            field = value;
+            ErrorMessage.IsVisible = field;
+        }
+    }
+
     private Entry _entryElement;
     private readonly string _defaultValue;
     private readonly Func<string, IValidatorResult> _validate;
     private readonly bool _isNumeric;
     private readonly bool _allowZero;
+    private bool _isResetting = false;
     
     public TextInput
     (
@@ -66,22 +93,28 @@ public partial class TextInput : ContentView, IFormElement<string>
     
     public void Revalidate()
     {
-        InitializeState();
+        var value = _entryElement.Text;
+        var validatorResult = _validate(value);
+        State = new FormElementState<string>()
+        {
+            Value = value,
+            IsValid = validatorResult.IsValid,
+            ErrorMessage = validatorResult.ErrorMessage,
+        };
     }
 
     public void DisplayErrors()
     {
-        if (!State.IsValid)
-        {
-            Border.Stroke = Color.Parse("Red");
-            ErrorMessage.IsVisible = true;
-        }
+        ShouldDisplayErrors = true;
+        ApplyValidityDependentStyles();
     }
 
     public void Reset()
     {
+        _isResetting = true;
+        ShouldDisplayErrors = false;
         _entryElement.Text = _defaultValue;
-        HideErrors();
+        _isResetting = false;
     }
 
     public new void Focus()
@@ -116,6 +149,11 @@ public partial class TextInput : ContentView, IFormElement<string>
                 return;
             }
 
+            if (!_isResetting)
+            {
+                ShouldDisplayErrors = true;
+            }
+
             var validatorResult = _validate(e.NewTextValue);
             
             State = new FormElementState<string>
@@ -124,18 +162,14 @@ public partial class TextInput : ContentView, IFormElement<string>
                 IsValid = validatorResult.IsValid,
                 ErrorMessage = validatorResult.ErrorMessage,
             };
+        };
 
-            if (State.IsValid)
-            {
-                HideErrors();
-            }
-            else
-            {
-                DisplayErrors();
-            }
+        _entryElement.Completed += (sender, e) =>
+        {
+            DisplayErrors();
+            Completed?.Invoke(this, e);
         };
         
-        _entryElement.Completed += (sender, e) => Completed?.Invoke(this, e);
         Border.Content = _entryElement;
     }
 
@@ -143,6 +177,7 @@ public partial class TextInput : ContentView, IFormElement<string>
     {
         var value = _entryElement.Text;
         var validatorResult = _validate(value);
+        
         State = new FormElementState<string>
         {
             Value = value,
@@ -150,10 +185,17 @@ public partial class TextInput : ContentView, IFormElement<string>
             ErrorMessage = validatorResult.ErrorMessage,
         };
     }
-    
-    private void HideErrors()
+
+    private void ApplyValidityDependentStyles()
     {
-        Border.Stroke = Color.Parse("Black");
-        ErrorMessage.IsVisible = false;
+        if (ShouldDisplayErrors && !State.IsValid)
+        {
+            Border.Stroke = Color.Parse("Red");
+        }
+        else
+        {
+            Border.Stroke = Color.Parse("Black");
+        }
     }
 }
+
