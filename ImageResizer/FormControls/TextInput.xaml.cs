@@ -141,11 +141,9 @@ public partial class TextInput : ContentView, IFormElement<string>
         
         _entryElement.TextChanged += (sender, e) =>
         {
-#if MACCATALYST
-            /* 
-                On Windows, this will be handled by the native TextChanging event because when handled in this manner, the 
-                unfiltered value of the entry element briefly appears. On Mac, this is not an issue, so it can be handled 
-                more simply.
+            /*
+               Filtering input should be handled by native Entry handlers. This code is preserved as a fallback, but it 
+               should not execute.
             */
             if (
                 (Accepts == AcceptedCharacters.WholeNumbers || Accepts == AcceptedCharacters.PositiveIntegers) && 
@@ -155,7 +153,6 @@ public partial class TextInput : ContentView, IFormElement<string>
                 ((Entry)sender).Text = FormControlHelpers.ToIntegerOrEmptyString(e.NewTextValue, Accepts == AcceptedCharacters.WholeNumbers);
                 return;
             }
-#endif
 
             if (!_isResetting)
             {
