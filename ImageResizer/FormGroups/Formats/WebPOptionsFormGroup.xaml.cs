@@ -28,7 +28,7 @@ public partial class WebPOptionsFormGroup : ContentView
         
         _qualityInput = new TextInputBuilder()
             .WithLabel("Quality")
-            .NumericAllowZero()
+            .WholeNumbersOnly()
             .WithDefaultValue(_defaultQuality.ToString())
             .WithValidator
             (
@@ -47,7 +47,7 @@ public partial class WebPOptionsFormGroup : ContentView
         
         _effortInput = new TextInputBuilder()
             .WithLabel("Effort")
-            .NumericAllowZero()
+            .WholeNumbersOnly()
             .WithDefaultValue(_defaultEffort.ToString())
             .WithValidator
             (

@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using ImageResizer.DataModel;
 
 namespace ImageResizer.FormControls;
@@ -21,15 +20,15 @@ public partial class TextInput : ContentView, IFormElement<string>
         }
     }
 
+    public AcceptedCharacters Accepts { get; private set; }
+
     public event EventHandler<IFormElementState<string>>? StateChanged;
     public event EventHandler? Completed;
-    public new event PropertyChangedEventHandler? PropertyChanged;
 
     private Entry _entryElement;
     private readonly string _defaultValue;
     private readonly Func<string, IValidatorResult> _validate;
-    private readonly bool _isNumeric;
-    private readonly bool _allowZero;
+    
     
     public TextInput
     (
@@ -37,23 +36,23 @@ public partial class TextInput : ContentView, IFormElement<string>
         string defaultValue,
         Func<string, IValidatorResult> validate,
         int maxLength,
-        bool isNumeric,
-        bool allowZero
+        AcceptedCharacters accepts
     )
     {
         InitializeComponent();
 
-        if (isNumeric && !FormControlHelpers.IsIntegerOrEmptyString(defaultValue, allowZero))
+        if (
+            (accepts == AcceptedCharacters.WholeNumbers || accepts == AcceptedCharacters.PositiveIntegers) && 
+            !FormControlHelpers.IsIntegerOrEmptyString(defaultValue, accepts == AcceptedCharacters.WholeNumbers))
         {
             throw new ArgumentException(
                 "A numeric input must have a numeric default or an empty string."
             );
         }
 
+        Accepts = accepts;
         _defaultValue = defaultValue;
         _validate = validate;
-        _isNumeric = isNumeric;
-        _allowZero = allowZero;
 
         if (labelText != null)
         {
@@ -110,12 +109,21 @@ public partial class TextInput : ContentView, IFormElement<string>
         
         _entryElement.TextChanged += (sender, e) =>
         {
-            if (_isNumeric && !FormControlHelpers.IsIntegerOrEmptyString(e.NewTextValue, _allowZero))
+#if MACCATALYST
+            /* 
+                On Windows, this will be handled by the native TextChanging event because when handled in this manner, the 
+                unfiltered value of the entry element briefly appears. On Mac, this is not an issue, so it can be handled 
+                more simply.
+            */
+            if (
+                (Accepts == AcceptedCharacters.WholeNumbers || Accepts == AcceptedCharacters.PositiveIntegers) && 
+                !FormControlHelpers.IsIntegerOrEmptyString(e.NewTextValue, Accepts == AcceptedCharacters.WholeNumbers)
+            )
             {
-                ((Entry)sender).Text = FormControlHelpers.ToIntegerOrEmptyString(e.NewTextValue, _allowZero);
+                ((Entry)sender).Text = FormControlHelpers.ToIntegerOrEmptyString(e.NewTextValue, Accepts == AcceptedCharacters.WholeNumbers);
                 return;
             }
-
+#endif
             var validatorResult = _validate(e.NewTextValue);
             
             State = new FormElementState<string>

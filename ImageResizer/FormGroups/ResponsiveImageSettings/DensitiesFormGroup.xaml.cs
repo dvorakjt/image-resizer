@@ -19,7 +19,7 @@ public partial class DensitiesFormGroup : ContentView
     {
         _baseWidthInput = new TextInputBuilder()
             .WithLabel("Base Width")
-            .Numeric()
+            .PositiveIntegersOnly()
             .WithValidator
             (
                 FormControlHelpers.CreateMinMaxValidator

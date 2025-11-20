@@ -20,7 +20,7 @@ public partial class JPEGOptionsFormGroup : ContentView
         
         _qualityInput = new TextInputBuilder()
             .WithLabel("Quality")
-            .NumericAllowZero()
+            .WholeNumbersOnly()
             .WithDefaultValue(_defaultQuality.ToString())
             .WithValidator
             (

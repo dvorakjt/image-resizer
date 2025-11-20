@@ -3,6 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ImageResizer.MainPage"
              >
+    <ScrollView>
     <VerticalStackLayout x:Name="MainLayout" WidthRequest="440">
-    </VerticalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

@@ -9,6 +9,7 @@
         >
         <Border
             x:Name="Border"
+            Padding="2, 0"
             Stroke="Black"
             >
         </Border>

@@ -80,7 +80,7 @@ public partial class WidthsFormGroup : ContentView
         
         _newScreenWidthInput = new TextInputBuilder()
             .WithLabel("Add a new screen width")
-            .Numeric()
+            .PositiveIntegersOnly()
             .WithMaxLength(_maxWidth.ToString().Length)
             .WithValidator(IsValidScreenWidth)
             .Build();
@@ -181,7 +181,7 @@ public partial class WidthsFormGroup : ContentView
             row.Children.Add(imageWidthCell);
 
             var imageWidthInput = new TextInputBuilder()
-                .Numeric()
+                .PositiveIntegersOnly()
                 .WithValidator(
                     FormControlHelpers.CreateMinMaxValidator
                     (
@@ -217,7 +217,7 @@ public partial class WidthsFormGroup : ContentView
 
         var defaultWidthInput = new TextInputBuilder()
             .WithLabel("Default")
-            .Numeric()
+            .PositiveIntegersOnly()
             .WithValidator(
                 FormControlHelpers.CreateMinMaxValidator(
                     _minWidth,

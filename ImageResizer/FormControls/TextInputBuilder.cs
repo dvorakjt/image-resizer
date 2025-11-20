@@ -9,8 +9,7 @@ public class TextInputBuilder
     private Func<string, IValidatorResult> _validator = (string value) =>
         new ValidatorResult { IsValid = true, ErrorMessage = "" };
     private int _maxLength = int.MaxValue;
-    private bool _numeric = false;
-    private bool _allowZero = false;
+    private AcceptedCharacters _accepts = AcceptedCharacters.All;
     private int? _widthRequest = null;
 
     public TextInputBuilder WithLabel(string labelText)
@@ -37,16 +36,15 @@ public class TextInputBuilder
         return this;
     }
 
-    public TextInputBuilder Numeric()
+    public TextInputBuilder PositiveIntegersOnly()
     {
-        _numeric = true;
+        _accepts = AcceptedCharacters.PositiveIntegers;
         return this;
     }
 
-    public TextInputBuilder NumericAllowZero()
+    public TextInputBuilder WholeNumbersOnly()
     {
-        _numeric = true;
-        _allowZero = true;
+        _accepts = AcceptedCharacters.WholeNumbers;
         return this;
     }
 
@@ -59,7 +57,7 @@ public class TextInputBuilder
     public TextInput Build()
     {
         var textInput = new TextInput(
-            _labelText, _defaultValue, _validator, _maxLength, _numeric, _allowZero);
+            _labelText, _defaultValue, _validator, _maxLength, _accepts);
 
         if (_widthRequest != null)
         {
