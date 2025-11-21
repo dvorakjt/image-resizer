@@ -3,5 +3,10 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ImageResizer.FormGroups.ResponsiveImageSettings.MediaQueriesFormGroup">
-    
+    <VerticalStackLayout x:Name="RootLayout" HorizontalOptions="Fill" Spacing="18">
+        <FlexLayout HorizontalOptions="Fill" JustifyContent="SpaceBetween" AlignItems="Center" >
+            <Label Text="Media Queries" StyleClass="Subheading1" />
+            <Button Text="+" StyleClass="AddOrRemoveButton" Clicked="AddMediaQuery" />
+        </FlexLayout>
+    </VerticalStackLayout>
 </ContentView>

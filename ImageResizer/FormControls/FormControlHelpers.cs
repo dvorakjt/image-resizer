@@ -44,7 +44,7 @@ public static class FormControlHelpers
         };
     }
 
-    public static Func<T, ValidatorResult> ChainValidators<T>(IEnumerable<Func<T, ValidatorResult>> validators)
+    public static Func<T, ValidatorResult> ChainValidators<T>(params Func<T, ValidatorResult>[] validators)
     {
         return (T value) =>
         {

@@ -2,7 +2,7 @@ using System.Collections;
 
 namespace ImageResizer.Utils;
 
-public class LiveList<T> : ILiveList<T>
+public class PrependableLiveList<T> : IPrependableLiveList<T>
 {
     public event EventHandler<ListItemAddedEventArgs<T>>? ItemAdded;
     public event EventHandler<ListItemRemovedEventArgs>? ItemRemoved;
@@ -28,6 +28,16 @@ public class LiveList<T> : ILiveList<T>
             NewItem = item,
             NewIndex = _items.Count - 1,
         });   
+    }
+
+    public void Prepend(T item)
+    {
+        _items.Insert(0, item);
+        ItemAdded?.Invoke(this, new ListItemAddedEventArgs<T>()
+        {
+            NewItem = item,
+            NewIndex = 0
+        });
     }
 
     public void Remove(T item)

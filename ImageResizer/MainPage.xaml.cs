@@ -13,14 +13,11 @@ public partial class MainPage : ContentPage
         InitializeComponent();
         var formatsFormGroup = new FormatsFormGroup();
         MainLayout.Children.Add(formatsFormGroup);
+        
+        var responsiveImageSettingsFormGroup = new ResponsiveImageSettingsFormGroup();
+        MainLayout.Children.Add(responsiveImageSettingsFormGroup);
 
         var outputFormGroup = new OutputFormGroup();
         MainLayout.Children.Add(outputFormGroup);
-
-        var densitiesFormGroup = new DensitiesFormGroup();
-        MainLayout.Children.Add(densitiesFormGroup);
-        
-        var widthsFormGroup = new WidthsFormGroup();
-        MainLayout.Children.Add(widthsFormGroup);
     }
 }
