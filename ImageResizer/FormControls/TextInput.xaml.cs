@@ -7,7 +7,6 @@ namespace ImageResizer.FormControls;
 ///   <list type="bullet">
 ///   <item>Error messages are hidden by default.</item>
 ///   <item>When the user enters a value, if that value is invalid, error messages and styles are applied immediately.</item>
-///   <item>When the user presses the return key, if the field is invalid, error messages and styles are applied immediately.</item>
 ///   <item>
 ///     When the Revalidate method is called, the validator is executed and error styles are applied if the result is
 ///     invalid and the input has previously received user input, otherwise these styles are cleared.
@@ -168,12 +167,9 @@ public partial class TextInput : ContentView, IFormElement<string>
                 ErrorMessage = validatorResult.ErrorMessage,
             };
         };
-
-        _entryElement.Completed += (sender, e) =>
-        {
-            DisplayErrors();
+        
+        _entryElement.Completed += (sender, e) => 
             Completed?.Invoke(this, e);
-        };
         
         Border.Content = _entryElement;
     }

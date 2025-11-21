@@ -75,8 +75,11 @@ public partial class WidthsFormGroup : ContentView
 
     private void InitializeNewScreenWidthInput()
     {
-        var newScreenWidthLayout = new HorizontalStackLayout();
-        newScreenWidthLayout.HorizontalOptions = LayoutOptions.Fill;
+        var newScreenWidthLayout = new HorizontalStackLayout()
+        {
+            HorizontalOptions = LayoutOptions.Fill,
+            Spacing = 2
+        };
         
         _newScreenWidthInput = new TextInputBuilder()
             .WithLabel("Add a new screen width")
@@ -93,7 +96,6 @@ public partial class WidthsFormGroup : ContentView
         
         _widths.ItemRemoved += (sender, e) => _newScreenWidthInput.Revalidate();
         _newScreenWidthInput.WidthRequest = 406;
-        _newScreenWidthInput.Margin = new Thickness(0,0, 1, 0);
         newScreenWidthLayout.Children.Add(_newScreenWidthInput);
 
         var addNewScreenWidthButton = new Button()
@@ -204,7 +206,7 @@ public partial class WidthsFormGroup : ContentView
             var removeWidthButton = new Button()
             {
                 Text = "-",
-                StyleClass = ["RemoveWidthButton"],
+                StyleClass = ["AddOrRemoveButton"],
                 VerticalOptions = LayoutOptions.Start
             };
             
@@ -254,7 +256,9 @@ public partial class WidthsFormGroup : ContentView
     
     private void AddNewScreenWidth()
     {
-        if (_newScreenWidthInput.State.IsValid && _widths.Count() < _maxWidthCount)
+        if (_widths.Count() >= _maxWidthCount) return;
+        
+        if (_newScreenWidthInput.State.IsValid)
         {
             var newWidths = new ScreenAndImageWidths
             {
@@ -263,6 +267,10 @@ public partial class WidthsFormGroup : ContentView
 
             _widths.Add(newWidths);
             _newScreenWidthInput.Reset();
+        }
+        else
+        {
+            _newScreenWidthInput.DisplayErrors();
         }
     }
 }
