@@ -51,7 +51,7 @@ public static class FormControlHelpers
             foreach (var validator in validators)
             {
                 var result = validator(value);
-                if (result.IsValid) return result;
+                if (!result.IsValid) return result;
             }
 
             return new ValidatorResult

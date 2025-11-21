@@ -48,13 +48,13 @@
         <Setter Property="FontFamily" Value="IBMPlexSansBold" />
         <Setter Property="FontSize" Value="18" />
     </Style>
-    
+
     <Style TargetType="Label" Class="Error">
         <Setter Property="FontFamily" Value="IBMPlexSansRegular" />
         <Setter Property="FontSize" Value="10" />
         <Setter Property="TextColor" Value="Red" />
     </Style>
-    
+
     <Style TargetType="Button" Class="AddOrRemoveButton">
         <Setter Property="HeightRequest" Value="32" />
         <Setter Property="WidthRequest" Value="32" />
