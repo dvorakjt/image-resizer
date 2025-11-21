@@ -140,21 +140,13 @@ public partial class WidthsFormGroup : ContentView
         header.Children.Add(imageWidthsColumnHeading);
         outerLayout.Children.Add(header);
 
-        var scrollView = new ScrollView()
-        {
-            MaximumHeightRequest = 145,
-            HorizontalOptions = LayoutOptions.Fill,
-        };
-
-        var screenWidthsList = new VerticalStackLayout()
+        var widthsListLayout = new VerticalStackLayout()
         {
             HorizontalOptions = LayoutOptions.Fill,
             Spacing = 5
         };
         
-        scrollView.Content = screenWidthsList;
-        
-        DynamicListFactory.MakeDynamic(screenWidthsList, _widths, (width) =>
+        DynamicListFactory.MakeDynamic(widthsListLayout, _widths, (width) =>
         {
             var row = new HorizontalStackLayout()
             {
@@ -215,7 +207,7 @@ public partial class WidthsFormGroup : ContentView
             return row;
         });
         
-        outerLayout.Children.Add(scrollView);
+        outerLayout.Children.Add(widthsListLayout);
 
         var defaultWidthInput = new TextInputBuilder()
             .WithLabel("Default")

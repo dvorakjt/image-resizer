@@ -140,10 +140,8 @@ public partial class TextInput : ContentView, IFormElement<string>
         
         _entryElement.TextChanged += (sender, e) =>
         {
-            /*
-               Filtering input should be handled by native Entry handlers. This code is preserved as a fallback, but it 
-               should not execute.
-            */
+            // Note: On Windows this is implemented with a native handler to prevent a brief flash of disallowed characters
+            // See MainProgram.cs for this handler.
             if (
                 (Accepts == AcceptedCharacters.WholeNumbers || Accepts == AcceptedCharacters.PositiveIntegers) && 
                 !FormControlHelpers.IsIntegerOrEmptyString(e.NewTextValue, Accepts == AcceptedCharacters.WholeNumbers)
