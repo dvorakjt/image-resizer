@@ -11,6 +11,7 @@ public class TextInputBuilder
     private int _maxLength = int.MaxValue;
     private AcceptedCharacters _accepts = AcceptedCharacters.All;
     private int? _widthRequest = null;
+    private bool _displayErrorsOnInput = true;
 
     public TextInputBuilder WithLabel(string labelText)
     {
@@ -54,10 +55,22 @@ public class TextInputBuilder
         return this;
     }
 
+    public TextInputBuilder DisplayErrorsOnInput()
+    {
+        _displayErrorsOnInput = true;
+        return this;
+    }
+
+    public TextInputBuilder DiplayErrorsOnCommandOnly()
+    {
+        _displayErrorsOnInput = false;
+        return this;
+    }
+
     public TextInput Build()
     {
         var textInput = new TextInput(
-            _labelText, _defaultValue, _validator, _maxLength, _accepts);
+            _labelText, _defaultValue, _validator, _maxLength, _accepts, _displayErrorsOnInput);
 
         if (_widthRequest != null)
         {

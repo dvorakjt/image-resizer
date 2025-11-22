@@ -86,6 +86,7 @@ public partial class WidthsFormGroup : ContentView
             .PositiveIntegersOnly()
             .WithMaxLength(_maxWidth.ToString().Length)
             .WithValidator(IsValidScreenWidth)
+            .DiplayErrorsOnCommandOnly()
             .Build();
 
         _newScreenWidthInput.Completed += (sender, e) =>

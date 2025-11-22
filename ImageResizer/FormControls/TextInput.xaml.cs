@@ -53,6 +53,7 @@ public partial class TextInput : ContentView, IFormElement<string>
     private Entry _entryElement;
     private readonly string _defaultValue;
     private readonly Func<string, IValidatorResult> _validate;
+    private readonly bool _displayErrorsOnInput;
     private bool _isResetting = false;
     
     public TextInput
@@ -61,7 +62,8 @@ public partial class TextInput : ContentView, IFormElement<string>
         string defaultValue,
         Func<string, IValidatorResult> validate,
         int maxLength,
-        AcceptedCharacters accepts
+        AcceptedCharacters accepts,
+        bool displayErrorsOnInput
     )
     {
         InitializeComponent();
@@ -78,6 +80,7 @@ public partial class TextInput : ContentView, IFormElement<string>
         Accepts = accepts;
         _defaultValue = defaultValue;
         _validate = validate;
+        _displayErrorsOnInput = displayErrorsOnInput;
 
         if (labelText != null)
         {
@@ -109,7 +112,6 @@ public partial class TextInput : ContentView, IFormElement<string>
     public void Reset()
     {
         _isResetting = true;
-        ShouldDisplayErrors = false;
         _entryElement.Text = _defaultValue;
         _isResetting = false;
     }
@@ -151,9 +153,13 @@ public partial class TextInput : ContentView, IFormElement<string>
                 return;
             }
 
-            if (!_isResetting)
+            if (!_isResetting && _displayErrorsOnInput)
             {
                 ShouldDisplayErrors = true;
+            }
+            else
+            {
+                ShouldDisplayErrors = false;
             }
 
             var validatorResult = _validate(e.NewTextValue);
