@@ -1,6 +1,4 @@
-﻿using ImageResizer.FormControls;
-using ImageResizer.DataModel;
-using ImageResizer.FormGroups.Formats;
+﻿using ImageResizer.FormGroups.Formats;
 using ImageResizer.FormGroups.Output;
 using ImageResizer.FormGroups.ResponsiveImageSettings;
 
@@ -11,13 +9,54 @@ public partial class MainPage : ContentPage
     public MainPage()
     {
         InitializeComponent();
-        var formatsFormGroup = new FormatsFormGroup();
-        MainLayout.Children.Add(formatsFormGroup);
-        
+        InitializeFormGroups();
+        InitializeResizeButton();
+        InitializeResetButton();
+    }
+    
+    private void InitializeFormGroups()
+    {
         var responsiveImageSettingsFormGroup = new ResponsiveImageSettingsFormGroup();
-        MainLayout.Children.Add(responsiveImageSettingsFormGroup);
+        RootLayout.Children.Add(responsiveImageSettingsFormGroup);
+        
+        var formatsFormGroup = new FormatsFormGroup();
+        RootLayout.Children.Add(formatsFormGroup);
 
         var outputFormGroup = new OutputFormGroup();
-        MainLayout.Children.Add(outputFormGroup);
+        RootLayout.Children.Add(outputFormGroup);
+    }
+
+    private void InitializeResizeButton()
+    {
+        var resizeButton = new Button()
+        {
+            Text = "Resize",
+            StyleClass = ["LargeButton"]
+        };
+        
+        RootLayout.Children.Add(resizeButton);
+    }
+
+    private void InitializeResetButton()
+    {
+        var resetButton = new Button()
+        {
+            Text = "Reset",
+            StyleClass = ["LargeButton", "SecondaryButton"]
+        };
+
+        resetButton.Clicked += (sender, args) => Reset();
+
+        RootLayout.Children.Add(resetButton);
+    }
+
+    private async Task Reset()
+    {
+        var shouldReset = await DisplayAlert("Confirm", "Are you sure you would like to reset the form?", "Reset", "Cancel");
+        if (shouldReset)
+        {
+            // call reset methods of each form group
+            // scroll to top
+        }
     }
 }

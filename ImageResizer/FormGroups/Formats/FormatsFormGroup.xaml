@@ -10,7 +10,6 @@
     <VerticalStackLayout
         x:Name="RootLayout"
         HorizontalOptions="Fill"
-        HeightRequest="434" 
         Spacing="18" 
         >
         <Label Text="Image Formats" StyleClass="Heading" />
