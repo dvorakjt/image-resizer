@@ -44,6 +44,12 @@ public class SortedLiveList<T> : ISortedLiveList<T> where T : IComparable<T>
         _items.RemoveAt(index);
         ItemRemoved?.Invoke(this, new ListItemRemovedEventArgs { OldIndex = index });
     }
+
+    public void Clear()
+    {
+        _items.Clear();
+        ListReset?.Invoke(this, EventArgs.Empty);
+    }
     
     public int IndexOf(T item)
     {

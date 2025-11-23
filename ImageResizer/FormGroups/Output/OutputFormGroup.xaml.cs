@@ -17,6 +17,14 @@ public partial class OutputFormGroup : ContentView
         InitializeFormControls();
     }
 
+    public void Reset()
+    {
+        _filenameInput.Reset();
+        _versionNumberInput.Reset();
+        _pathToPublicDirInput.Reset();
+        _pathFromPublicDirInput.Reset();
+    }
+
     private void InitializeFormControls()
     {
         _filenameInput = new TextInputBuilder()

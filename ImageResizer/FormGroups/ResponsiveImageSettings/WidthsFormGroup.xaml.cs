@@ -10,6 +10,7 @@ public partial class WidthsFormGroup : ContentView
     private CustomRadioButtonGroup _widthThresholdsStrategyRadioGroup;
     private TextInput _newScreenWidthInput;
     private ISortedLiveList<ScreenAndImageWidths> _widths = new SortedLiveList<ScreenAndImageWidths>();
+    private TextInput _defaultWidthInput;
     private readonly int _minWidth = 1;
     private readonly int _maxWidth = 40_000;
     private readonly int _maxWidthCount = 30;
@@ -71,6 +72,14 @@ public partial class WidthsFormGroup : ContentView
         
         widthThrehsholdsStrategyLayout.Children.Add(_widthThresholdsStrategyRadioGroup);
         RootLayout.Children.Add(widthThrehsholdsStrategyLayout);
+    }
+
+    public void Reset()
+    {
+        _newScreenWidthInput.Reset();
+        _widthThresholdsStrategyRadioGroup.Reset();
+        _widths.Clear();
+        _defaultWidthInput.Reset();
     }
 
     private void InitializeNewScreenWidthInput()
@@ -210,7 +219,7 @@ public partial class WidthsFormGroup : ContentView
         
         outerLayout.Children.Add(widthsListLayout);
 
-        var defaultWidthInput = new TextInputBuilder()
+        _defaultWidthInput = new TextInputBuilder()
             .WithLabel("Default Image Width")
             .PositiveIntegersOnly()
             .WithValidator(
@@ -223,7 +232,7 @@ public partial class WidthsFormGroup : ContentView
             .WithMaxLength(_maxWidth.ToString().Length)
             .Build();
         
-        outerLayout.Children.Add(defaultWidthInput);
+        outerLayout.Children.Add(_defaultWidthInput);
         RootLayout.Children.Add(outerLayout);
     }
 

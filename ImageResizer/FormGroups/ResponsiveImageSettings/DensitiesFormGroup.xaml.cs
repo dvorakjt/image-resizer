@@ -17,6 +17,13 @@ public partial class DensitiesFormGroup : ContentView
         InitializeFormControls();
     }
 
+    public void Reset()
+    {
+        _baseWidthInput.Reset();
+        _selectedDensities.Reset();
+        _defaultWidthInput.Reset();
+    }
+
     private void InitializeFormControls()
     {
         _selectedDensities = new CustomCheckboxGroup(

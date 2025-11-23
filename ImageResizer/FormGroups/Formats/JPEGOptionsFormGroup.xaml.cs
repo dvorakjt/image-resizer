@@ -14,7 +14,12 @@ public partial class JPEGOptionsFormGroup : ContentView
         InitializeFormControls();
     }
 
-    public void InitializeFormControls()
+    public void Reset()
+    {
+        _qualityInput.Reset();
+    }
+
+    private void InitializeFormControls()
     {
         var formControlsLayout = new HorizontalStackLayout();
         

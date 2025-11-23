@@ -20,5 +20,6 @@ public interface ILiveList<T> : IEnumerable<T>
     void Add(T item);
     void Remove(T item);
     int IndexOf(T item);
+    void Clear();
 }
 

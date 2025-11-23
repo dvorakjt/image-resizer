@@ -4,7 +4,7 @@
              x:Class="ImageResizer.MainPage"
              xmlns:formGroups="clr-namespace:ImageResizer.FormGroups"
              >
-    <ScrollView>
+    <ScrollView x:Name="ScrollContainer">
         <VerticalStackLayout 
             x:Name="RootLayout"
             WidthRequest="476" 

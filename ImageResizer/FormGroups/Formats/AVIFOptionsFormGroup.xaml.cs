@@ -17,7 +17,13 @@ public partial class AVIFOptionsFormGroup : ContentView
         InitializeFormControls();
     }
 
-    public void InitializeFormControls()
+    public void Reset()
+    {
+        _qualityInput.Reset();
+        _effortInput.Reset();
+    }
+
+    private void InitializeFormControls()
     {
         var spacing = 2;
         var inputWidth = (AppDimensions.ColumnWidth - spacing) / 2;

@@ -51,6 +51,12 @@ public class PrependableLiveList<T> : IPrependableLiveList<T>
             OldIndex = index
         });
     }
+    
+    public void Clear()
+    {
+        _items.Clear();
+        ListReset?.Invoke(this, EventArgs.Empty);
+    }
 
     public int IndexOf(T item)
     {

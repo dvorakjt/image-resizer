@@ -18,6 +18,12 @@ public partial class MediaQueriesFormGroup : ContentView
         InitializeMediaQueriesSection();
     }
 
+    public void Reset()
+    {
+        _mediaQueries.Clear();
+        _defaultImageWidthInput.Reset();
+    }
+
     private void InitializeMediaQueriesSection()
     {
         var outerLayout = new VerticalStackLayout()

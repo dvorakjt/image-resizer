@@ -11,6 +11,12 @@ public partial class WebPOptionsFormGroup : ContentView
     private (int Min, int Max) _quality = (0, 100);
     private (int Min, int Max) _effort = (0, 6);
     
+    public void Reset()
+    {
+        _qualityInput.Reset();
+        _effortInput.Reset();
+    }
+    
     public WebPOptionsFormGroup()
     {
         InitializeComponent();

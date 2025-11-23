@@ -17,6 +17,14 @@ public partial class FormatsFormGroup : ContentView
         InitializeFormControls();
     }
 
+    public void Reset()
+    {
+        _selectedOutputFormats.Reset();
+        _avifOptionsFormGroup.Reset();
+        _webpOptionsFormGroup.Reset();
+        _jpegOptionsFormGroup.Reset();
+    }
+
     private void InitializeFormControls()
     {
         InitializeSelectedOutputFormats();

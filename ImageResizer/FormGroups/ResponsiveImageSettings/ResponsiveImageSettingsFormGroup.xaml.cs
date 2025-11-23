@@ -22,6 +22,14 @@ public partial class ResponsiveImageSettingsFormGroup : ContentView
         InitializeNestedFormGroups();
     }
 
+    public void Reset()
+    {
+        _strategyRadioButtonGroup.Reset();
+        _densitiesFormGroup.Reset();
+        _widthsFormGroup.Reset();
+        _mediaQueriesFormGroup.Reset();
+    }
+
     private void InitializeNestedFormGroups()
     {
        InitializeStrategyRadioGroup();
