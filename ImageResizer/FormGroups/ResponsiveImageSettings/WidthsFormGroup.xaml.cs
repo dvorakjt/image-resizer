@@ -211,7 +211,7 @@ public partial class WidthsFormGroup : ContentView
         outerLayout.Children.Add(widthsListLayout);
 
         var defaultWidthInput = new TextInputBuilder()
-            .WithLabel("Default")
+            .WithLabel("Default Image Width")
             .PositiveIntegersOnly()
             .WithValidator(
                 FormControlHelpers.CreateMinMaxValidator(

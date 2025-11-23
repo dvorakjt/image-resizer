@@ -110,7 +110,7 @@ public partial class MediaQueriesFormGroup : ContentView
         outerLayout.Children.Add(mediaQueriesListLayout);
 
         _defaultImageWidthInput = new TextInputBuilder()
-            .WithLabel("Default")
+            .WithLabel("Default Image Width")
             .PositiveIntegersOnly()
             .WithMaxLength(_maxImageWidth.ToString().Length)
             .WithValidator
