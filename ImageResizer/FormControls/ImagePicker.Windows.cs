@@ -13,7 +13,6 @@ public partial class ImagePicker
         ".pjpeg",
         ".pjp",
         ".png",
-        ".svg",
         ".webp"
     };
 

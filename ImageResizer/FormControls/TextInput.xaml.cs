@@ -142,6 +142,7 @@ public partial class TextInput : ContentView, IFormElement<string>
         
         _entryElement.TextChanged += (sender, e) =>
         {
+            Console.WriteLine("Here");
             // Note: On Windows this is implemented with a native handler to prevent a brief flash of disallowed characters
             // See MainProgram.cs for this handler.
             if (

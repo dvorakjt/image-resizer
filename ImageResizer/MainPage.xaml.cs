@@ -1,11 +1,14 @@
-﻿using ImageResizer.FormGroups.Formats;
+﻿using ImageResizer.FormControls;
+using ImageResizer.FormGroups.Formats;
 using ImageResizer.FormGroups.Output;
 using ImageResizer.FormGroups.ResponsiveImageSettings;
+using ImageResizer.FormGroups.TheImage;
 
 namespace ImageResizer;
 
 public partial class MainPage : ContentPage
 {
+    private TheImageFormGroup _theImageFormGroup;
     private ResponsiveImageSettingsFormGroup _responsiveImageSettingsFormGroup;
     private FormatsFormGroup _formatsFormGroup;
     private OutputFormGroup _outputFormGroup;
@@ -20,6 +23,9 @@ public partial class MainPage : ContentPage
     
     private void InitializeFormGroups()
     {
+        _theImageFormGroup = new TheImageFormGroup();
+        RootLayout.Children.Add(_theImageFormGroup);
+        
         _responsiveImageSettingsFormGroup = new ResponsiveImageSettingsFormGroup();
         RootLayout.Children.Add(_responsiveImageSettingsFormGroup);
         
@@ -60,6 +66,7 @@ public partial class MainPage : ContentPage
         
         if (shouldReset)
         {
+            _theImageFormGroup.Reset();
             _responsiveImageSettingsFormGroup.Reset();
             _formatsFormGroup.Reset();
             _outputFormGroup.Reset();
