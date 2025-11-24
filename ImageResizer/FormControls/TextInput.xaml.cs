@@ -2,25 +2,6 @@ using ImageResizer.DataModel;
 
 namespace ImageResizer.FormControls;
 
-/// <summary>
-///   A text input with an error message and, optionally, a label. Implements the following features:
-///   <list type="bullet">
-///   <item>Error messages are hidden by default.</item>
-///   <item>When the user enters a value, if that value is invalid, error messages and styles are applied immediately.</item>
-///   <item>
-///     When the Revalidate method is called, the validator is executed and error styles are applied if the result is
-///     invalid and the input has previously received user input, otherwise these styles are cleared.
-///   </item>
-///   <item>
-///     When the DisplayErrors() method is called, error styles are applied immediately and the error message becomes
-///     visible if it was previously hidden, and thereafter errors will be displayed when the field becomes invalid.
-///   </item>
-///   <item>
-///     When the Reset() method is called, the value of the input is reset to the default value. This value is revalidated
-///     to produce the new state of the input and errors are hidden.
-///   </item>
-/// </list>
-/// </summary>
 public partial class TextInput : ContentView, IFormElement<string>
 {
     public IFormElementState<string> State
@@ -35,11 +16,12 @@ public partial class TextInput : ContentView, IFormElement<string>
         }
     }
 
+    // Flag that enables the restriction of input to certain character sets
     public AcceptedCharacters Accepts { get; private set; }
 
     public event EventHandler<IFormElementState<string>>? StateChanged;
     public event EventHandler? Completed;
-
+    
     public bool ShouldDisplayErrors
     {
         get;
@@ -54,7 +36,6 @@ public partial class TextInput : ContentView, IFormElement<string>
     private readonly string _defaultValue;
     private readonly Func<string, IValidatorResult> _validate;
     private readonly bool _displayErrorsOnInput;
-    private bool _isResetting = false;
     
     public TextInput
     (
@@ -88,19 +69,12 @@ public partial class TextInput : ContentView, IFormElement<string>
         }
         
         CreateEntryElement(maxLength);
-        InitializeState();
+        ValidateEnteredValueAndUpdateState();
     }
     
     public void Revalidate()
     {
-        var value = _entryElement.Text;
-        var validatorResult = _validate(value);
-        State = new FormElementState<string>()
-        {
-            Value = value,
-            IsValid = validatorResult.IsValid,
-            ErrorMessage = validatorResult.ErrorMessage,
-        };
+        ValidateEnteredValueAndUpdateState();
     }
 
     public void DisplayErrors()
@@ -111,9 +85,17 @@ public partial class TextInput : ContentView, IFormElement<string>
 
     public void Reset()
     {
-        _isResetting = true;
+        /*
+            Here, ValidateEnteredValueAndUpdateState is invoked explicitly so that even if the input was already
+            set to the default value, state is still updated and the appropriate styles are applied. The event 
+            listener is first removed so that ShouldDisplayErrors is not set to true. After state and the value of the 
+            entry element are reset, the OnTextChanged event handler is reattached to the TextChanged event.
+        */
+        ShouldDisplayErrors = false;
+        _entryElement.TextChanged -= OnTextChanged;
         _entryElement.Text = _defaultValue;
-        _isResetting = false;
+        ValidateEnteredValueAndUpdateState();
+        _entryElement.TextChanged += OnTextChanged;
     }
 
     public new void Focus()
@@ -140,46 +122,44 @@ public partial class TextInput : ContentView, IFormElement<string>
             HorizontalOptions = LayoutOptions.Fill
         };
         
-        _entryElement.TextChanged += (sender, e) =>
-        {
-            Console.WriteLine("Here");
-            // Note: On Windows this is implemented with a native handler to prevent a brief flash of disallowed characters
-            // See MainProgram.cs for this handler.
-            if (
-                (Accepts == AcceptedCharacters.WholeNumbers || Accepts == AcceptedCharacters.PositiveIntegers) && 
-                !FormControlHelpers.IsIntegerOrEmptyString(e.NewTextValue, Accepts == AcceptedCharacters.WholeNumbers)
-            )
-            {
-                ((Entry)sender).Text = FormControlHelpers.ToIntegerOrEmptyString(e.NewTextValue, Accepts == AcceptedCharacters.WholeNumbers);
-                return;
-            }
-
-            if (!_isResetting && _displayErrorsOnInput)
-            {
-                ShouldDisplayErrors = true;
-            }
-            else
-            {
-                ShouldDisplayErrors = false;
-            }
-
-            var validatorResult = _validate(e.NewTextValue);
-            
-            State = new FormElementState<string>
-            {
-                Value = e.NewTextValue,
-                IsValid = validatorResult.IsValid,
-                ErrorMessage = validatorResult.ErrorMessage,
-            };
-        };
-        
+        _entryElement.TextChanged += OnTextChanged;
         _entryElement.Completed += (sender, e) => 
             Completed?.Invoke(this, e);
+
+        if (_displayErrorsOnInput)
+        {
+            _entryElement.Unfocused += (sender, e) => DisplayErrors();
+        }
         
         Border.Content = _entryElement;
     }
 
-    private void InitializeState()
+    private void OnTextChanged(object? sender, TextChangedEventArgs e)
+    {
+        // On Windows, this is handled by a native event handler, but on Mac, it must be handled this way so that the 
+        // MaxLength property of the Entry element is honored.
+        if (
+            (Accepts == AcceptedCharacters.WholeNumbers || Accepts == AcceptedCharacters.PositiveIntegers) && 
+            !FormControlHelpers.IsIntegerOrEmptyString(e.NewTextValue, Accepts == AcceptedCharacters.WholeNumbers)
+        )
+        {
+            ((Entry)sender).Text = FormControlHelpers.ToIntegerOrEmptyString(e.NewTextValue, Accepts == AcceptedCharacters.WholeNumbers);
+            return;
+        }
+
+        if (_displayErrorsOnInput)
+        {
+            ShouldDisplayErrors = true;
+        }
+        else
+        {
+            ShouldDisplayErrors = false;
+        }
+
+        ValidateEnteredValueAndUpdateState();
+    }
+
+    private void ValidateEnteredValueAndUpdateState()
     {
         var value = _entryElement.Text;
         var validatorResult = _validate(value);
