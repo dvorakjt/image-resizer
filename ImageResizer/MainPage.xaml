@@ -3,14 +3,18 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ImageResizer.MainPage"
              xmlns:formGroups="clr-namespace:ImageResizer.FormGroups"
+             xmlns:ui="clr-namespace:ImageResizer.UI"
              >
-    <ScrollView x:Name="ScrollContainer">
-        <VerticalStackLayout 
-            x:Name="RootLayout"
-            WidthRequest="476" 
-            Padding="18" 
-            Spacing="36"
-            >
-        </VerticalStackLayout>
-    </ScrollView>
+    <AbsoluteLayout>
+        <ScrollView x:Name="ScrollContainer" AbsoluteLayout.LayoutBounds="0,0,1,1" AbsoluteLayout.LayoutFlags="All">
+            <VerticalStackLayout 
+                x:Name="RootLayout"
+                WidthRequest="476" 
+                Padding="18" 
+                Spacing="36"
+                >
+            </VerticalStackLayout>
+        </ScrollView>
+        <ui:LoadingSpinner AbsoluteLayout.LayoutBounds="0,0,1,1" AbsoluteLayout.LayoutFlags="All"></ui:LoadingSpinner>
+    </AbsoluteLayout>
 </ContentPage>
