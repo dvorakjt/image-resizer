@@ -1,10 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="ImageResizer.MainPage"
-             xmlns:formGroups="clr-namespace:ImageResizer.FormGroups"
-             xmlns:ui="clr-namespace:ImageResizer.UI"
-             >
+<ContentPage 
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="ImageResizer.MainPage"
+    x:Name="MainPageComponent"
+    xmlns:ui="clr-namespace:ImageResizer.UI"
+    >
     <AbsoluteLayout>
         <ScrollView x:Name="ScrollContainer" AbsoluteLayout.LayoutBounds="0,0,1,1" AbsoluteLayout.LayoutFlags="All">
             <VerticalStackLayout 
@@ -15,6 +16,10 @@
                 >
             </VerticalStackLayout>
         </ScrollView>
-        <ui:LoadingSpinner AbsoluteLayout.LayoutBounds="0,0,1,1" AbsoluteLayout.LayoutFlags="All"></ui:LoadingSpinner>
+        <ui:LoadingSpinner 
+            IsVisible="{Binding Source={x:Reference MainPageComponent}, Path=IsLoading}"
+            AbsoluteLayout.LayoutBounds="0,0,1,1" 
+            AbsoluteLayout.LayoutFlags="All" 
+            />
     </AbsoluteLayout>
 </ContentPage>

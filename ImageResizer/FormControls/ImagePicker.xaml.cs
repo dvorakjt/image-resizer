@@ -5,8 +5,6 @@ namespace ImageResizer.FormControls;
 public partial class ImagePicker : ContentView, IFormElement<Stream?>
 {
     public event EventHandler<IFormElementState<Stream?>> StateChanged;
-    public event EventHandler ImageLoading;
-    public event EventHandler ImageLoaded;
     public event EventHandler<Exception> Error;
 
     private bool _shouldDisplayErrors;
@@ -35,7 +33,6 @@ public partial class ImagePicker : ContentView, IFormElement<Stream?>
 
     private async void OnTapped(object sender, EventArgs e)
     {
-        ImageLoading?.Invoke(this, EventArgs.Empty);
         _shouldDisplayErrors = true;
 
         try
@@ -62,8 +59,6 @@ public partial class ImagePicker : ContentView, IFormElement<Stream?>
             {
                 DisplayErrors();
             }
-            
-            ImageLoaded?.Invoke(this, EventArgs.Empty);
         }
         catch (Exception ex)
         {
@@ -109,8 +104,6 @@ public partial class ImagePicker : ContentView, IFormElement<Stream?>
 
     private async void OnDrop(object sender, DropEventArgs e)
     {
-        ImageLoading?.Invoke(this, EventArgs.Empty);
-
         try
         {
             var imageStream = await GetDroppedImageStream(e);
@@ -128,8 +121,6 @@ public partial class ImagePicker : ContentView, IFormElement<Stream?>
             {
                 DisplayErrors();
             }
-            
-            ImageLoaded?.Invoke(this, EventArgs.Empty);
         }
         catch (Exception ex)
         {

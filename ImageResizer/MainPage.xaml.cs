@@ -1,4 +1,5 @@
-﻿using ImageResizer.FormControls;
+﻿using System.ComponentModel;
+using ImageResizer.FormControls;
 using ImageResizer.FormGroups.Formats;
 using ImageResizer.FormGroups.Output;
 using ImageResizer.FormGroups.ResponsiveImageSettings;
@@ -6,8 +7,20 @@ using ImageResizer.FormGroups.TheImage;
 
 namespace ImageResizer;
 
-public partial class MainPage : ContentPage
+public partial class MainPage : ContentPage, INotifyPropertyChanged
 {
+    public new event PropertyChangedEventHandler? PropertyChanged;
+
+    public bool IsLoading
+    {
+        get;
+        set
+        {
+            field = value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsLoading)));
+        }
+    } = false;
+
     private TheImageFormGroup _theImageFormGroup;
     private ResponsiveImageSettingsFormGroup _responsiveImageSettingsFormGroup;
     private FormatsFormGroup _formatsFormGroup;
@@ -42,6 +55,13 @@ public partial class MainPage : ContentPage
         {
             Text = "Resize",
             StyleClass = ["LargeButton"]
+        };
+
+        resizeButton.Clicked += async (sender, args) =>
+        {
+            IsLoading = true;
+            await Task.Delay(2000);
+            IsLoading = false;
         };
         
         RootLayout.Children.Add(resizeButton);

@@ -4,7 +4,7 @@ namespace ImageResizer.FormGroups.TheImage;
 
 public partial class TheImageFormGroup : ContentView
 {
-    ImagePicker _imagePicker;
+    private ImagePicker _imagePicker;
     private TextInput _altTextInput;
     
     public TheImageFormGroup()
