@@ -4,8 +4,35 @@ using ImageResizer.FormControls;
 
 namespace ImageResizer.FormGroups.Output;
 
-public partial class OutputFormGroup : ContentView
-{
+public partial class OutputFormGroup : ContentView, IFormElement<OutputFormGroupValue>
+{ 
+    public event EventHandler<IFormElementState<OutputFormGroupValue>>? StateChanged;
+
+    public IFormElementState<OutputFormGroupValue> State
+    {
+        get
+        {
+            var isValid = 
+                _filenameInput.State.IsValid && 
+                _versionNumberInput.State.IsValid &&
+                _pathToPublicDirInput.State.IsValid && 
+                _pathFromPublicDirInput.State.IsValid;
+
+            return new FormElementState<OutputFormGroupValue>()
+            {
+                Value = new OutputFormGroupValue()
+                {
+                    Filename = _filenameInput.State.Value,
+                    Version = _versionNumberInput.State.Value,
+                    PathToPublicDirectory = _pathToPublicDirInput.State.Value,
+                    PathFromPublicDirectory = _pathFromPublicDirInput.State.Value,
+                },
+                IsValid = isValid,
+                ErrorMessage = ""
+            };
+        }
+    }
+    
     private TextInput _filenameInput;
     private TextInput _versionNumberInput;
     private TextInput _pathToPublicDirInput;
@@ -15,6 +42,24 @@ public partial class OutputFormGroup : ContentView
     {
         InitializeComponent();
         InitializeFormControls();
+    }
+
+
+
+    public void Revalidate()
+    {
+        _filenameInput.Revalidate();
+        _versionNumberInput.Revalidate();
+        _pathToPublicDirInput.Revalidate();
+        _pathFromPublicDirInput.Revalidate();
+    }
+
+    public void DisplayErrors()
+    {
+        _filenameInput.DisplayErrors();
+        _versionNumberInput.DisplayErrors();
+        _pathToPublicDirInput.DisplayErrors();
+        _pathFromPublicDirInput.DisplayErrors();
     }
 
     public void Reset()
@@ -33,6 +78,7 @@ public partial class OutputFormGroup : ContentView
             .Build();
 
         _filenameInput.HorizontalOptions = LayoutOptions.Fill;
+        _filenameInput.StateChanged += (sender, e) => StateChanged?.Invoke(this, State);
         FormControlsLayout.Children.Add(_filenameInput);
         
         _versionNumberInput = new TextInputBuilder()
@@ -40,6 +86,7 @@ public partial class OutputFormGroup : ContentView
             .WithValidator(IsValidVersionNumber).Build();
         
         _versionNumberInput.HorizontalOptions = LayoutOptions.Fill;
+        _versionNumberInput.StateChanged += (sender, e) => StateChanged?.Invoke(this, State);
         FormControlsLayout.Children.Add(_versionNumberInput);
         
         _pathToPublicDirInput = new TextInputBuilder()
@@ -48,6 +95,7 @@ public partial class OutputFormGroup : ContentView
             .Build();
         
         _pathToPublicDirInput.HorizontalOptions = LayoutOptions.Fill;
+        _pathToPublicDirInput.StateChanged += (sender, e) => StateChanged?.Invoke(this, State);
         FormControlsLayout.Children.Add(_pathToPublicDirInput);
         
         _pathFromPublicDirInput = new TextInputBuilder()
@@ -56,6 +104,7 @@ public partial class OutputFormGroup : ContentView
             .Build();
         
         _pathFromPublicDirInput.HorizontalOptions = LayoutOptions.Fill;
+        _pathFromPublicDirInput.StateChanged += (sender, e) => StateChanged?.Invoke(this, State);
         FormControlsLayout.Children.Add(_pathFromPublicDirInput);
     }
 
