@@ -10,17 +10,87 @@ using Microsoft.Maui.Layouts;
 
 namespace ImageResizer.FormGroups.ResponsiveImageSettings;
 
-public partial class ResponsiveImageSettingsFormGroup : ContentView
+public partial class ResponsiveImageSettingsFormGroup : ContentView, IFormElement<ResponsiveImageSettingsFormGroupValue>
 {
-    CustomRadioButtonGroup _strategyRadioButtonGroup;
-    DensitiesFormGroup _densitiesFormGroup;
-    WidthsFormGroup _widthsFormGroup;
-    MediaQueriesFormGroup _mediaQueriesFormGroup;
+    public IFormElementState<ResponsiveImageSettingsFormGroupValue> State
+    {
+        get
+        {
+            ResponsiveImageStrategy strategy;
+            bool isValid = _strategyRadioButtonGroup.State.IsValid;
+
+            if (_strategyRadioButtonGroup.State.Value == ResponsiveImageStrategy.Densities.ToString())
+            {
+                strategy = ResponsiveImageStrategy.Densities;
+            }
+            else if (_strategyRadioButtonGroup.State.Value == ResponsiveImageStrategy.Widths.ToString())
+            {
+                strategy = ResponsiveImageStrategy.Widths;
+            }
+            else if (_strategyRadioButtonGroup.State.Value == ResponsiveImageStrategy.MediaQueries.ToString())
+            {
+                strategy = ResponsiveImageStrategy.MediaQueries;
+            }
+            else
+            {
+                throw new InvalidOperationException($"Unsupported responsive image strategy:  {_strategyRadioButtonGroup.State.Value}");
+            }
+
+            switch (strategy)
+            {
+                case ResponsiveImageStrategy.Densities:
+                    if(!_densitiesFormGroup.State.IsValid) isValid = false;
+                    break;
+                case ResponsiveImageStrategy.Widths:
+                    if(!_widthsFormGroup.State.IsValid) isValid = false;
+                    break;
+                case ResponsiveImageStrategy.MediaQueries:
+                    if(!_mediaQueriesFormGroup.State.IsValid) isValid = false;
+                    break;
+            }
+
+            return new FormElementState<ResponsiveImageSettingsFormGroupValue>
+            {
+                Value = new ResponsiveImageSettingsFormGroupValue
+                {
+                    ResponsiveImageStrategy = strategy,
+                    DensitiesStrategyOptions = _densitiesFormGroup.State.Value,
+                    WidthsStrategyOptions = _widthsFormGroup.State.Value,
+                    MediaQueriesStrategyOptions = _mediaQueriesFormGroup.State.Value,
+                },
+                IsValid = isValid,
+                ErrorMessage = ""
+            };
+        }
+    }
+
+    public event EventHandler<IFormElementState<ResponsiveImageSettingsFormGroupValue>>? StateChanged;
+    
+    private CustomRadioButtonGroup _strategyRadioButtonGroup;
+    private DensitiesFormGroup _densitiesFormGroup;
+    private WidthsFormGroup _widthsFormGroup;
+    private MediaQueriesFormGroup _mediaQueriesFormGroup;
     
     public ResponsiveImageSettingsFormGroup()
     {
         InitializeComponent();
         InitializeNestedFormGroups();
+    }
+
+    public void DisplayErrors()
+    {
+        _strategyRadioButtonGroup.DisplayErrors();
+        _densitiesFormGroup.DisplayErrors();
+        _widthsFormGroup.DisplayErrors();
+        _mediaQueriesFormGroup.DisplayErrors();
+    }
+
+    public void Revalidate()
+    {
+        _strategyRadioButtonGroup.Revalidate();
+        _densitiesFormGroup.Revalidate();
+        _widthsFormGroup.Revalidate();
+        _mediaQueriesFormGroup.Revalidate();
     }
 
     public void Reset()
@@ -67,6 +137,7 @@ public partial class ResponsiveImageSettingsFormGroup : ContentView
             JustifyContent = FlexJustify.SpaceBetween
         };
         
+        _strategyRadioButtonGroup.StateChanged += (sender, e) => StateChanged?.Invoke(this, State);
         Header.Children.Add(_strategyRadioButtonGroup);
     }
 
@@ -77,6 +148,7 @@ public partial class ResponsiveImageSettingsFormGroup : ContentView
             IsVisible = _strategyRadioButtonGroup.State.Value == ResponsiveImageStrategy.Densities.ToString(),
         };
         
+        _densitiesFormGroup.StateChanged += (sender, e) => StateChanged?.Invoke(this, State);
         _strategyRadioButtonGroup.StateChanged += (sender, e) =>
         {
             _densitiesFormGroup.IsVisible = e.Value == ResponsiveImageStrategy.Densities.ToString();
@@ -92,6 +164,7 @@ public partial class ResponsiveImageSettingsFormGroup : ContentView
             IsVisible = _strategyRadioButtonGroup.State.Value == ResponsiveImageStrategy.Widths.ToString(),
         };
         
+        _widthsFormGroup.StateChanged += (sender, e) => StateChanged?.Invoke(this, State);
         _strategyRadioButtonGroup.StateChanged += (sender, e) =>
         {
             _widthsFormGroup.IsVisible = e.Value == ResponsiveImageStrategy.Widths.ToString();
@@ -107,6 +180,7 @@ public partial class ResponsiveImageSettingsFormGroup : ContentView
             IsVisible = _strategyRadioButtonGroup.State.Value == ResponsiveImageStrategy.MediaQueries.ToString(),
         };
         
+        _mediaQueriesFormGroup.StateChanged += (sender, e) => StateChanged?.Invoke(this, State);
         _strategyRadioButtonGroup.StateChanged += (sender, e) =>
         {
             _mediaQueriesFormGroup.IsVisible = e.Value == ResponsiveImageStrategy.MediaQueries.ToString();
