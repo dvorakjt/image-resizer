@@ -1,6 +1,6 @@
 namespace ImageResizer.DataModel.ResponsiveImageSettings;
 
-public class MediaQueriesFormGroupValue
+public record class MediaQueriesFormGroupValue
 {
     public IEnumerable<MediaQueryAndImageWidth> MediaQueryAndImageWidths { get; init; }
     public int? DefaultImageWidth { get; init; }

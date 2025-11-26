@@ -1,6 +1,6 @@
 namespace ImageResizer.DataModel.Formats;
 
-public class JPEGOptionsFormGroupValue
+public record class JPEGOptionsFormGroupValue
 {
     public int? Quality { get; init; }
 }

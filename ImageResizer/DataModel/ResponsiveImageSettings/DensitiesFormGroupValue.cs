@@ -1,6 +1,6 @@
 namespace ImageResizer.DataModel.ResponsiveImageSettings;
 
-public class DensitiesFormGroupValue
+public record class DensitiesFormGroupValue
 {
     public int? BaseImageWidth { get; init; }
     public int? DefaultImageWidth { get; init; }

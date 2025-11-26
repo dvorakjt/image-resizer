@@ -59,6 +59,23 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
 
         resizeButton.Clicked += async (sender, args) =>
         {
+            if (!IsFormValid(out View? elementToScrollTo))
+            {
+                _theImageFormGroup.DisplayErrors();
+                _responsiveImageSettingsFormGroup.DisplayErrors();
+                _formatsFormGroup.DisplayErrors();
+                _outputFormGroup.DisplayErrors();
+
+                if (elementToScrollTo != null)
+                {
+                    await ScrollContainer.ScrollToAsync(elementToScrollTo, 0, false);
+                }
+                
+                await DisplayAlertAsync("Error","Failed to resize image: invalid form field(s).", "Ok");
+                
+                return;
+            }
+            
             IsLoading = true;
             await Task.Delay(2000);
             IsLoading = false;
@@ -78,6 +95,38 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
         resetButton.Clicked += (sender, args) => Reset();
 
         RootLayout.Children.Add(resetButton);
+    }
+
+    private bool IsFormValid(out View? elementToScrollTo)
+    {
+        bool isValid = true;
+        elementToScrollTo = null;
+        
+        if (!_outputFormGroup.State.IsValid)
+        {
+            isValid = false;
+            elementToScrollTo = _outputFormGroup;
+        }
+        
+        if (!_formatsFormGroup.State.IsValid)
+        {
+            isValid = false;
+            elementToScrollTo = _formatsFormGroup;
+        }
+        
+        if (!_responsiveImageSettingsFormGroup.State.IsValid)
+        {
+            isValid = false;
+            elementToScrollTo = _responsiveImageSettingsFormGroup;
+        }
+        
+        if (!_theImageFormGroup.State.IsValid)
+        {
+            isValid = false;
+            elementToScrollTo = _theImageFormGroup;
+        }
+        
+        return isValid;
     }
 
     private async Task Reset()
