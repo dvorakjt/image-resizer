@@ -109,17 +109,48 @@ public partial class OutputFormGroup : ContentView, IFormElement<OutputFormGroup
 
     private ValidatorResult IsValidFileName(string value)
     {
-        bool isValid = new Regex(@"^(?:[a-zA-Z0-9\-_]+)(?:\.[a-zA-Z0-9\-_]+)*$").IsMatch(value);
+        // Filename is required
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return new ValidatorResult
+            {
+                IsValid = false,
+                ErrorMessage = "Filename is required"
+            };
+        }
+        
+        // Filename cannot include / or \
+        if (value.Contains('/') || value.Contains('\\'))
+        {
+            return new ValidatorResult
+            {
+                IsValid = false,
+                ErrorMessage = "Filename cannot contain potential directory separaters (/ or \\)"
+            };
+        }
+
+        // Check for any other invalid characters
+        if (value.IndexOfAny(Path.GetInvalidFileNameChars()) != -1)
+        {
+            return new ValidatorResult
+            {
+                IsValid = false,
+                ErrorMessage = $"Filename {value} contains invalid filename characters"
+            };
+        }
 
         return new ValidatorResult
         {
-            IsValid = isValid,
-            ErrorMessage = isValid ? "" : "Please enter a valid file name (allowed chars: A-Z a-z 0-9 - _)"
+            IsValid = true,
+            ErrorMessage = ""
         };
     }
 
     private ValidatorResult IsValidVersionId(string value)
     {
+        /*
+            Allow for numeric, UUID, and dot-separated version ids. 
+        */
         bool isValid = new Regex(@"^[a-zA-Z0-9\.\-]+$").IsMatch(value);
         return new ValidatorResult
         {
@@ -149,6 +180,10 @@ public partial class OutputFormGroup : ContentView, IFormElement<OutputFormGroup
             };
         }
         
+        /*
+            Accessing the parent directory of the path could cause problems when serving the image from the public 
+            directory of a web project.
+        */ 
         if (value.IndexOf(".." + Path.DirectorySeparatorChar) != -1)
         {
             return new ValidatorResult
@@ -158,6 +193,9 @@ public partial class OutputFormGroup : ContentView, IFormElement<OutputFormGroup
             };
         }
 
+        /*
+            / should be used instead of constructs like /./././
+        */
         if (value.IndexOf("." + Path.DirectorySeparatorChar) > 0)
         {
             return new ValidatorResult
@@ -167,6 +205,12 @@ public partial class OutputFormGroup : ContentView, IFormElement<OutputFormGroup
             };
         }
 
+        /*
+            When producing a URI from the path, the directory separator character will be converted to a forward slash. 
+            If the path includes both backslashes and forward slashes, and one type is interpreted as a literal character 
+            when the image file is written, this could potentially cause issues when serving the file, so it is best 
+            to allow only one type of separator.
+        */
         if (Path.DirectorySeparatorChar == '\\' && value.Contains('/'))
         {
             return new ValidatorResult
@@ -185,6 +229,7 @@ public partial class OutputFormGroup : ContentView, IFormElement<OutputFormGroup
             };
         }
 
+        // Check for any other invalid characters
         if (value.IndexOfAny(Path.GetInvalidPathChars()) != -1)
         {
             return new ValidatorResult
