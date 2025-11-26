@@ -14,11 +14,11 @@ public static class ImageFileFormatsExtensions
         switch (fileFormat)
         {
             case ImageFileFormats.AVIF:
-                return ".avif";
+                return "avif";
             case ImageFileFormats.WebP:
-                return ".webp";
+                return "webp";
             case ImageFileFormats.JPEG:
-                return ".jpeg";
+                return "jpeg";
             default:
                 throw new ArgumentOutOfRangeException(nameof(fileFormat), fileFormat, null);
         }

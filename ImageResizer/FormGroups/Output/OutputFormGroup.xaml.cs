@@ -140,12 +140,64 @@ public partial class OutputFormGroup : ContentView, IFormElement<OutputFormGroup
 
     private ValidatorResult IsValidPath(string value)
     {
-        bool isValid = !string.IsNullOrWhiteSpace(value) && value.IndexOfAny(Path.GetInvalidPathChars()) == -1;
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return new ValidatorResult
+            {
+                IsValid = false, 
+                ErrorMessage = "Path is required"
+            };
+        }
         
+        if (value.IndexOf(".." + Path.DirectorySeparatorChar) != -1)
+        {
+            return new ValidatorResult
+            {
+                IsValid = false,
+                ErrorMessage = "Path cannot contain .." + Path.DirectorySeparatorChar
+            };
+        }
+
+        if (value.IndexOf("." + Path.DirectorySeparatorChar) > 0)
+        {
+            return new ValidatorResult
+            {
+                IsValid = false,
+                ErrorMessage = "Path cannot contain ." + Path.DirectorySeparatorChar + " except at the start"
+            };
+        }
+
+        if (Path.DirectorySeparatorChar == '\\' && value.Contains('/'))
+        {
+            return new ValidatorResult
+            {
+                IsValid = false,
+                ErrorMessage = "Path cannot contain / if system directory separator is \\"
+            };
+        }
+
+        if (Path.DirectorySeparatorChar == '/' && value.Contains('\\'))
+        {
+            return new ValidatorResult
+            {
+                IsValid = false,
+                ErrorMessage = "Path cannot contain \\ if system directory separator is /"
+            };
+        }
+
+        if (value.IndexOfAny(Path.GetInvalidPathChars()) != -1)
+        {
+            return new ValidatorResult
+            {
+                IsValid = false,
+                ErrorMessage = $"Path {value} contains invalid character"
+            };
+        }
+
         return new ValidatorResult
         {
-            IsValid = isValid, 
-            ErrorMessage = isValid ? "" : "Please enter a valid path."
+            IsValid = true,
+            ErrorMessage = ""
         };
     }
 }

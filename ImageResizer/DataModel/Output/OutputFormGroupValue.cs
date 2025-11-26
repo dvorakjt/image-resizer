@@ -7,3 +7,4 @@ public record class OutputFormGroupValue
     public string PathToPublicDirectory { get; init; }
     public string PathFromPublicDirectory { get; init; }
 }
+
