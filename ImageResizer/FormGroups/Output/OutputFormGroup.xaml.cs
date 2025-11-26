@@ -15,7 +15,7 @@ public partial class OutputFormGroup : ContentView, IFormElement<OutputFormGroup
         {
             var isValid = 
                 _filenameInput.State.IsValid && 
-                _versionNumberInput.State.IsValid &&
+                _versionIdInput.State.IsValid &&
                 _pathToPublicDirInput.State.IsValid && 
                 _pathFromPublicDirInput.State.IsValid;
 
@@ -24,7 +24,7 @@ public partial class OutputFormGroup : ContentView, IFormElement<OutputFormGroup
                 Value = new OutputFormGroupValue()
                 {
                     Filename = _filenameInput.State.Value,
-                    Version = _versionNumberInput.State.Value,
+                    VersionId = _versionIdInput.State.Value,
                     PathToPublicDirectory = _pathToPublicDirInput.State.Value,
                     PathFromPublicDirectory = _pathFromPublicDirInput.State.Value,
                 },
@@ -35,7 +35,7 @@ public partial class OutputFormGroup : ContentView, IFormElement<OutputFormGroup
     }
     
     private TextInput _filenameInput;
-    private TextInput _versionNumberInput;
+    private TextInput _versionIdInput;
     private TextInput _pathToPublicDirInput;
     private TextInput _pathFromPublicDirInput;
     
@@ -45,12 +45,10 @@ public partial class OutputFormGroup : ContentView, IFormElement<OutputFormGroup
         InitializeFormControls();
     }
 
-
-
     public void Revalidate()
     {
         _filenameInput.Revalidate();
-        _versionNumberInput.Revalidate();
+        _versionIdInput.Revalidate();
         _pathToPublicDirInput.Revalidate();
         _pathFromPublicDirInput.Revalidate();
     }
@@ -58,7 +56,7 @@ public partial class OutputFormGroup : ContentView, IFormElement<OutputFormGroup
     public void DisplayErrors()
     {
         _filenameInput.DisplayErrors();
-        _versionNumberInput.DisplayErrors();
+        _versionIdInput.DisplayErrors();
         _pathToPublicDirInput.DisplayErrors();
         _pathFromPublicDirInput.DisplayErrors();
     }
@@ -66,7 +64,7 @@ public partial class OutputFormGroup : ContentView, IFormElement<OutputFormGroup
     public void Reset()
     {
         _filenameInput.Reset();
-        _versionNumberInput.Reset();
+        _versionIdInput.Reset();
         _pathToPublicDirInput.Reset();
         _pathFromPublicDirInput.Reset();
     }
@@ -82,13 +80,13 @@ public partial class OutputFormGroup : ContentView, IFormElement<OutputFormGroup
         _filenameInput.StateChanged += (sender, e) => StateChanged?.Invoke(this, State);
         FormControlsLayout.Children.Add(_filenameInput);
         
-        _versionNumberInput = new TextInputBuilder()
-            .WithLabel("Version Number (for cache busting)")
-            .WithValidator(IsValidVersionNumber).Build();
+        _versionIdInput = new TextInputBuilder()
+            .WithLabel("Version ID (for cache busting)")
+            .WithValidator(IsValidVersionId).Build();
         
-        _versionNumberInput.HorizontalOptions = LayoutOptions.Fill;
-        _versionNumberInput.StateChanged += (sender, e) => StateChanged?.Invoke(this, State);
-        FormControlsLayout.Children.Add(_versionNumberInput);
+        _versionIdInput.HorizontalOptions = LayoutOptions.Fill;
+        _versionIdInput.StateChanged += (sender, e) => StateChanged?.Invoke(this, State);
+        FormControlsLayout.Children.Add(_versionIdInput);
         
         _pathToPublicDirInput = new TextInputBuilder()
             .WithLabel("Absolute path to the public directory of your project")
@@ -101,7 +99,7 @@ public partial class OutputFormGroup : ContentView, IFormElement<OutputFormGroup
         
         _pathFromPublicDirInput = new TextInputBuilder()
             .WithLabel("Relative path from the public directory to the output directory")
-            .WithValidator(IsValidRelativePath)
+            .WithValidator(IsValidPath)
             .Build();
         
         _pathFromPublicDirInput.HorizontalOptions = LayoutOptions.Fill;
@@ -120,13 +118,13 @@ public partial class OutputFormGroup : ContentView, IFormElement<OutputFormGroup
         };
     }
 
-    private ValidatorResult IsValidVersionNumber(string value)
+    private ValidatorResult IsValidVersionId(string value)
     {
-        bool isValid = new Regex(@"^\d+(?:\.\d+)*$").IsMatch(value);
+        bool isValid = new Regex(@"^[a-zA-Z0-9\.\-]+$").IsMatch(value);
         return new ValidatorResult
         {
             IsValid = isValid,
-            ErrorMessage = isValid ? "" : "Please enter a valid version number (e.g. 0 or 1.0.2)"
+            ErrorMessage = isValid ? "" : "Please enter a valid version id. Allowed characters: A-Z a-z 0-9 . -"
         };
     }
     
@@ -140,34 +138,14 @@ public partial class OutputFormGroup : ContentView, IFormElement<OutputFormGroup
         };
     }
 
-    private ValidatorResult IsValidRelativePath(string value)
+    private ValidatorResult IsValidPath(string value)
     {
-        bool isValidPath = value.IndexOfAny(Path.GetInvalidFileNameChars()) != -1;
-
-        if (!isValidPath)
-        {
-            return new ValidatorResult
-            {
-                IsValid = false, 
-                ErrorMessage = "Please enter a valid path."
-                
-            };
-        }
-
-        bool isAbsolutePath = Path.IsPathFullyQualified(value);
-        if (isAbsolutePath)
-        {
-            return new ValidatorResult
-            {
-                IsValid = false,
-                ErrorMessage = "You have entered an absolute path. Please enter a relative path instead."
-            };
-        }
-
+        bool isValid = !string.IsNullOrWhiteSpace(value) && value.IndexOfAny(Path.GetInvalidPathChars()) == -1;
+        
         return new ValidatorResult
         {
-            IsValid = true,
-            ErrorMessage = ""
+            IsValid = isValid, 
+            ErrorMessage = isValid ? "" : "Please enter a valid path."
         };
     }
 }
