@@ -5,10 +5,42 @@ using ImageResizer.Utils;
 
 namespace ImageResizer.FormGroups.ResponsiveImageSettings;
 
-public partial class MediaQueriesFormGroup : ContentView
+public partial class MediaQueriesFormGroup : ContentView, IFormElement<MediaQueriesFormGroupValue>
 {
+    public event EventHandler<IFormElementState<MediaQueriesFormGroupValue>>? StateChanged;
+
+    public IFormElementState<MediaQueriesFormGroupValue> State
+    {
+        get
+        {
+            var isValid = _defaultImageWidthInput.State.IsValid &&  GetAllTextInputs().All(i => i.State.IsValid);
+            int? defaultImageWidth = null;
+
+            if (_defaultImageWidthInput.State.IsValid && int.TryParse(_defaultImageWidthInput.State.Value, out int w))
+            {
+                defaultImageWidth = w;
+            }
+
+            return new FormElementState<MediaQueriesFormGroupValue>
+            {
+                Value = new MediaQueriesFormGroupValue
+                {
+                    DefaultImageWidth = defaultImageWidth,
+                    MediaQueryAndImageWidths = _mediaQueries.Select(mq => new MediaQueryAndImageWidth
+                    {
+                        MediaQuery = mq.MediaQuery,
+                        ImageWidth = mq.ImageWidth
+                    })
+                },
+                IsValid = isValid,
+                ErrorMessage = ""
+            };
+        }
+    }
+    
     private IPrependableLiveList<MediaQueryAndImageWidth>  _mediaQueries = new PrependableLiveList<MediaQueryAndImageWidth>();
     private TextInput _defaultImageWidthInput;
+    private VerticalStackLayout _mediaQueriesListLayout;
     private readonly int _minImageWidth = 1;
     private readonly int _maxImageWidth = 40_000;
     private readonly int _maxQueryCount = 30;
@@ -16,13 +48,42 @@ public partial class MediaQueriesFormGroup : ContentView
     public MediaQueriesFormGroup()
     {
         InitializeComponent();
+        SubscribeToMediaQueriesList();
         InitializeMediaQueriesSection();
+    }
+    
+    public void DisplayErrors()
+    {
+        _defaultImageWidthInput.DisplayErrors();
+        foreach (var input in GetAllTextInputs())
+        {
+            input.DisplayErrors();
+        }
+    }
+
+    public void Revalidate()
+    {
+        _defaultImageWidthInput.Revalidate();
+        foreach (var input in GetAllTextInputs())
+        {
+            input.Revalidate();
+        }
     }
 
     public void Reset()
     {
         _mediaQueries.Clear();
         _defaultImageWidthInput.Reset();
+    }
+
+    private void SubscribeToMediaQueriesList()
+    {
+        _mediaQueries.ItemAdded += 
+            (sender, e) => StateChanged?.Invoke(this, State);
+        _mediaQueries.ItemRemoved +=
+            (sender, e) => StateChanged?.Invoke(this, State);
+        _mediaQueries.ListReset +=
+            (sender, e) => StateChanged?.Invoke(this, State);
     }
 
     private void InitializeMediaQueriesSection()
@@ -54,13 +115,13 @@ public partial class MediaQueriesFormGroup : ContentView
         header.Children.Add(imageWidthHeading);
         outerLayout.Children.Add(header);
 
-        var mediaQueriesListLayout = new VerticalStackLayout()
+        _mediaQueriesListLayout = new VerticalStackLayout()
         {
             HorizontalOptions = LayoutOptions.Fill,
             Spacing = 5
         };
         
-        DynamicListFactory.MakeDynamic(mediaQueriesListLayout, _mediaQueries, (mediaQuery) =>
+        DynamicListFactory.MakeDynamic(_mediaQueriesListLayout, _mediaQueries, (mediaQuery) =>
         {
             var row = new HorizontalStackLayout()
             {
@@ -76,6 +137,7 @@ public partial class MediaQueriesFormGroup : ContentView
             mediaQueryInput.StateChanged += (sender, state) =>
             {
                 mediaQuery.MediaQuery = state.Value;
+                StateChanged?.Invoke(this, State);
             };
             
             row.Children.Add(mediaQueryInput);
@@ -98,6 +160,7 @@ public partial class MediaQueriesFormGroup : ContentView
             imageWidthInput.StateChanged += (sender, state) =>
             {
                 mediaQuery.ImageWidth = state.IsValid ? int.Parse(state.Value) : null;
+                StateChanged?.Invoke(this, State);
             };  
             
             row.Children.Add(imageWidthInput);
@@ -114,7 +177,7 @@ public partial class MediaQueriesFormGroup : ContentView
             return row;
         });
         
-        outerLayout.Children.Add(mediaQueriesListLayout);
+        outerLayout.Children.Add(_mediaQueriesListLayout);
 
         _defaultImageWidthInput = new TextInputBuilder()
             .WithLabel("Default Image Width")
@@ -130,6 +193,7 @@ public partial class MediaQueriesFormGroup : ContentView
                 )
             ).Build();
         
+        _defaultImageWidthInput.StateChanged += (sender, state) => StateChanged?.Invoke(this, State);
         outerLayout.Children.Add(_defaultImageWidthInput);
         RootLayout.Children.Add(outerLayout);
     }
@@ -142,5 +206,23 @@ public partial class MediaQueriesFormGroup : ContentView
             var newMediaQuery = new MediaQueryAndImageWidth();
             _mediaQueries.Prepend(newMediaQuery);
         }
+    }
+
+    private IEnumerable<TextInput> GetAllTextInputs()
+    {
+        IList<TextInput> inputs = new List<TextInput>();
+
+        foreach (var el1 in _mediaQueriesListLayout.Children)
+        {
+            if (el1 is Layout row)
+            {
+                foreach (var el2 in row.Children)
+                {
+                    if(el2 is TextInput input) inputs.Add(input);
+                }
+            }
+        }
+
+        return inputs;
     }
 }
