@@ -1,4 +1,4 @@
-namespace ImageResizer.DataModel;
+namespace ImageResizer.DataModel.Formats;
 
 public enum ImageFileFormats
 {

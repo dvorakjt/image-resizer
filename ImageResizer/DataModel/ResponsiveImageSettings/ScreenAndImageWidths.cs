@@ -1,4 +1,4 @@
-namespace ImageResizer.DataModel;
+namespace ImageResizer.DataModel.ResponsiveImageSettings;
 
 public class ScreenAndImageWidths : IComparable<ScreenAndImageWidths>
 {

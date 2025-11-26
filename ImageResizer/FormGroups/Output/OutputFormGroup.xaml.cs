@@ -1,5 +1,6 @@
 using System.Text.RegularExpressions;
 using ImageResizer.DataModel;
+using ImageResizer.DataModel.Output;
 using ImageResizer.FormControls;
 
 namespace ImageResizer.FormGroups.Output;

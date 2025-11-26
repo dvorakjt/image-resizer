@@ -1,9 +1,45 @@
+using ImageResizer.DataModel;
+using ImageResizer.DataModel.Formats;
 using ImageResizer.FormControls;
 
 namespace ImageResizer.FormGroups.Formats;
 
-public partial class AVIFOptionsFormGroup : ContentView
+public partial class AVIFOptionsFormGroup : ContentView, IFormElement<AVIFOptionsFormGroupValue>
 {
+    public event EventHandler<IFormElementState<AVIFOptionsFormGroupValue>>? StateChanged;
+
+    public IFormElementState<AVIFOptionsFormGroupValue> State
+    {
+        get
+        {
+            int? quality, effort;
+            quality = effort = null;
+
+            if (_qualityInput.State.IsValid && int.TryParse(_qualityInput.State.Value, out int q))
+            {
+                quality = q;
+            }
+            
+            if (_effortInput.State.IsValid && int.TryParse(_effortInput.State.Value, out int e))
+            {
+                effort = e;
+            }
+            
+            var isValid = _qualityInput.State.IsValid && _effortInput.State.IsValid;
+
+            return new FormElementState<AVIFOptionsFormGroupValue>()
+            {
+                Value = new AVIFOptionsFormGroupValue()
+                {
+                    Quality = quality,
+                    Effort = effort
+                },
+                IsValid = isValid,
+                ErrorMessage = ""
+            };
+        }
+    }
+    
     private TextInput _qualityInput;
     private TextInput _effortInput;
     private int _defaultQuality = 50;
@@ -15,6 +51,18 @@ public partial class AVIFOptionsFormGroup : ContentView
     {
         InitializeComponent();
         InitializeFormControls();
+    }
+    
+    public void DisplayErrors()
+    {
+        _qualityInput.DisplayErrors();
+        _effortInput.DisplayErrors();
+    }
+
+    public void Revalidate()
+    {
+        _qualityInput.Revalidate();
+        _effortInput.Revalidate();
     }
 
     public void Reset()
@@ -48,7 +96,8 @@ public partial class AVIFOptionsFormGroup : ContentView
             )
             .WithMaxLength(_quality.Max.ToString().Length)
             .Build();
-        
+
+        _qualityInput.StateChanged += (sender, e) => StateChanged?.Invoke(this, State);
         _qualityInput.WidthRequest = inputWidth;
         formControlsLayout.Children.Add(_qualityInput);
         
@@ -68,6 +117,7 @@ public partial class AVIFOptionsFormGroup : ContentView
             .WithMaxLength(_effort.Max.ToString().Length)
             .Build();
         
+        _effortInput.StateChanged += (sender, e) => StateChanged?.Invoke(this, State);
         _effortInput.WidthRequest = inputWidth;
         formControlsLayout.Children.Add(_effortInput);
         

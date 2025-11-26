@@ -1,4 +1,5 @@
 using ImageResizer.DataModel;
+using ImageResizer.DataModel.ResponsiveImageSettings;
 using ImageResizer.FormControls;
 using ImageResizer.Utils;
 using Microsoft.Maui.Layouts;

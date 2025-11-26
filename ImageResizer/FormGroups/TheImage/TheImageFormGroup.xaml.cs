@@ -1,4 +1,5 @@
 using ImageResizer.DataModel;
+using ImageResizer.DataModel.TheImage;
 using ImageResizer.FormControls;
 
 namespace ImageResizer.FormGroups.TheImage;

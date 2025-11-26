@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ImageResizer.DataModel;
+using ImageResizer.DataModel.ResponsiveImageSettings;
 using ImageResizer.FormControls;
 using Microsoft.Maui.Layouts;
 

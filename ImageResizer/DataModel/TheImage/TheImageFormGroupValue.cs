@@ -1,4 +1,4 @@
-namespace ImageResizer.DataModel;
+namespace ImageResizer.DataModel.TheImage;
 
 public class TheImageFormGroupValue
 {

@@ -1,4 +1,4 @@
-namespace ImageResizer.DataModel;
+namespace ImageResizer.DataModel.Output;
 
 public class OutputFormGroupValue
 {
