@@ -18,12 +18,12 @@ public partial class DensitiesFormGroup : ContentView, IFormElement<DensitiesFor
             int? baseImageWidth, defaultImageWidth;
             baseImageWidth = defaultImageWidth = null;
 
-            if (_baseWidthInput.State.IsValid && int.TryParse(_baseWidthInput.State.Value, out int b))
+            if (int.TryParse(_baseWidthInput.State.Value, out int b))
             {
                 baseImageWidth = b;
             }
 
-            if (_defaultWidthInput.State.IsValid && int.TryParse(_defaultWidthInput.State.Value, out int d))
+            if (int.TryParse(_defaultWidthInput.State.Value, out int d))
             {
                 defaultImageWidth = d;
             }

@@ -6,12 +6,61 @@ using Microsoft.Maui.Layouts;
 
 namespace ImageResizer.FormGroups.ResponsiveImageSettings;
 
-public partial class WidthsFormGroup : ContentView
+public partial class WidthsFormGroup : ContentView, IFormElement<WidthsFormGroupValue>
 {
+    
+    public event EventHandler<IFormElementState<WidthsFormGroupValue>>? StateChanged;
+
+    public IFormElementState<WidthsFormGroupValue> State
+    {
+        get
+        {
+            WidthThresholdsStrategy widthThresholdsStrategy;
+
+            if (_widthThresholdsStrategyRadioGroup.State.Value == WidthThresholdsStrategy.MaxWidths.ToString())
+            {
+                widthThresholdsStrategy = WidthThresholdsStrategy.MaxWidths;
+            } 
+            else if(_widthThresholdsStrategyRadioGroup.State.Value == WidthThresholdsStrategy.MinWidths.ToString())
+            {
+                widthThresholdsStrategy = WidthThresholdsStrategy.MinWidths;
+            }
+            else
+            {
+                throw new InvalidOperationException($"Unsupported width threshold strategy: {_widthThresholdsStrategyRadioGroup.State.Value}");
+            }
+            
+            int? defaultImageWidth = null;
+            if (int.TryParse(_defaultWidthInput.State.Value, out int w))
+            {
+                defaultImageWidth = w;
+            }
+            
+            var isValid = _defaultWidthInput.State.IsValid && GetAllTextInputs().All(i => i.State.IsValid);
+
+            return new FormElementState<WidthsFormGroupValue>
+            {
+                Value = new WidthsFormGroupValue
+                {
+                    WidthThresholdsStrategy = widthThresholdsStrategy,
+                    ScreenAndImageWidths = _widths.Select(w => new ScreenAndImageWidths
+                    {
+                        ScreenWidth = w.ScreenWidth,
+                        ImageWidth = w.ImageWidth,
+                    }),
+                    DefaultImageWidth = defaultImageWidth,
+                },
+                IsValid = isValid,
+                ErrorMessage = ""
+            };
+        }
+    }
+    
     private CustomRadioButtonGroup _widthThresholdsStrategyRadioGroup;
     private TextInput _newScreenWidthInput;
     private ISortedLiveList<ScreenAndImageWidths> _widths = new SortedLiveList<ScreenAndImageWidths>();
     private TextInput _defaultWidthInput;
+    private VerticalStackLayout _widthsListLayout;
     private readonly int _minWidth = 1;
     private readonly int _maxWidth = 40_000;
     private readonly int _maxWidthCount = 30;
@@ -20,6 +69,35 @@ public partial class WidthsFormGroup : ContentView
     {
         InitializeComponent();
         InitializeFormControls();
+        SubscribeToWidths();
+    }
+    
+    public void DisplayErrors()
+    {
+        _defaultWidthInput.DisplayErrors();
+        _widthThresholdsStrategyRadioGroup.DisplayErrors();
+        foreach (var input in GetAllTextInputs())
+        {
+            input.DisplayErrors();
+        }
+    }
+    
+    public void Revalidate()
+    {
+        _defaultWidthInput.Revalidate();
+        _widthThresholdsStrategyRadioGroup.Revalidate();
+        foreach (var input in GetAllTextInputs())
+        {
+            input.Revalidate();
+        }
+    }
+    
+    public void Reset()
+    {
+        _newScreenWidthInput.Reset();
+        _widthThresholdsStrategyRadioGroup.Reset();
+        _widths.Clear();
+        _defaultWidthInput.Reset();
     }
 
     private void InitializeFormControls()
@@ -66,21 +144,17 @@ public partial class WidthsFormGroup : ContentView
 
         _widths.IsReversed = _widthThresholdsStrategyRadioGroup.State.Value ==
                              WidthThresholdsStrategy.MinWidths.ToString();
-        
+
         _widthThresholdsStrategyRadioGroup.StateChanged += (sender, e) =>
+        {
             _widths.IsReversed = _widthThresholdsStrategyRadioGroup.State.Value ==
                                  WidthThresholdsStrategy.MinWidths.ToString();
+
+            StateChanged?.Invoke(this, State);
+        };
         
         widthThrehsholdsStrategyLayout.Children.Add(_widthThresholdsStrategyRadioGroup);
         RootLayout.Children.Add(widthThrehsholdsStrategyLayout);
-    }
-
-    public void Reset()
-    {
-        _newScreenWidthInput.Reset();
-        _widthThresholdsStrategyRadioGroup.Reset();
-        _widths.Clear();
-        _defaultWidthInput.Reset();
     }
 
     private void InitializeNewScreenWidthInput()
@@ -151,13 +225,13 @@ public partial class WidthsFormGroup : ContentView
         header.Children.Add(imageWidthsColumnHeading);
         outerLayout.Children.Add(header);
 
-        var widthsListLayout = new VerticalStackLayout()
+        _widthsListLayout = new VerticalStackLayout()
         {
             HorizontalOptions = LayoutOptions.Fill,
             Spacing = 5
         };
         
-        DynamicListFactory.MakeDynamic(widthsListLayout, _widths, (width) =>
+        DynamicListFactory.MakeDynamic(_widthsListLayout, _widths, (width) =>
         {
             var row = new HorizontalStackLayout()
             {
@@ -202,6 +276,7 @@ public partial class WidthsFormGroup : ContentView
             imageWidthInput.StateChanged += (sender, e) =>
             {
                 width.ImageWidth = imageWidthInput.State.IsValid ? int.Parse(imageWidthInput.State.Value) : null;
+                StateChanged?.Invoke(this, State);
             };
             
             imageWidthCell.Children.Add(imageWidthInput);
@@ -218,7 +293,7 @@ public partial class WidthsFormGroup : ContentView
             return row;
         });
         
-        outerLayout.Children.Add(widthsListLayout);
+        outerLayout.Children.Add(_widthsListLayout);
 
         _defaultWidthInput = new TextInputBuilder()
             .WithLabel("Default Image Width")
@@ -233,8 +308,16 @@ public partial class WidthsFormGroup : ContentView
             .WithMaxLength(_maxWidth.ToString().Length)
             .Build();
         
+        _defaultWidthInput.StateChanged += (sender, e) => StateChanged?.Invoke(this, State);
         outerLayout.Children.Add(_defaultWidthInput);
         RootLayout.Children.Add(outerLayout);
+    }
+    
+    private void SubscribeToWidths()
+    {
+        _widths.ItemAdded += (sender, e) => StateChanged?.Invoke(this, State);
+        _widths.ItemRemoved += (sender, e) => StateChanged?.Invoke(this, State);
+        _widths.ListReset += (sender, e) => StateChanged?.Invoke(this, State);
     }
 
     private ValidatorResult IsValidScreenWidth(string value)
@@ -275,5 +358,29 @@ public partial class WidthsFormGroup : ContentView
         {
             _newScreenWidthInput.DisplayErrors();
         }
+    }
+
+    private IEnumerable<TextInput> GetAllTextInputs()
+    {
+        IList<TextInput> inputs = new List<TextInput>();
+
+        foreach (var el1 in _widthsListLayout.Children)
+        {
+            if (el1 is Layout row)
+            {
+                foreach (var el2 in row.Children)
+                {
+                    if (el2 is Layout cell)
+                    {
+                        foreach (var el3 in cell.Children)
+                        {
+                            if(el3 is TextInput textInput) inputs.Add(textInput);
+                        }
+                    }
+                }
+            }
+        }
+        
+        return inputs;
     }
 }

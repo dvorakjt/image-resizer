@@ -14,12 +14,12 @@ public partial class WebPOptionsFormGroup : ContentView, IFormElement<WebPOption
             int? quality, effort;
             quality = effort = null;
 
-            if (_qualityInput.State.IsValid && int.TryParse(_qualityInput.State.Value, out int q))
+            if (int.TryParse(_qualityInput.State.Value, out int q))
             {
                 quality = q;
             }
             
-            if (_effortInput.State.IsValid && int.TryParse(_effortInput.State.Value, out int e))
+            if (int.TryParse(_effortInput.State.Value, out int e))
             {
                 effort = e;
             }

@@ -14,7 +14,7 @@ public partial class JPEGOptionsFormGroup : ContentView, IFormElement<JPEGOption
         {
             int? quality = null;
 
-            if (_qualityInput.State.IsValid && int.TryParse(_qualityInput.State.Value, out int q))
+            if (int.TryParse(_qualityInput.State.Value, out int q))
             {
                 quality = q;
             }

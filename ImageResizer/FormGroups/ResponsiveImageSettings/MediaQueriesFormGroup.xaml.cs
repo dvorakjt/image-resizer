@@ -16,7 +16,7 @@ public partial class MediaQueriesFormGroup : ContentView, IFormElement<MediaQuer
             var isValid = _defaultImageWidthInput.State.IsValid &&  GetAllTextInputs().All(i => i.State.IsValid);
             int? defaultImageWidth = null;
 
-            if (_defaultImageWidthInput.State.IsValid && int.TryParse(_defaultImageWidthInput.State.Value, out int w))
+            if (int.TryParse(_defaultImageWidthInput.State.Value, out int w))
             {
                 defaultImageWidth = w;
             }
@@ -48,8 +48,8 @@ public partial class MediaQueriesFormGroup : ContentView, IFormElement<MediaQuer
     public MediaQueriesFormGroup()
     {
         InitializeComponent();
-        SubscribeToMediaQueriesList();
         InitializeMediaQueriesSection();
+        SubscribeToMediaQueriesList();
     }
     
     public void DisplayErrors()
