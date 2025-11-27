@@ -1,6 +1,6 @@
 namespace ImageResizer.DataModel.Output;
 
-public record class OutputFormGroupValue
+public class OutputFormGroupValue
 {
     public string Filename { get; init; }
     public string VersionId { get; init; }

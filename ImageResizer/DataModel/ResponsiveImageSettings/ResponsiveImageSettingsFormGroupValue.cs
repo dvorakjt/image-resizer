@@ -1,6 +1,6 @@
 namespace ImageResizer.DataModel.ResponsiveImageSettings;
 
-public record class ResponsiveImageSettingsFormGroupValue
+public class ResponsiveImageSettingsFormGroupValue
 {
     public ResponsiveImageStrategy ResponsiveImageStrategy { get; init; }
     public DensitiesFormGroupValue DensitiesStrategyOptions { get; init; }

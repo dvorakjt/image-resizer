@@ -219,7 +219,7 @@ public partial class OutputFormGroup : ContentView, IFormElement<OutputFormGroup
                 ErrorMessage = "Path cannot contain / if system directory separator is \\"
             };
         }
-
+        
         if (Path.DirectorySeparatorChar == '/' && value.Contains('\\'))
         {
             return new ValidatorResult

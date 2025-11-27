@@ -1,6 +1,6 @@
 namespace ImageResizer.DataModel.ResponsiveImageSettings;
 
-public record class ScreenAndImageWidths : IComparable<ScreenAndImageWidths>
+public class ScreenAndImageWidths : IComparable<ScreenAndImageWidths>
 {
     public int ScreenWidth { get; init; }
     public int? ImageWidth { get; set; }

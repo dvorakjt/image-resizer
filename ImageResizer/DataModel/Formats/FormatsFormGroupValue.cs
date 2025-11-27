@@ -1,6 +1,6 @@
 namespace ImageResizer.DataModel.Formats;
 
-public record class FormatsFormGroupValue
+public class FormatsFormGroupValue
 {
     public IEnumerable<ImageFileFormats> SelectedFormats { get; init; }
     public AVIFOptionsFormGroupValue AVIFOptions { get; init; }
