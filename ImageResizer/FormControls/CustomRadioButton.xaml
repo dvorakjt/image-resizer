@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ImageResizer.FormControls.CustomRadioButton"
+             x:Name="CustomRadioButtonComponent">
+    <HorizontalStackLayout 
+        HeightRequest="23"
+        Spacing="2"
+        >
+        <HorizontalStackLayout.GestureRecognizers>
+            <TapGestureRecognizer Tapped="OnTapped" />
+        </HorizontalStackLayout.GestureRecognizers>
+        <AbsoluteLayout WidthRequest="18" HeightRequest="18">
+            <Border 
+                AbsoluteLayout.LayoutBounds="0,0,18,18"
+                StrokeShape="Ellipse"
+                Stroke="Black"
+            >
+                <BoxView
+                    AbsoluteLayout.LayoutBounds="0,0,18,18"
+                    Color="White"
+                    CornerRadius="9"
+                />
+            </Border>
+            <FlexLayout 
+                AbsoluteLayout.LayoutBounds="0,0,18,18"
+                AlignItems="Center" 
+                JustifyContent="Center"
+            >
+                <BoxView 
+                    WidthRequest="12" 
+                    HeightRequest="12" 
+                    CornerRadius="6"
+                    Color="Black"
+                    IsVisible="{Binding Source={x:Reference CustomRadioButtonComponent}, Path=IsChecked}"></BoxView>
+            </FlexLayout>
+        </AbsoluteLayout>
+        <Label 
+            Text="{Binding Source={x:Reference CustomRadioButtonComponent}, Path=LabelText}" 
+            StyleClass="Subheading2"
+            HorizontalOptions="Start"
+        />
+    </HorizontalStackLayout>
+</ContentView>

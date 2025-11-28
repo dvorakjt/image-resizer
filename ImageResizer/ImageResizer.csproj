@@ -1,96 +1,150 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<TargetFrameworks>net10.0;net10.0-maccatalyst</TargetFrameworks>
-		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net10.0-windows10.0.19041.0</TargetFrameworks>
+    <PropertyGroup>
+        <TargetFrameworks>net10.0;net10.0-maccatalyst</TargetFrameworks>
+        <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net10.0-windows10.0.19041.0</TargetFrameworks>
 
-		<!-- Note for MacCatalyst:
-		The default runtime is maccatalyst-x64, except in Release config, in which case the default is maccatalyst-x64;maccatalyst-arm64.
-		When specifying both architectures, use the plural <RuntimeIdentifiers> instead of the singular <RuntimeIdentifier>.
-		The Mac App Store will NOT accept apps with ONLY maccatalyst-arm64 indicated;
-		either BOTH runtimes must be indicated or ONLY macatalyst-x64. -->
-		<!-- For example: <RuntimeIdentifiers>maccatalyst-x64;maccatalyst-arm64</RuntimeIdentifiers> -->
+        <!-- Note for MacCatalyst:
+        The default runtime is maccatalyst-x64, except in Release config, in which case the default is maccatalyst-x64;maccatalyst-arm64.
+        When specifying both architectures, use the plural <RuntimeIdentifiers> instead of the singular <RuntimeIdentifier>.
+        The Mac App Store will NOT accept apps with ONLY maccatalyst-arm64 indicated;
+        either BOTH runtimes must be indicated or ONLY macatalyst-x64. -->
+        <!-- For example: <RuntimeIdentifiers>maccatalyst-x64;maccatalyst-arm64</RuntimeIdentifiers> -->
 
-		<OutputType Condition="'$(TargetFramework)' != 'net10.0'">Exe</OutputType>
-		<RootNamespace>ImageResizer</RootNamespace>
-		<UseMaui>true</UseMaui>
-		<SingleProject>true</SingleProject>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>enable</Nullable>
+        <OutputType Condition="'$(TargetFramework)' != 'net10.0'">Exe</OutputType>
+        <RootNamespace>ImageResizer</RootNamespace>
+        <UseMaui>true</UseMaui>
+        <SingleProject>true</SingleProject>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
 
-		<!-- Display name -->
-		<ApplicationTitle>ImageResizer</ApplicationTitle>
+        <!-- Display name -->
+        <ApplicationTitle>ImageResizer</ApplicationTitle>
 
-		<!-- App Identifier -->
-		<ApplicationId>dev.joedvorak.imageresizer</ApplicationId>
+        <!-- App Identifier -->
+        <ApplicationId>dev.joedvorak.imageresizer</ApplicationId>
 
-		<!-- Versions -->
-		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
-		<ApplicationVersion>1</ApplicationVersion>
+        <!-- Versions -->
+        <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+        <ApplicationVersion>1</ApplicationVersion>
 
-		<!-- To develop, package, and publish an app to the Microsoft Store, see: https://aka.ms/MauiTemplateUnpackaged -->
-		<WindowsPackageType>None</WindowsPackageType>
+        <!-- To develop, package, and publish an app to the Microsoft Store, see: https://aka.ms/MauiTemplateUnpackaged -->
+        <WindowsPackageType>None</WindowsPackageType>
 
-		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">15.0</SupportedOSPlatformVersion>
-		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">15.0</SupportedOSPlatformVersion>
-		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
-		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
-		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
-	</PropertyGroup>
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">15.0</SupportedOSPlatformVersion>
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">15.0</SupportedOSPlatformVersion>
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
+        <TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
+    </PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net10.0-maccatalyst|AnyCPU'">
-		<CodesignEntitlements>Platforms\MacCatalyst\Entitlements.plist</CodesignEntitlements>
-	</PropertyGroup>
+    <!-- Grant full access to the file system on Mac so images can be read and save -->
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net10.0-maccatalyst|AnyCPU'">
+        <CodesignEntitlements>Platforms\MacCatalyst\Entitlements.plist</CodesignEntitlements>
+    </PropertyGroup>
 
-	<ItemGroup>
-		<!-- App Icon -->
-		<MauiIcon Include="Resources/AppIcon/appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" ForegroundScale="1.0" />
+    <ItemGroup>
+        <!-- App Icon -->
+        <MauiIcon Include="Resources/AppIcon/appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" ForegroundScale="1.0" />
 
-		<!-- Splash Screen -->
-		<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#512BD4" BaseSize="128,128" />
+        <!-- Splash Screen -->
 
-		<!-- Images -->
-		<MauiImage Include="Resources\Images\*" />
-		<MauiImage Update="Resources\Images\dotnet_bot.png" Resize="True" BaseSize="300,185" />
+        <!-- Images -->
+        <MauiImage Include="Resources\Images\*"/>
+
+        <!-- Custom Fonts -->
+        <MauiFont Include="Resources\Fonts\*"/>
+
+        <!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
+        <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)"/>
+        <PackageReference Include="Microsoft.Maui.Essentials" Version="$(MauiVersion)"/>
+        <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.0"/>
+        
+        <!-- 
+            libvips native binaries for Windows
+        -->
+        <PackageReference Include="NetVips.Native.win-x64" Version="8.17.3" />
+        <PackageReference Include="NetVips.Native.win-x86" Version="8.17.3" />
+        <PackageReference Include="NetVips.Native.win-arm64" Version="8.17.3" />
+        
+        <!-- 
+            lipvips native binaries for macOS - MAKE SURE THESE ARE COMMENTED OUT ON WINDOWS. See this Github 
+            issue for more information about correctly including the right files in the output:
+            https://github.com/kleisauke/net-vips/issues/240 
+            
+            Note that the inclusion of these packages seems to confuse JetBrains rider. The project will still build 
+            correctly but Rider will seemingly fail to resolve many automatically imported types and they will be 
+            highlighted in the IDE.
+        -->
+        <!-- osx-x64 -->
+        <!--
+        <PackageReference Include="NetVips.Native.osx-x64" Version="8.17.3" GeneratePathProperty="true" />
+        <NativeReference Include="$(PkgNetVips_Native_osx-x64)/runtimes/osx-x64/native/libvips.42.dylib">
+            <Kind>Dynamic</Kind>
+            <SmartLink>False</SmartLink>
+        </NativeReference>
+        -->
+        <!-- osx-arm64 -->
+        <!--
+        <PackageReference Include="NetVips.Native.osx-arm64" Version="8.17.3" GeneratePathProperty="true" />
+        <NativeReference Include="$(PkgNetVips_Native_osx-arm64)/runtimes/osx-arm64/native/libvips.42.dylib">
+            <Kind>Dynamic</Kind>
+            <SmartLink>False</SmartLink>
+        </NativeReference>
+        -->
 		
-		<!-- Custom Fonts -->
-		<MauiFont Include="Resources\Fonts\*" />
+        <PackageReference Include="NetVips" Version="3.1.0" />
+    </ItemGroup>
 
-		<!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
-		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
-	</ItemGroup>
+    <ItemGroup>
+      <Folder Include="Resources\Images\" />
+      <Folder Include="Resources\Splash\" />
+    </ItemGroup>
 
-	<ItemGroup>
-		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
-		<PackageReference Include="Microsoft.Maui.Essentials" Version="$(MauiVersion)" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.0" />
-		<PackageReference Include="NetVips.Native.win-x64" Version="8.17.3" />
-		<PackageReference Include="NetVips.Native.win-x86" Version="8.17.3" />
-		<PackageReference Include="NetVips.Native.win-arm64" Version="8.17.3" />
-		<PackageReference Include="NetVips.Native.osx-x64" Version="8.17.3" />
-		<PackageReference Include="NetVips.Native.osx-arm64" Version="8.17.3" />
-		<PackageReference Include="NetVips" Version="3.1.0" />
-	</ItemGroup>
+    <!-- Platform-dependent files -->
+    
+    <!-- Mac Catalyst -->
+    <ItemGroup Condition="$(TargetFramework.StartsWith('net10.0-maccatalyst')) != true">
+        <Compile Remove="**\**\*.MacCatalyst.cs" />
+        <None Include="**\**\*.MacCatalyst.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
+        <Compile Update="FormGroups\Formats\AVIFOptionsFormGroup.xaml.cs">
+          <DependentUpon>AVIFOptionsFormGroup.xaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="FormGroups\Formats\FormatsFormGroup.xaml.cs">
+          <DependentUpon>FormatOptionsFormGroup.xaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="FormGroups\Formats\WebPOptionsFormGroup.xaml.cs">
+          <DependentUpon>WebPOptionsFormGroup.xaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+    </ItemGroup>
 
-	<!-- Mac Catalyst -->
-	<ItemGroup Condition="$(TargetFramework.StartsWith('net10.0-maccatalyst')) != true">
-		<Compile Remove="**\**\*.MacCatalyst.cs" />
-		<None Include="**\**\*.MacCatalyst.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
-	</ItemGroup>
+    <!-- Windows -->
+    <ItemGroup Condition="$(TargetFramework.StartsWith('net10.0-windows')) != true">
+        <Compile Remove="**\*.Windows.cs" />
+        <None Include="**\*.Windows.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
+    </ItemGroup>
 
-	<!-- Windows -->
-	<ItemGroup Condition="$(TargetFramework.StartsWith('net10.0-windows')) != true">
-		<Compile Remove="**\*.Windows.cs" />
-		<None Include="**\*.Windows.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
-	</ItemGroup>
-
-	<!-- .NET -->
-	<ItemGroup Condition="!($(TargetFramework.StartsWith('net')) == true AND $(TargetFramework.EndsWith('.0')) == true AND $(TargetFramework.Contains('-')) != true)">
-		<Compile Remove="**\*.net.cs" />
-		<None Include="**\*.net.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
-	</ItemGroup>
-	<ItemGroup>
-	  <Folder Include="Resources\AppIcon\" />
-	  <Folder Include="Resources\Images\" />
-	</ItemGroup>
+    <!-- .NET -->
+    <ItemGroup Condition="!($(TargetFramework.StartsWith('net')) == true AND $(TargetFramework.EndsWith('.0')) == true AND $(TargetFramework.Contains('-')) != true)">
+        <Compile Remove="**\*.net.cs" />
+        <None Include="**\*.net.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
+    </ItemGroup>
+    <ItemGroup>
+      <MauiXaml Update="FormGroups\Formats\AVIFOptionsFormGroup.xaml">
+        <SubType>Designer</SubType>
+      </MauiXaml>
+      <MauiXaml Update="FormGroups\Formats\FormatsFormGroup.xaml">
+        <SubType>Designer</SubType>
+      </MauiXaml>
+      <MauiXaml Update="FormGroups\Formats\WebPOptionsFormGroup.xaml">
+        <SubType>Designer</SubType>
+      </MauiXaml>
+    </ItemGroup>
 </Project>

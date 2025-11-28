@@ -1,13 +1,25 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:views="clr-namespace:ImageResizer.Views"
-             x:Class="ImageResizer.MainPage">
-    <ScrollView>
-        <FlexLayout Direction="Column" AlignItems="Center" >
-            <Label Text="Image Resizer" StyleClass="Heading" Margin="0,0,0,20" />
-            <HorizontalStackLayout x:Name="FormLayout">
-            </HorizontalStackLayout>
-        </FlexLayout>
-    </ScrollView>
+<ContentPage 
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="ImageResizer.MainPage"
+    x:Name="MainPageComponent"
+    xmlns:ui="clr-namespace:ImageResizer.UI"
+    >
+    <AbsoluteLayout>
+        <ScrollView x:Name="ScrollContainer" AbsoluteLayout.LayoutBounds="0,0,1,1" AbsoluteLayout.LayoutFlags="All">
+            <VerticalStackLayout 
+                x:Name="RootLayout"
+                WidthRequest="476" 
+                Padding="18" 
+                Spacing="36"
+                >
+            </VerticalStackLayout>
+        </ScrollView>
+        <ui:LoadingSpinner 
+            IsVisible="{Binding Source={x:Reference MainPageComponent}, Path=IsLoading}"
+            AbsoluteLayout.LayoutBounds="0,0,1,1" 
+            AbsoluteLayout.LayoutFlags="All" 
+            />
+    </AbsoluteLayout>
 </ContentPage>

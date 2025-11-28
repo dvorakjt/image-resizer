@@ -1,174 +1,164 @@
-﻿using ImageResizer.Models;
-using ImageResizer.ViewFactories;
-using ImageResizer.ViewModels;
-using ImageResizer.Views;
+﻿using System.ComponentModel;
+using ImageResizer.FormGroups.Formats;
+using ImageResizer.FormGroups.Output;
+using ImageResizer.FormGroups.ResponsiveImageSettings;
+using ImageResizer.FormGroups.TheImage;
+using ImageResizer.ImageProcessing;
 
 namespace ImageResizer;
 
-public partial class MainPage : ContentPage
+public partial class MainPage : ContentPage, INotifyPropertyChanged
 {
-    private ImageSection _imageSection;
-    private FormatsSection _formatsSection;
-    private ResponsiveImageSettingsSection _responsiveImageSettingsSection;
-    private OutputSection _outputSection;
+    public new event PropertyChangedEventHandler? PropertyChanged;
+
+    public bool IsLoading
+    {
+        get;
+        set
+        {
+            field = value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsLoading)));
+        }
+    } = false;
+
+    private TheImageFormGroup _theImageFormGroup;
+    private ResponsiveImageSettingsFormGroup _responsiveImageSettingsFormGroup;
+    private FormatsFormGroup _formatsFormGroup;
+    private OutputFormGroup _outputFormGroup;
     
     public MainPage()
     {
         InitializeComponent();
-        CreateFormElements();
-    }
-
-    private void CreateFormElements()
-    {
-        var leftPane = CreatePane();
-        
-        _imageSection = ImageSectionFactory.Create();
-        leftPane.Children.Add(_imageSection.SectionLayout);
-        
-        _formatsSection = FormatsSectionFactory.Create();
-        leftPane.Children.Add(_formatsSection.SectionLayout);
-        
-        FormLayout.Children.Add(leftPane);
-        
-        var rightPane = CreatePane();
-        
-        _responsiveImageSettingsSection = ResponsiveImageSettingsSectionFactory.Create();
-        rightPane.Children.Add(_responsiveImageSettingsSection.SectionLayout);
-        
-        _outputSection = OutputSectionFactory.Create();
-        rightPane.Children.Add(_outputSection.SectionLayout);
-        
-        var submitButton = CreateSubmitButton();
-        rightPane.Children.Add(submitButton);
-        
-        FormLayout.Children.Add(rightPane);
+        InitializeFormGroups();
+        InitializeResizeButton();
+        InitializeResetButton();
     }
     
-    private Layout CreatePane()
+    private void InitializeFormGroups()
     {
-        var padding = 12;
-        var paneWidth = AppDimensions.CONTENT_WIDTH + padding * 2;
-        var pane = new VerticalStackLayout()
-        {
-            Padding = new Thickness(12),
-            MinimumWidthRequest = paneWidth,
-            MaximumWidthRequest = paneWidth
-        };
-        return pane;
+        _theImageFormGroup = new TheImageFormGroup();
+        RootLayout.Children.Add(_theImageFormGroup);
+        
+        _responsiveImageSettingsFormGroup = new ResponsiveImageSettingsFormGroup();
+        RootLayout.Children.Add(_responsiveImageSettingsFormGroup);
+        
+        _formatsFormGroup = new FormatsFormGroup();
+        RootLayout.Children.Add(_formatsFormGroup);
+
+        _outputFormGroup = new OutputFormGroup();
+        RootLayout.Children.Add(_outputFormGroup);
     }
 
-    private Button CreateSubmitButton()
+    private void InitializeResizeButton()
     {
-        var submitButton = new Button()
+        var resizeButton = new Button()
         {
             Text = "Resize",
-            StyleClass = ["Submit"]
+            StyleClass = ["LargeButton"]
         };
 
-        submitButton.Clicked += (sender, e) => ResizeImage();
-        return submitButton;
-    }
-
-    private bool ResizeImage()
-    {
-        bool isFormValid = ValidateForm();
-        return isFormValid;
-    }
-
-    private bool ValidateForm()
-    {
-        bool isValid = ValidateImageSection();
-        if(!ValidateFormatsSection()) isValid = false;
-        if(!ValidateResponsiveImageSettingsSection()) isValid = false;
-        if(!ValidateOutputSection()) isValid = false;
-        return isValid;
-    }
-
-    private bool ValidateImageSection()
-    {
-        bool isValid = _imageSection.ImagePicker.State.IsValid;
-
-        if (!_imageSection.AltTextInput.State.IsValid)
+        resizeButton.Clicked += async (sender, args) =>
         {
-            isValid = false;
-        }
-        
-        _imageSection.ImagePicker.RevealErrors();
-        _imageSection.AltTextInput.RevealErrors();
-        return isValid;
-    }
+            if (!IsFormValid(out View? elementToScrollTo))
+            {
+                _theImageFormGroup.DisplayErrors();
+                _responsiveImageSettingsFormGroup.DisplayErrors();
+                _formatsFormGroup.DisplayErrors();
+                _outputFormGroup.DisplayErrors();
 
-    private bool ValidateFormatsSection()
-    {
-        bool isValid = !_formatsSection.SelectedFormats.State.Value.Contains(OutputFormat.AVIF.ToFileExtension()) ||
-                       _formatsSection.AVIFOptionsInput.State.IsValid;
-        
-        if 
-        (
-            _formatsSection.SelectedFormats.State.Value.Contains(OutputFormat.WebP.ToFileExtension()) &&
-            !_formatsSection.WebPOptionsInput.State.IsValid
-        )
-        {
-            isValid = false;
+                if (elementToScrollTo != null)
+                {
+                    await ScrollContainer.ScrollToAsync(elementToScrollTo, 0, false);
+                }
+                
+                await DisplayAlertAsync("Error","Failed to resize image: invalid form field(s).", "Ok");
+                
+                return;
+            }
             
-        }
+            IsLoading = true;
+            try
+            {
+                await ProcessImage();
+            }
+            catch (Exception ex)
+            {
+                var message = ex.Message != null ? $"Failed to resize image, exception was \"{ex.Message}\"" : "An unknown error occurred.";
+                DisplayAlert("Error", message, "Ok");
+            }
+            IsLoading = false;
+        };
+        
+        RootLayout.Children.Add(resizeButton);
+    }
 
-        if (!_formatsSection.JPGQualityInput.State.IsValid)
+    private void InitializeResetButton()
+    {
+        var resetButton = new Button()
+        {
+            Text = "Reset",
+            StyleClass = ["LargeButton", "SecondaryButton"]
+        };
+
+        resetButton.Clicked += (sender, args) => Reset();
+
+        RootLayout.Children.Add(resetButton);
+    }
+
+    private bool IsFormValid(out View? elementToScrollTo)
+    {
+        bool isValid = true;
+        elementToScrollTo = null;
+        
+        if (!_outputFormGroup.State.IsValid)
         {
             isValid = false;
+            elementToScrollTo = _outputFormGroup;
         }
         
-        _formatsSection.AVIFOptionsInput.RevealErrors();
-        _formatsSection.WebPOptionsInput.RevealErrors();
-        _formatsSection.JPGQualityInput.RevealErrors();
+        if (!_formatsFormGroup.State.IsValid)
+        {
+            isValid = false;
+            elementToScrollTo = _formatsFormGroup;
+        }
+        
+        if (!_responsiveImageSettingsFormGroup.State.IsValid)
+        {
+            isValid = false;
+            elementToScrollTo = _responsiveImageSettingsFormGroup;
+        }
+        
+        if (!_theImageFormGroup.State.IsValid)
+        {
+            isValid = false;
+            elementToScrollTo = _theImageFormGroup;
+        }
         
         return isValid;
     }
 
-    private bool ValidateResponsiveImageSettingsSection()
+    private async Task ProcessImage()
     {
-        bool isValid = _responsiveImageSettingsSection.ResponsivenessModeInput.State.Value !=
-                       ResponsivenessMode.Densities.ToString() ||
-                       _responsiveImageSettingsSection.DensitiesInput.State.IsValid;
-
-        if 
-        (
-            _responsiveImageSettingsSection.ResponsivenessModeInput.State.Value == ResponsivenessMode.Widths.ToString() &&
-            !_responsiveImageSettingsSection.WidthsInput.State.IsValid
-        )
-        {
-            isValid = false;
-        }
-        
-        if 
-        (
-            _responsiveImageSettingsSection.ResponsivenessModeInput.State.Value == ResponsivenessMode.MediaQueries.ToString() &&
-            !_responsiveImageSettingsSection.MediaQueriesInput.State.IsValid
-        )
-        {
-            isValid = false;
-        }
-        
-        _responsiveImageSettingsSection.DensitiesInput.RevealErrors();
-        _responsiveImageSettingsSection.WidthsInput.RevealErrors();
-        _responsiveImageSettingsSection.MediaQueriesInput.RevealErrors();
-
-        return isValid;
+        await ImageProcessor.ProcessImage(
+            _theImageFormGroup.State.Value,
+            _responsiveImageSettingsFormGroup.State.Value,
+            _formatsFormGroup.State.Value,
+            _outputFormGroup.State.Value
+       );
     }
 
-    private bool ValidateOutputSection()
+    private async Task Reset()
     {
-        bool isValid = _outputSection.FileNameInput.State.IsValid;
-        if(!_outputSection.VersionNumberInput.State.IsValid) isValid = false;
-        if(!_outputSection.PathFromPublicDirInput.State.IsValid) isValid = false;
-        if(!_outputSection.PathToPublicDirInput.State.IsValid) isValid = false;
+        var shouldReset = await DisplayAlert("Confirm", "Are you sure you would like to reset the form?", "Reset", "Cancel");
         
-        _outputSection.FileNameInput.RevealErrors();
-        _outputSection.VersionNumberInput.RevealErrors();
-        _outputSection.PathToPublicDirInput.RevealErrors();
-        _outputSection.PathFromPublicDirInput.RevealErrors();
-        
-        return isValid;
+        if (shouldReset)
+        {
+            _theImageFormGroup.Reset();
+            _responsiveImageSettingsFormGroup.Reset();
+            _formatsFormGroup.Reset();
+            _outputFormGroup.Reset();
+        }
+
+        await ScrollContainer.ScrollToAsync(0.0d, 0.0d, false);
     }
 }
-
