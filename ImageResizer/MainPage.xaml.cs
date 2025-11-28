@@ -77,7 +77,15 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
             }
             
             IsLoading = true;
-            await ProcessImage();
+            try
+            {
+                await ProcessImage();
+            }
+            catch (Exception ex)
+            {
+                var message = ex.Message != null ? $"Failed to resize image, exception was \"{ex.Message}\"" : "An unknown error occurred.";
+                DisplayAlert("Error", message, "Ok");
+            }
             IsLoading = false;
         };
         
