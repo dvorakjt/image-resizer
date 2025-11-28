@@ -63,23 +63,40 @@
         <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)"/>
         <PackageReference Include="Microsoft.Maui.Essentials" Version="$(MauiVersion)"/>
         <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.0"/>
-
-        <!-- NetVips -->
+        
+        <!-- 
+            libvips native binaries for Windows
+        -->
         <PackageReference Include="NetVips.Native.win-x64" Version="8.17.3" />
         <PackageReference Include="NetVips.Native.win-x86" Version="8.17.3" />
         <PackageReference Include="NetVips.Native.win-arm64" Version="8.17.3" />
-        <PackageReference Include="NetVips.Native.osx-x64" Version="8.17.3" />
+        
         <!-- 
-            See this issue for more information on including the correct native libvips code for Mac:
+            lipvips native binaries for macOS - MAKE SURE THESE ARE COMMENTED OUT ON WINDOWS. See this Github 
+            issue for more information about correctly including the right files in the output:
             https://github.com/kleisauke/net-vips/issues/240 
+            
+            Note that the inclusion of these packages seems to confuse JetBrains rider. The project will still build 
+            correctly but Rider will seemingly fail to resolve many automatically imported types and they will be 
+            highlighted in the IDE.
         -->
-		<!--
+        <!-- osx-x64 -->
+        <!--
+        <PackageReference Include="NetVips.Native.osx-x64" Version="8.17.3" GeneratePathProperty="true" />
+        <NativeReference Include="$(PkgNetVips_Native_osx-x64)/runtimes/osx-x64/native/libvips.42.dylib">
+            <Kind>Dynamic</Kind>
+            <SmartLink>False</SmartLink>
+        </NativeReference>
+        -->
+        <!-- osx-arm64 -->
+        <!--
         <PackageReference Include="NetVips.Native.osx-arm64" Version="8.17.3" GeneratePathProperty="true" />
         <NativeReference Include="$(PkgNetVips_Native_osx-arm64)/runtimes/osx-arm64/native/libvips.42.dylib">
             <Kind>Dynamic</Kind>
             <SmartLink>False</SmartLink>
         </NativeReference>
-		-->
+        -->
+		
         <PackageReference Include="NetVips" Version="3.1.0" />
     </ItemGroup>
 

@@ -1,6 +1,3 @@
-using ImageResizer.DataModel.Formats;
-using ImageResizer.DataModel.TheImage;
-
 namespace ImageResizer.ImageProcessing;
 
 public interface IImageWriter

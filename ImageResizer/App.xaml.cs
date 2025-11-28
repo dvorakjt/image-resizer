@@ -1,6 +1,4 @@
-﻿
-
-namespace ImageResizer;
+﻿namespace ImageResizer;
 
 public partial class App : Application
 {
