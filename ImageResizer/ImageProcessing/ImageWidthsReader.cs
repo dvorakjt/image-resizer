@@ -2,9 +2,9 @@ using ImageResizer.DataModel.ResponsiveImageSettings;
 
 namespace ImageResizer.ImageProcessing;
 
-public class ImageWidthsReader  : IImageWidthsReader
+public static class ImageWidthsReader
 {
-    public HashSet<int> GetImageWidths(DensitiesFormGroupValue densitiesStrategyOptions)
+    public static HashSet<int> GetImageWidths(DensitiesFormGroupValue densitiesStrategyOptions)
     {
         var imageWidths = new HashSet<int>();
         if (densitiesStrategyOptions.BaseImageWidth == null)
@@ -27,7 +27,7 @@ public class ImageWidthsReader  : IImageWidthsReader
         return imageWidths;
     }
 
-    public HashSet<int> GetImageWidths(WidthsFormGroupValue widthsStrategyOptions)
+    public static HashSet<int> GetImageWidths(WidthsFormGroupValue widthsStrategyOptions)
     {
         var imageWidths = new HashSet<int>();
         
@@ -51,7 +51,7 @@ public class ImageWidthsReader  : IImageWidthsReader
         return imageWidths;
     }
 
-    public HashSet<int> GetImageWidths(MediaQueriesFormGroupValue mediaQueriesStrategyOptions)
+    public static HashSet<int> GetImageWidths(MediaQueriesFormGroupValue mediaQueriesStrategyOptions)
     {
         var imageWidths = new HashSet<int>();
         

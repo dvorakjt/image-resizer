@@ -1,42 +1,46 @@
-using System.Text.RegularExpressions;
 using ImageResizer.DataModel.Formats;
 
 namespace ImageResizer.ImageProcessing;
 
 public class ImagePath : IImagePath
 {
-    private string _basePath;
-    private string _relativePath;
-    private string _filename;
-
+    private string _pathToPublicDirectory;
+    private string _pathFromPublicDirectory;
+    private string _baseFilename;
+    private string _versionId;
+    
     public ImagePath(
-        string pathToPublicDir,
-        string pathFromPublicDir,
-        string filename,
-        int imageWidth,
-        string versionNumber,
-        ImageFileFormats format
+        string pathToPublicDirectory,
+        string pathFromPublicDirectory,
+        string baseFilename,
+        string versionId
     )
     {
-        _basePath = pathToPublicDir;
-        _relativePath = ConstructRelativePath(pathFromPublicDir, filename, format);
-        _filename = ConstructFileName(filename, imageWidth, versionNumber, format);
+        _pathToPublicDirectory = pathToPublicDirectory;
+        _pathFromPublicDirectory = pathFromPublicDirectory;
+        _baseFilename = baseFilename;
+        _versionId = versionId;
     }
     
-    public string GetPlatformSpecificDirPath()
+    public string GetPlatformSpecificDirPath(ImageFileFormats format)
     {
-        return Path.Combine(_basePath, _relativePath);
+        var relativePath = ConstructRelativePath(format);
+        return Path.Combine(_pathToPublicDirectory, relativePath);
     }
 
-    public string GetPlatformSpecificFilePath()
+    public string GetPlatformSpecificFilePath(ImageFileFormats format, int imageWidth)
     {
-        return Path.Combine(GetPlatformSpecificDirPath(), _filename);
+        var absolutePath = GetPlatformSpecificDirPath(format);
+        var filename = ConstructFileName(format, imageWidth);
+        return Path.Combine(absolutePath, filename);
     }
 
-    public string GetURI()
+    public string GetURI(ImageFileFormats format, int imageWidth)
     {
         // Create a path from the public directory to the file
-        var path = Path.Combine(_relativePath, _filename);
+        var relativePath = ConstructRelativePath(format);
+        var filename = ConstructFileName(format, imageWidth);
+        var path = Path.Combine(relativePath, filename);
         
         // Replace the platform-specific directory separator with forward slashes
         path = path.Replace(Path.DirectorySeparatorChar, '/');
@@ -48,27 +52,25 @@ public class ImagePath : IImagePath
         if(!path.StartsWith('/')) path = '/' + path;
         
         // URI-encode the path
-        var uri = Uri.EscapeUriString(path);
+        var uri = Uri.EscapeDataString(path);
         return uri;
     }
-
+    
     /// <summary>
     /// Constructs a path in the format /<pathFromPublicDir>/filename/extension
     /// </summary>
     private string ConstructRelativePath(
-        string pathFromPublicDir,
-        string filename,
         ImageFileFormats format
     )
     {
-        return Path.Combine(pathFromPublicDir, filename, format.ToFileExtension());
+        return Path.Combine(_pathFromPublicDirectory, _baseFilename, format.ToFileExtension());
     }
 
     /// <summary>
     /// Constructs a filename in the format <filename>_<imageWidth>w_v<versionId>.<extension>
     /// </summary>
-    private string ConstructFileName(string filename, int imageWidth, string versionNumber, ImageFileFormats format)
+    private string ConstructFileName(ImageFileFormats format, int imageWidth)
     {
-        return $"{filename}_{imageWidth}w_v{versionNumber}.{format.ToFileExtension()}";
+        return $"{_baseFilename}_{imageWidth}w_v{_versionId}.{format.ToFileExtension()}";
     }
 }

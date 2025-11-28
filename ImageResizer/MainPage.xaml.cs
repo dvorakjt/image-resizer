@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel;
-using ImageResizer.FormControls;
 using ImageResizer.FormGroups.Formats;
 using ImageResizer.FormGroups.Output;
 using ImageResizer.FormGroups.ResponsiveImageSettings;
 using ImageResizer.FormGroups.TheImage;
+using ImageResizer.ImageProcessing;
 
 namespace ImageResizer;
 
@@ -77,7 +77,7 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
             }
             
             IsLoading = true;
-            await Task.Delay(2000);
+            await ProcessImage();
             IsLoading = false;
         };
         
@@ -127,6 +127,16 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
         }
         
         return isValid;
+    }
+
+    private async Task ProcessImage()
+    {
+        await ImageProcessor.ProcessImage(
+            _theImageFormGroup.State.Value,
+            _responsiveImageSettingsFormGroup.State.Value,
+            _formatsFormGroup.State.Value,
+            _outputFormGroup.State.Value
+        );
     }
 
     private async Task Reset()
