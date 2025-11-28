@@ -132,7 +132,24 @@ public partial class ImagePicker : ContentView, IFormElement<Stream?>
     {
         if (imageStream != null)
         {
-            TheThumbnail.Source = ImageSource.FromStream(() => imageStream);
+            TheThumbnail.Source = ImageSource.FromStream(() =>
+            {
+                /* 
+                    Create a new MemoryStream and copy the image stream to allow reading 
+                    from the original stream later (prevents "Cannot read from closed 
+                    stream" errors).
+                */
+                var memoryStream = new MemoryStream();
+                imageStream.CopyTo(memoryStream);
+
+                /* 
+                    Reset the positions of both streams which will both be at the end 
+                    after the copy operation.
+                */
+                memoryStream.Position = 0;
+                imageStream.Position = 0;
+                return memoryStream;
+            });
             TheLabel.IsVisible = false;
             TheThumbnail.IsVisible = true;
         }

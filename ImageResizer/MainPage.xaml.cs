@@ -136,7 +136,7 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
             _responsiveImageSettingsFormGroup.State.Value,
             _formatsFormGroup.State.Value,
             _outputFormGroup.State.Value
-        );
+       );
     }
 
     private async Task Reset()

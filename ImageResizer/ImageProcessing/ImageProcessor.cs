@@ -39,16 +39,21 @@ public static class ImageProcessor
             throw new ArgumentNullException(nameof(theImageFormGroupValue.ImageStream));
         }
         
+        
         /*
-            Reset the position of the stream to 0 because it will have been read from already in order to display the
-            thumbnail.
-        */ 
+            Ensure that the stream position is set to 0 before attempting to copy it.
+            This should be redundant, as the stream will be reset after updating the 
+            thumbnail and after resizing it.
+        */
         theImageFormGroupValue.ImageStream.Position = 0;
         
         // Convert the image stream to a byte array
         using var memoryStream = new MemoryStream();
         await theImageFormGroupValue.ImageStream.CopyToAsync(memoryStream);
         var imageData = memoryStream.ToArray();
+
+        // Reset the position of the stream, which will be at the end after copying it.
+        theImageFormGroupValue.ImageStream.Position = 0;
 
         var outputPath = new ImagePath(
             outputFormGroupValue.PathToPublicDirectory,

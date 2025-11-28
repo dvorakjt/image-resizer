@@ -6,8 +6,8 @@
              >
     <Border x:Name="TheBorder">
         <FlexLayout 
-            WidthRequest="440"
-            HeightRequest="440"
+            WidthRequest="438"
+            HeightRequest="438"
             Direction="Column" 
             AlignItems="Center" 
             JustifyContent="Center"
@@ -18,8 +18,8 @@
             </FlexLayout.GestureRecognizers>
             <Image 
                 x:Name="TheThumbnail" 
-                WidthRequest="440" 
-                HeightRequest="440"
+                WidthRequest="438" 
+                HeightRequest="438"
                 Aspect="AspectFit" 
                 IsVisible="False" 
                 />

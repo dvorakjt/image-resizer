@@ -13,8 +13,8 @@ public partial class App : Application
     {
         return new Window(new MainPage())
         {
-            MinimumWidth = 476,
-            Width = 476,
+            MinimumWidth = 500,
+            Width = 500,
             Height = 768
         };
     }
