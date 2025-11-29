@@ -7,7 +7,7 @@ public class NetVipsImageWriter : IImageWriter
 {
     public async Task ResizeReformatAndSaveAsAVIF(byte[] imageData, HashSet<int> widths, IImagePath outputPath, int quality, int effort)
     {
-        CreateDirectoryIfNotExists(outputPath, ImageFileFormats.AVIF);
+        CreateDirectoryIfNotExists(outputPath, ImageFileFormat.AVIF);
         var image = NetVips.Image.NewFromBuffer(imageData);
         await Task.WhenAll(widths.Select(w => ResizeReformatAndSaveOneAsAVIF(image, w, outputPath, quality, effort)));
         image.Dispose();
@@ -15,7 +15,7 @@ public class NetVipsImageWriter : IImageWriter
 
     public async Task ResizeReformatAndSaveAsWebP(byte[] imageData, HashSet<int> widths, IImagePath outputPath, int quality, int effort)
     {        
-        CreateDirectoryIfNotExists(outputPath, ImageFileFormats.WebP);
+        CreateDirectoryIfNotExists(outputPath, ImageFileFormat.WebP);
         var image = NetVips.Image.NewFromBuffer(imageData);
         await Task.WhenAll(widths.Select(w => ResizeReformatAndSaveOneAsWebP(image, w, outputPath, quality, effort)));
         image.Dispose();
@@ -23,7 +23,7 @@ public class NetVipsImageWriter : IImageWriter
 
     public async Task ResizeReformatAndSaveAsJPEG(byte[] imageData, HashSet<int> widths, IImagePath outputPath, int quality)
     {
-        CreateDirectoryIfNotExists(outputPath, ImageFileFormats.JPEG);
+        CreateDirectoryIfNotExists(outputPath, ImageFileFormat.JPEG);
         var image = NetVips.Image.NewFromBuffer(imageData);
         await Task.WhenAll(widths.Select(w => ResizeReformatAndSaveOneAsJPEG(image, w, outputPath, quality)));
         image.Dispose();
@@ -39,7 +39,7 @@ public class NetVipsImageWriter : IImageWriter
     {
         return Task.Run(() =>
         {
-            var filepath = outputPath.GetPlatformSpecificFilePath(ImageFileFormats.AVIF, width);
+            var filepath = outputPath.GetPlatformSpecificFilePath(ImageFileFormat.AVIF, width);
             using var resizedImage = ResizeImage(image, width);
             resizedImage.Heifsave(filepath, quality, effort: effort);
         });
@@ -55,7 +55,7 @@ public class NetVipsImageWriter : IImageWriter
     {
         return Task.Run(() =>
         {
-            var filepath = outputPath.GetPlatformSpecificFilePath(ImageFileFormats.WebP, width);
+            var filepath = outputPath.GetPlatformSpecificFilePath(ImageFileFormat.WebP, width);
             using var resizedImage = ResizeImage(image, width);
             resizedImage.Webpsave(filepath, quality, effort: effort);
         });
@@ -70,13 +70,13 @@ public class NetVipsImageWriter : IImageWriter
     {
         return Task.Run(() =>
         {
-            var filepath = outputPath.GetPlatformSpecificFilePath(ImageFileFormats.JPEG, width);
+            var filepath = outputPath.GetPlatformSpecificFilePath(ImageFileFormat.JPEG, width);
             using var resizedImage = ResizeImage(image, width);
             resizedImage.Jpegsave(filepath, quality);
         });
     }
 
-    private void CreateDirectoryIfNotExists(IImagePath outputPath, ImageFileFormats format)
+    private void CreateDirectoryIfNotExists(IImagePath outputPath, ImageFileFormat format)
     {
         var directoryPath = outputPath.GetPlatformSpecificDirPath(format);
         if (!Directory.Exists(directoryPath))

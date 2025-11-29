@@ -96,7 +96,6 @@
             <SmartLink>False</SmartLink>
         </NativeReference>
         -->
-		
         <PackageReference Include="NetVips" Version="3.1.0" />
     </ItemGroup>
 

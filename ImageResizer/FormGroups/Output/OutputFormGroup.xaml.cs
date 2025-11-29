@@ -26,7 +26,7 @@ public partial class OutputFormGroup : ContentView, IFormElement<OutputFormGroup
                     Filename = _filenameInput.State.Value,
                     VersionId = _versionIdInput.State.Value,
                     PathToPublicDirectory = _pathToPublicDirInput.State.Value,
-                    PathFromPublicDirectory = _pathFromPublicDirInput.State.Value,
+                    PathFromPublicDirectory = FormatRelativePath(_pathFromPublicDirInput.State.Value)
                 },
                 IsValid = isValid,
                 ErrorMessage = ""
@@ -106,7 +106,7 @@ public partial class OutputFormGroup : ContentView, IFormElement<OutputFormGroup
         _pathFromPublicDirInput.StateChanged += (sender, e) => StateChanged?.Invoke(this, State);
         FormControlsLayout.Children.Add(_pathFromPublicDirInput);
     }
-
+    
     private ValidatorResult IsValidFileName(string value)
     {
         // Filename is required
@@ -119,23 +119,14 @@ public partial class OutputFormGroup : ContentView, IFormElement<OutputFormGroup
             };
         }
         
-        // Filename cannot include / or \
-        if (value.Contains('/') || value.Contains('\\'))
+        // only allow A-Z a-z 0-9 - in filename
+        var filenamePattern = new Regex(@"^[A-Za-z0-9\-]+$");
+        if (!filenamePattern.IsMatch(value))
         {
             return new ValidatorResult
             {
                 IsValid = false,
-                ErrorMessage = "Filename cannot contain potential directory separaters (/ or \\)"
-            };
-        }
-
-        // Check for any other invalid characters
-        if (value.IndexOfAny(Path.GetInvalidFileNameChars()) != -1)
-        {
-            return new ValidatorResult
-            {
-                IsValid = false,
-                ErrorMessage = $"Filename {value} contains invalid filename characters"
+                ErrorMessage = "Please enter a valid filename. Allowed characters: A-Z a-z 0-9 -"
             };
         }
 
@@ -149,13 +140,13 @@ public partial class OutputFormGroup : ContentView, IFormElement<OutputFormGroup
     private ValidatorResult IsValidVersionId(string value)
     {
         /*
-            Allow for numeric, UUID, and dot-separated version ids. 
+            Allow for numeric and UUID-based version numbers
         */
-        bool isValid = new Regex(@"^[a-zA-Z0-9\.\-]+$").IsMatch(value);
+        bool isValid = new Regex(@"^[A-Za-z0-9\-]+$").IsMatch(value);
         return new ValidatorResult
         {
             IsValid = isValid,
-            ErrorMessage = isValid ? "" : "Please enter a valid version id. Allowed characters: A-Z a-z 0-9 . -"
+            ErrorMessage = isValid ? "" : "Please enter a valid version id. Allowed characters: A-Z a-z 0-9 -"
         };
     }
     
@@ -168,81 +159,24 @@ public partial class OutputFormGroup : ContentView, IFormElement<OutputFormGroup
             ErrorMessage = isValid ? "" : "Please enter a valid absolute path."
         };
     }
-
+    
     private ValidatorResult IsValidPath(string value)
     {
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            return new ValidatorResult
-            {
-                IsValid = false, 
-                ErrorMessage = "Path is required"
-            };
-        }
+        // Does not allow spaces, most symbols, combining forward slashes or backslashes, or repeated slashes
+        var pathPattern = new Regex(@"^(?:(?:(?:\/|\.\/)?(?:[A-Za-z0-9\-_]+(?:\/)?)*)|(?:(?:\\|\.\\)?(?:[A-Za-z0-9\-_]+(?:\\)?)*))$");
+        var isValid = pathPattern.IsMatch(value);
         
-        /*
-            Accessing the parent directory of the path could cause problems when serving the image from the public 
-            directory of a web project.
-        */ 
-        if (value.IndexOf(".." + Path.DirectorySeparatorChar) != -1)
-        {
-            return new ValidatorResult
-            {
-                IsValid = false,
-                ErrorMessage = "Path cannot contain .." + Path.DirectorySeparatorChar
-            };
-        }
-
-        /*
-            / should be used instead of constructs like /./././
-        */
-        if (value.IndexOf("." + Path.DirectorySeparatorChar) > 0)
-        {
-            return new ValidatorResult
-            {
-                IsValid = false,
-                ErrorMessage = "Path cannot contain ." + Path.DirectorySeparatorChar + " except at the start"
-            };
-        }
-
-        /*
-            When producing a URI from the path, the directory separator character will be converted to a forward slash. 
-            If the path includes both backslashes and forward slashes, and one type is interpreted as a literal character 
-            when the image file is written, this could potentially cause issues when serving the file, so it is best 
-            to allow only one type of separator.
-        */
-        if (Path.DirectorySeparatorChar == '\\' && value.Contains('/'))
-        {
-            return new ValidatorResult
-            {
-                IsValid = false,
-                ErrorMessage = "Path cannot contain / if system directory separator is \\"
-            };
-        }
-        
-        if (Path.DirectorySeparatorChar == '/' && value.Contains('\\'))
-        {
-            return new ValidatorResult
-            {
-                IsValid = false,
-                ErrorMessage = "Path cannot contain \\ if system directory separator is /"
-            };
-        }
-
-        // Check for any other invalid characters
-        if (value.IndexOfAny(Path.GetInvalidPathChars()) != -1)
-        {
-            return new ValidatorResult
-            {
-                IsValid = false,
-                ErrorMessage = $"Path {value} contains invalid character"
-            };
-        }
-
         return new ValidatorResult
         {
-            IsValid = true,
-            ErrorMessage = ""
+            IsValid = isValid,
+            ErrorMessage = isValid ? "" : "Please enter a valid path. Allowed characters: A-Z a-z 0-9 - _ and / or \\"
         };
+    }
+
+    private string FormatRelativePath(string relativePath)
+    {
+        var formattedPath = Regex.Replace(relativePath, @"[\\\/]", Path.DirectorySeparatorChar.ToString());
+        if(formattedPath.StartsWith(Path.DirectorySeparatorChar.ToString())) formattedPath = formattedPath.Substring(1);
+        return formattedPath;
     }
 }

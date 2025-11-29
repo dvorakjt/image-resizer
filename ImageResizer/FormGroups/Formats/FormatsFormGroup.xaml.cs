@@ -15,25 +15,25 @@ public partial class FormatsFormGroup : ContentView, IFormElement<FormatsFormGro
             var isValid = _selectedOutputFormats.State.IsValid;
             var selectedFormats = _selectedOutputFormats.State.Value.Select(format =>
             {
-                if (format == ImageFileFormats.AVIF.ToString())
+                if (format == ImageFileFormat.AVIF.ToString())
                 {
-                    return ImageFileFormats.AVIF;
+                    return ImageFileFormat.AVIF;
                 }
 
-                if (format == ImageFileFormats.WebP.ToString())
+                if (format == ImageFileFormat.WebP.ToString())
                 {
-                    return ImageFileFormats.WebP;
+                    return ImageFileFormat.WebP;
                 }
 
-                if (format == ImageFileFormats.JPEG.ToString())
+                if (format == ImageFileFormat.JPEG.ToString())
                 {
-                    return ImageFileFormats.JPEG;
+                    return ImageFileFormat.JPEG;
                 }
 
                 throw new InvalidOperationException($"Unsupported format: {format}");
             });
 
-            if (selectedFormats.Contains(ImageFileFormats.AVIF))
+            if (selectedFormats.Contains(ImageFileFormat.AVIF))
             {
                 if (!_avifOptionsFormGroup.State.IsValid)
                 {
@@ -41,7 +41,7 @@ public partial class FormatsFormGroup : ContentView, IFormElement<FormatsFormGro
                 }
             }
             
-            if (selectedFormats.Contains(ImageFileFormats.WebP))
+            if (selectedFormats.Contains(ImageFileFormat.WebP))
             {
                 if (!_webpOptionsFormGroup.State.IsValid)
                 {
@@ -49,7 +49,7 @@ public partial class FormatsFormGroup : ContentView, IFormElement<FormatsFormGro
                 }
             }
             
-            if (selectedFormats.Contains(ImageFileFormats.JPEG))
+            if (selectedFormats.Contains(ImageFileFormat.JPEG))
             {
                 if (!_jpegOptionsFormGroup.State.IsValid)
                 {
@@ -119,21 +119,21 @@ public partial class FormatsFormGroup : ContentView, IFormElement<FormatsFormGro
             new CheckboxGroupItem
             {
                 Label = "AVIF",
-                Value = ImageFileFormats.AVIF.ToString(),
+                Value = ImageFileFormat.AVIF.ToString(),
                 IsChecked = true,
                 IsFrozen = false
             },
             new CheckboxGroupItem
             {
                 Label = "WebP",
-                Value = ImageFileFormats.WebP.ToString(),
+                Value = ImageFileFormat.WebP.ToString(),
                 IsChecked = true,
                 IsFrozen = false
             },
             new CheckboxGroupItem
             {
                 Label = "JPEG",
-                Value = ImageFileFormats.JPEG.ToString(),
+                Value = ImageFileFormat.JPEG.ToString(),
                 IsChecked = true,
                 IsFrozen = true
             }
@@ -163,11 +163,11 @@ public partial class FormatsFormGroup : ContentView, IFormElement<FormatsFormGro
     private void InitializeAVIFOptionsFormGroup(Layout formatOptionsLayout)
     {
         _avifOptionsFormGroup = new AVIFOptionsFormGroup();
-        _avifOptionsFormGroup.IsVisible = _selectedOutputFormats.State.Value.Contains(ImageFileFormats.AVIF.ToString());
+        _avifOptionsFormGroup.IsVisible = _selectedOutputFormats.State.Value.Contains(ImageFileFormat.AVIF.ToString());
         _avifOptionsFormGroup.StateChanged += (sender, e) => StateChanged?.Invoke(this, State);
         _selectedOutputFormats.StateChanged += (sender, e) =>
         {
-            _avifOptionsFormGroup.IsVisible = e.Value.Contains(ImageFileFormats.AVIF.ToString());
+            _avifOptionsFormGroup.IsVisible = e.Value.Contains(ImageFileFormat.AVIF.ToString());
         };
         
         formatOptionsLayout.Children.Add(_avifOptionsFormGroup);
@@ -176,11 +176,11 @@ public partial class FormatsFormGroup : ContentView, IFormElement<FormatsFormGro
     private void InitializeWebPOptionsFormGroup(Layout formatOptionsLayout)
     {
         _webpOptionsFormGroup = new WebPOptionsFormGroup();
-        _webpOptionsFormGroup.IsVisible = _selectedOutputFormats.State.Value.Contains(ImageFileFormats.WebP.ToString());
+        _webpOptionsFormGroup.IsVisible = _selectedOutputFormats.State.Value.Contains(ImageFileFormat.WebP.ToString());
         _webpOptionsFormGroup.StateChanged += (sender, e) => StateChanged?.Invoke(this, State);
         _selectedOutputFormats.StateChanged += (sender, e) =>
         {
-            _webpOptionsFormGroup.IsVisible = e.Value.Contains(ImageFileFormats.WebP.ToString());
+            _webpOptionsFormGroup.IsVisible = e.Value.Contains(ImageFileFormat.WebP.ToString());
         };
         
         formatOptionsLayout.Children.Add(_webpOptionsFormGroup);
@@ -189,11 +189,11 @@ public partial class FormatsFormGroup : ContentView, IFormElement<FormatsFormGro
     private void InitializeJPEGOptionsFormGroup(Layout formatOptionsLayout)
     {
         _jpegOptionsFormGroup = new JPEGOptionsFormGroup();
-        _jpegOptionsFormGroup.IsVisible = _selectedOutputFormats.State.Value.Contains(ImageFileFormats.JPEG.ToString());
+        _jpegOptionsFormGroup.IsVisible = _selectedOutputFormats.State.Value.Contains(ImageFileFormat.JPEG.ToString());
         _jpegOptionsFormGroup.StateChanged += (sender, e) => StateChanged?.Invoke(this, State);
         _selectedOutputFormats.StateChanged += (sender, e) =>
         {
-            _jpegOptionsFormGroup.IsVisible = e.Value.Contains(ImageFileFormats.JPEG.ToString());
+            _jpegOptionsFormGroup.IsVisible = e.Value.Contains(ImageFileFormat.JPEG.ToString());
         };
         
         formatOptionsLayout.Children.Add(_jpegOptionsFormGroup);

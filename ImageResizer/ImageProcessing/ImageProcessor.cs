@@ -22,9 +22,13 @@ public static class ImageProcessor
             formatsFormGroupValue, 
             outputFormGroupValue
         );
-
-        // this will ultimately become the tag which will be copied to the clipboard
-        return "";
+        
+        return CreateTag(
+            theImageFormGroupValue, 
+            responsiveImageSettingsFormGroupValue, 
+            formatsFormGroupValue, 
+            outputFormGroupValue
+        );
     }
 
     private static async Task ResizeReformatAndSaveImages(
@@ -70,7 +74,7 @@ public static class ImageProcessor
         {
             switch (format)
             {
-                case ImageFileFormats.AVIF:
+                case ImageFileFormat.AVIF:
                     return _imageWriter.ResizeReformatAndSaveAsAVIF(
                         imageData,
                         widths,
@@ -78,7 +82,7 @@ public static class ImageProcessor
                         formatsFormGroupValue.AVIFOptions.Quality!.Value,
                         formatsFormGroupValue.AVIFOptions.Effort!.Value
                     );
-                case ImageFileFormats.WebP:
+                case ImageFileFormat.WebP:
                     return _imageWriter.ResizeReformatAndSaveAsWebP(
                         imageData,
                         widths,
@@ -86,7 +90,7 @@ public static class ImageProcessor
                         formatsFormGroupValue.WebPOptions.Quality!.Value,
                         formatsFormGroupValue.WebPOptions.Effort!.Value
                     );
-                case ImageFileFormats.JPEG:
+                case ImageFileFormat.JPEG:
                     return _imageWriter.ResizeReformatAndSaveAsJPEG(
                         imageData,
                         widths,
@@ -116,7 +120,7 @@ public static class ImageProcessor
 
     private static void ValidateFormatOptions(FormatsFormGroupValue formatsFormGroupValue)
     {
-        if (formatsFormGroupValue.SelectedFormats.Contains(ImageFileFormats.AVIF))
+        if (formatsFormGroupValue.SelectedFormats.Contains(ImageFileFormat.AVIF))
         {
             if (formatsFormGroupValue.AVIFOptions.Quality == null)
             {
@@ -129,7 +133,7 @@ public static class ImageProcessor
             }
         }
         
-        if(formatsFormGroupValue.SelectedFormats.Contains(ImageFileFormats.WebP))
+        if(formatsFormGroupValue.SelectedFormats.Contains(ImageFileFormat.WebP))
         {
             if (formatsFormGroupValue.WebPOptions.Quality == null)
             {
@@ -142,12 +146,39 @@ public static class ImageProcessor
             }
         }
         
-        if(formatsFormGroupValue.SelectedFormats.Contains(ImageFileFormats.JPEG))
+        if(formatsFormGroupValue.SelectedFormats.Contains(ImageFileFormat.JPEG))
         {
             if (formatsFormGroupValue.JPEGOptions.Quality == null)
             {
                 throw new ArgumentNullException(nameof(formatsFormGroupValue.JPEGOptions.Quality));
             }
+        }
+    }
+
+    private static string CreateTag(  
+        TheImageFormGroupValue theImageFormGroupValue,
+        ResponsiveImageSettingsFormGroupValue responsiveImageSettingsFormGroupValue,
+        FormatsFormGroupValue formatsFormGroupValue,
+        OutputFormGroupValue outputFormGroupValue)
+    {
+        var outputPath = new ImagePath(
+            outputFormGroupValue.PathToPublicDirectory,
+            outputFormGroupValue.PathFromPublicDirectory,
+            outputFormGroupValue.Filename,
+            outputFormGroupValue.VersionId
+        );
+        
+        switch (responsiveImageSettingsFormGroupValue.ResponsiveImageStrategy)
+        {
+            case ResponsiveImageStrategy.Densities:
+                return TagWriter.WriteTag(
+                    outputPath,
+                    formatsFormGroupValue.SelectedFormats,
+                    theImageFormGroupValue.AltText,
+                    responsiveImageSettingsFormGroupValue.DensitiesStrategyOptions
+                );
+            default:
+                return "";
         }
     }
 }

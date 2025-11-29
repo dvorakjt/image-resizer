@@ -139,12 +139,14 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
 
     private async Task ProcessImage()
     {
-        await ImageProcessor.ProcessImage(
+        var tag  = await ImageProcessor.ProcessImage(
             _theImageFormGroup.State.Value,
             _responsiveImageSettingsFormGroup.State.Value,
             _formatsFormGroup.State.Value,
             _outputFormGroup.State.Value
        );
+
+        await Clipboard.SetTextAsync(tag);
     }
 
     private async Task Reset()
