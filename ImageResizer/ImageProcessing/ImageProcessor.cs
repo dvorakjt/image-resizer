@@ -177,6 +177,13 @@ public static class ImageProcessor
                     theImageFormGroupValue.AltText,
                     responsiveImageSettingsFormGroupValue.DensitiesStrategyOptions
                 );
+            case ResponsiveImageStrategy.Widths:
+                return TagWriter.WriteTag(
+                    outputPath,
+                    formatsFormGroupValue.SelectedFormats,
+                    theImageFormGroupValue.AltText,
+                    responsiveImageSettingsFormGroupValue.WidthsStrategyOptions
+                );
             default:
                 return "";
         }

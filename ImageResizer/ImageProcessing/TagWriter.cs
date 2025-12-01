@@ -41,9 +41,42 @@ public static class TagWriter
         return pictureTagBuilder.ToString();
     }
 
-    public static string WriteTag(IImagePath outputPath, IEnumerable<ImageFileFormat> formats, WidthsFormGroupValue widthsStrategyOptions)
+    public static string WriteTag(
+        IImagePath outputPath,
+        IEnumerable<ImageFileFormat> formats, 
+        string altText,
+        WidthsFormGroupValue widthsStrategyOptions
+    )
     {
-        throw new NotImplementedException();
+        var pictureTagBuilder = new StringBuilder("<picture>\n");
+        
+        if (formats.Contains(ImageFileFormat.AVIF))
+        {
+            var srcset = CreateSourceSet(outputPath, ImageFileFormat.AVIF, widthsStrategyOptions);
+            var sizes = CreateSizes(widthsStrategyOptions);
+            var source = CreateSourceElement(srcset, ImageFileFormat.AVIF.ToMimeType(), sizes);
+            pictureTagBuilder.Append(source);
+        }
+        
+        if (formats.Contains(ImageFileFormat.WebP))
+        {
+            var srcset = CreateSourceSet(outputPath, ImageFileFormat.WebP, widthsStrategyOptions);
+            var sizes = CreateSizes(widthsStrategyOptions);
+            var source = CreateSourceElement(srcset, ImageFileFormat.WebP.ToMimeType(), sizes);
+            pictureTagBuilder.Append(source);
+        }
+        
+        if (formats.Contains(ImageFileFormat.JPEG))
+        {
+            var srcset = CreateSourceSet(outputPath, ImageFileFormat.JPEG, widthsStrategyOptions);
+            var sizes = CreateSizes(widthsStrategyOptions);
+            var src = outputPath.GetURI(ImageFileFormat.JPEG, widthsStrategyOptions.DefaultImageWidth!.Value);
+            var img = CreateImageElement(srcset, src, altText, sizes);
+            pictureTagBuilder.Append(img);
+        }
+
+        pictureTagBuilder.Append("</picture>");
+        return pictureTagBuilder.ToString();
     }
 
     public static string WriteTag(IImagePath outputPath, IEnumerable<ImageFileFormat> formats, MediaQueriesFormGroupValue mediaQueriesStrategyOptions)
@@ -51,14 +84,28 @@ public static class TagWriter
         throw new NotImplementedException();
     }
 
-    private static string CreateSourceElement(string srcset, string mimeType)
+    private static string CreateSourceElement(string srcset, string mimeType, string? sizes = null)
     {
-        return $"  <source srcset=\"{srcset}\" type=\"{mimeType}\" />\n";
+        var sourceTag = $"  <source srcset=\"{srcset}\" ";
+        if (sizes != null)
+        {
+            sourceTag += $" sizes=\"{sizes}\" ";
+        }
+
+        sourceTag += $"type=\"{mimeType}\" />\n";
+        return sourceTag;
     }
 
-    private static string CreateImageElement(string srcset, string src, string altText)
+    private static string CreateImageElement(string srcset, string src, string altText, string? sizes = null)
     {
-        return $"  <img srcset=\"{srcset}\" src=\"{src}\" alt=\"{altText}\" />\n";
+        var imgTag = $"  <img srcset=\"{srcset}\" ";
+        if (sizes != null)
+        {
+            imgTag += $" sizes=\"{sizes}\" ";
+        }
+        
+        imgTag += $"src=\"{src}\" alt=\"{altText}\" />\n";
+        return imgTag;
     }
 
     private static string CreateSourceSet(IImagePath outputPath, ImageFileFormat format,
@@ -73,8 +120,32 @@ public static class TagWriter
         }).ToList();
         
         sources.Add(outputPath.GetURI(format, densitiesStrategyOptions.DefaultImageWidth!.Value));
-        
         return string.Join(", ", sources);
+    }
+    
+    private static string CreateSourceSet(IImagePath outputPath, ImageFileFormat format,
+        WidthsFormGroupValue widthsStrategyOptions)
+    {
+        var sources = widthsStrategyOptions.ScreenAndImageWidths.Select(screenAndImageWidths =>
+        {
+            return
+                $"{outputPath.GetURI(format, screenAndImageWidths.ImageWidth!.Value)} {screenAndImageWidths.ImageWidth!.Value}w";
+        }).ToList();
+        
+        sources.Add($"{outputPath.GetURI(format, widthsStrategyOptions.DefaultImageWidth!.Value)} {widthsStrategyOptions.DefaultImageWidth!.Value}w");
+        return string.Join(", ", sources);
+    }
+
+    private static string CreateSizes(WidthsFormGroupValue widthsStrategyOptions)
+    {
+        var mediaQuery = widthsStrategyOptions.WidthThresholdsStrategy == WidthThresholdsStrategy.MaxWidths ? "max-width" :  "min-width";
+        var sizes = widthsStrategyOptions.ScreenAndImageWidths.Select(screenAndImageWidths =>
+        {
+            return $"({mediaQuery}: {screenAndImageWidths.ScreenWidth}px) {screenAndImageWidths.ImageWidth!.Value}px";
+        }).ToList();
+        
+        sizes.Add($"{widthsStrategyOptions.DefaultImageWidth!.Value}px");
+        return string.Join(", ", sizes);
     }
     
     /*
