@@ -79,9 +79,43 @@ public static class TagWriter
         return pictureTagBuilder.ToString();
     }
 
-    public static string WriteTag(IImagePath outputPath, IEnumerable<ImageFileFormat> formats, MediaQueriesFormGroupValue mediaQueriesStrategyOptions)
+    public static string WriteTag(
+        IImagePath outputPath, 
+        IEnumerable<ImageFileFormat> formats, 
+        string altText,
+        MediaQueriesFormGroupValue 
+            mediaQueriesStrategyOptions
+    )
     {
-        throw new NotImplementedException();
+        var pictureTagBuilder = new StringBuilder("<picture>\n");
+        
+        if (formats.Contains(ImageFileFormat.AVIF))
+        {
+            var srcset = CreateSourceSet(outputPath, ImageFileFormat.AVIF, mediaQueriesStrategyOptions);
+            var sizes = CreateSizes(mediaQueriesStrategyOptions);
+            var source = CreateSourceElement(srcset, ImageFileFormat.AVIF.ToMimeType(), sizes);
+            pictureTagBuilder.Append(source);
+        }
+        
+        if (formats.Contains(ImageFileFormat.WebP))
+        {
+            var srcset = CreateSourceSet(outputPath, ImageFileFormat.WebP, mediaQueriesStrategyOptions);
+            var sizes = CreateSizes(mediaQueriesStrategyOptions);
+            var source = CreateSourceElement(srcset, ImageFileFormat.WebP.ToMimeType(), sizes);
+            pictureTagBuilder.Append(source);
+        }
+        
+        if (formats.Contains(ImageFileFormat.JPEG))
+        {
+            var srcset = CreateSourceSet(outputPath, ImageFileFormat.JPEG, mediaQueriesStrategyOptions);
+            var sizes = CreateSizes(mediaQueriesStrategyOptions);
+            var src = outputPath.GetURI(ImageFileFormat.JPEG, mediaQueriesStrategyOptions.DefaultImageWidth!.Value);
+            var img = CreateImageElement(srcset, src, altText, sizes);
+            pictureTagBuilder.Append(img);
+        }
+
+        pictureTagBuilder.Append("</picture>");
+        return pictureTagBuilder.ToString();
     }
 
     private static string CreateSourceElement(string srcset, string mimeType, string? sizes = null)
@@ -135,6 +169,19 @@ public static class TagWriter
         sources.Add($"{outputPath.GetURI(format, widthsStrategyOptions.DefaultImageWidth!.Value)} {widthsStrategyOptions.DefaultImageWidth!.Value}w");
         return string.Join(", ", sources);
     }
+    
+    private static string CreateSourceSet(IImagePath outputPath, ImageFileFormat format,
+        MediaQueriesFormGroupValue mediaQueriesStrategyOptions)
+    {
+        var sources = mediaQueriesStrategyOptions.MediaQueryAndImageWidths.Select(mediaQueryAndImageWidth =>
+        {
+            return
+                $"{outputPath.GetURI(format, mediaQueryAndImageWidth.ImageWidth!.Value)} {mediaQueryAndImageWidth.ImageWidth!.Value}w";
+        }).ToList();
+        
+        sources.Add($"{outputPath.GetURI(format, mediaQueriesStrategyOptions.DefaultImageWidth!.Value)} {mediaQueriesStrategyOptions.DefaultImageWidth!.Value}w");
+        return string.Join(", ", sources);
+    }
 
     private static string CreateSizes(WidthsFormGroupValue widthsStrategyOptions)
     {
@@ -147,6 +194,19 @@ public static class TagWriter
         sizes.Add($"{widthsStrategyOptions.DefaultImageWidth!.Value}px");
         return string.Join(", ", sizes);
     }
+
+    private static string CreateSizes(MediaQueriesFormGroupValue mediaQueriesStrategyOptions)
+    {
+        var sizes = mediaQueriesStrategyOptions.MediaQueryAndImageWidths.Select(mediaQueryAndImageWidth =>
+        {
+            var mediaQuery = mediaQueryAndImageWidth.MediaQuery.Trim();
+            if (!IsEnclosedInParentheses(mediaQuery)) mediaQuery = $"({mediaQuery})";
+            return $"{mediaQuery} {mediaQueryAndImageWidth.ImageWidth!.Value}px";
+        }).ToList();
+        
+        sizes.Add($"{mediaQueriesStrategyOptions.DefaultImageWidth!.Value}px");
+        return string.Join(", ", sizes);
+    }
     
     /*
         NetVips.Image.Resize rounds to the nearest pixel, so the calculation here corresponds to what you would get
@@ -155,5 +215,10 @@ public static class TagWriter
     private static int CalculateImageWidthFromDensity(int baseImageWidth, Density density)
     {
         return (int)Math.Round(baseImageWidth * density.ToMultiplier());
+    }
+
+    private static bool IsEnclosedInParentheses(string mediaQuery)
+    {
+        return mediaQuery.IndexOf("(") == 0 && mediaQuery.LastIndexOf(")") == mediaQuery.Length - 1;
     }
 }

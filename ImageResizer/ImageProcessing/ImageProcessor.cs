@@ -184,8 +184,15 @@ public static class ImageProcessor
                     theImageFormGroupValue.AltText,
                     responsiveImageSettingsFormGroupValue.WidthsStrategyOptions
                 );
+            case ResponsiveImageStrategy.MediaQueries:
+                return TagWriter.WriteTag(
+                    outputPath,
+                    formatsFormGroupValue.SelectedFormats,
+                    theImageFormGroupValue.AltText,
+                    responsiveImageSettingsFormGroupValue.MediaQueriesStrategyOptions
+                );
             default:
-                return "";
+                throw new ArgumentOutOfRangeException(nameof(responsiveImageSettingsFormGroupValue.ResponsiveImageStrategy));
         }
     }
 }
