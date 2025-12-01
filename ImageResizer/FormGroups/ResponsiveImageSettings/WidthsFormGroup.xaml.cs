@@ -261,6 +261,7 @@ public partial class WidthsFormGroup : ContentView, IFormElement<WidthsFormGroup
 
             var imageWidthInput = new TextInputBuilder()
                 .PositiveIntegersOnly()
+                .WithDefaultValue(width.ImageWidth.HasValue ? width.ImageWidth.Value.ToString() : "")
                 .WithValidator(
                     FormControlHelpers.CreateMinMaxValidator
                     (

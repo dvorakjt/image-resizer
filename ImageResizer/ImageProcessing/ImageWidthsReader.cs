@@ -7,7 +7,7 @@ public static class ImageWidthsReader
     public static HashSet<int> GetImageWidths(DensitiesFormGroupValue densitiesStrategyOptions)
     {
         var imageWidths = new HashSet<int>();
-        if (densitiesStrategyOptions.BaseImageWidth == null)
+        if (!densitiesStrategyOptions.BaseImageWidth.HasValue)
         {
             throw new ArgumentException("densitiesStrategyOptions.BaseImageWidth cannot be null.");
         }
@@ -18,7 +18,7 @@ public static class ImageWidthsReader
             imageWidths.Add(adjustedWidth);
         }
         
-        if (densitiesStrategyOptions.DefaultImageWidth == null)
+        if (!densitiesStrategyOptions.DefaultImageWidth.HasValue)
         {
             throw new ArgumentException("densitiesStrategyOptions.DefaultImageWidth cannot be null.");
         }
@@ -31,7 +31,7 @@ public static class ImageWidthsReader
     {
         var imageWidths = new HashSet<int>();
         
-        if (widthsStrategyOptions.DefaultImageWidth == null)
+        if (!widthsStrategyOptions.DefaultImageWidth.HasValue)
         {
             throw new ArgumentException("widthsStrategyOptions.DefaultImageWidth cannot be null.");
         }
@@ -40,7 +40,7 @@ public static class ImageWidthsReader
 
         foreach (var screenAndImageWidth in widthsStrategyOptions.ScreenAndImageWidths)
         {
-            if (screenAndImageWidth.ImageWidth == null)
+            if (!screenAndImageWidth.ImageWidth.HasValue)
             {
                 throw new ArgumentException("widthsStrategyOptions.ScreenAndImageWidths contains a null image width.");
             }
@@ -55,7 +55,7 @@ public static class ImageWidthsReader
     {
         var imageWidths = new HashSet<int>();
         
-        if (mediaQueriesStrategyOptions.DefaultImageWidth == null)
+        if (!mediaQueriesStrategyOptions.DefaultImageWidth.HasValue)
         {
             throw new ArgumentException("mediaQueriesStrategyOptions.DefaultImageWidth cannot be null.");
         }
@@ -64,7 +64,7 @@ public static class ImageWidthsReader
 
         foreach (var mediaQueryAndImageWidth in mediaQueriesStrategyOptions.MediaQueryAndImageWidths)
         {
-            if (mediaQueryAndImageWidth.ImageWidth == null)
+            if (!mediaQueryAndImageWidth.ImageWidth.HasValue)
             {
                 throw new ArgumentException("mediaQueriesStrategyOptions.MediaQueryAndImageWidths contains a null image width.");
             }
