@@ -80,6 +80,10 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
             try
             {
                 await ProcessImage();
+                DisplayAlert(
+                    "Success", 
+                    "Image resized and saved at the provided location. A corresponding picture tag has been copied to the clipboard for you to paste into your code.", 
+                    "Ok");
             }
             catch (Exception ex)
             {
