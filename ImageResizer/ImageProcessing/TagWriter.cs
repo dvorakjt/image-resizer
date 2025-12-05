@@ -33,7 +33,7 @@ public static class TagWriter
         {
             var srcset = CreateSourceSet(outputPath, ImageFileFormat.JPEG, densitiesStrategyOptions);
             var src = outputPath.GetURI(ImageFileFormat.JPEG, densitiesStrategyOptions.DefaultImageWidth!.Value);
-            var img = CreateImageElement(srcset, src, altText);
+            var img = CreateImageElement(src, altText, srcset);
             pictureTagBuilder.Append(img);
         }
 
@@ -71,7 +71,7 @@ public static class TagWriter
             var srcset = CreateSourceSet(outputPath, ImageFileFormat.JPEG, widthsStrategyOptions);
             var sizes = CreateSizes(widthsStrategyOptions);
             var src = outputPath.GetURI(ImageFileFormat.JPEG, widthsStrategyOptions.DefaultImageWidth!.Value);
-            var img = CreateImageElement(srcset, src, altText, sizes);
+            var img = CreateImageElement(src, altText, srcset, sizes);
             pictureTagBuilder.Append(img);
         }
 
@@ -91,26 +91,38 @@ public static class TagWriter
         
         if (formats.Contains(ImageFileFormat.AVIF))
         {
-            var srcset = CreateSourceSet(outputPath, ImageFileFormat.AVIF, mediaQueriesStrategyOptions);
-            var sizes = CreateSizes(mediaQueriesStrategyOptions);
-            var source = CreateSourceElement(srcset, ImageFileFormat.AVIF.ToMimeType(), sizes);
-            pictureTagBuilder.Append(source);
+            foreach (var mediaQuery in mediaQueriesStrategyOptions.MediaQueryAndImageWidths)
+            {
+                var uri = outputPath.GetURI(ImageFileFormat.AVIF, mediaQuery.ImageWidth!.Value);
+                var formattedMediaQuery = FormatMediaQuery(mediaQuery.MediaQuery);
+                var source = CreateSourceElement(uri, ImageFileFormat.AVIF.ToMimeType(), null, formattedMediaQuery);
+                pictureTagBuilder.Append(source);
+            }
         }
         
         if (formats.Contains(ImageFileFormat.WebP))
         {
-            var srcset = CreateSourceSet(outputPath, ImageFileFormat.WebP, mediaQueriesStrategyOptions);
-            var sizes = CreateSizes(mediaQueriesStrategyOptions);
-            var source = CreateSourceElement(srcset, ImageFileFormat.WebP.ToMimeType(), sizes);
-            pictureTagBuilder.Append(source);
+            foreach (var mediaQuery in mediaQueriesStrategyOptions.MediaQueryAndImageWidths)
+            {
+                var uri = outputPath.GetURI(ImageFileFormat.WebP, mediaQuery.ImageWidth!.Value);
+                var formattedMediaQuery = FormatMediaQuery(mediaQuery.MediaQuery);
+                var source = CreateSourceElement(uri, ImageFileFormat.WebP.ToMimeType(), null, formattedMediaQuery);
+                pictureTagBuilder.Append(source);
+            }
         }
         
         if (formats.Contains(ImageFileFormat.JPEG))
         {
-            var srcset = CreateSourceSet(outputPath, ImageFileFormat.JPEG, mediaQueriesStrategyOptions);
-            var sizes = CreateSizes(mediaQueriesStrategyOptions);
-            var src = outputPath.GetURI(ImageFileFormat.JPEG, mediaQueriesStrategyOptions.DefaultImageWidth!.Value);
-            var img = CreateImageElement(srcset, src, altText, sizes);
+            foreach (var mediaQuery in mediaQueriesStrategyOptions.MediaQueryAndImageWidths)
+            {
+                var uri = outputPath.GetURI(ImageFileFormat.JPEG, mediaQuery.ImageWidth!.Value);
+                var formattedMediaQuery = FormatMediaQuery(mediaQuery.MediaQuery);
+                var source = CreateSourceElement(uri, ImageFileFormat.JPEG.ToMimeType(), null, formattedMediaQuery);
+                pictureTagBuilder.Append(source);
+            }
+            
+            var defaultImageSrc = outputPath.GetURI(ImageFileFormat.JPEG, mediaQueriesStrategyOptions.DefaultImageWidth!.Value);
+            var img = CreateImageElement(defaultImageSrc, altText);
             pictureTagBuilder.Append(img);
         }
 
@@ -118,27 +130,38 @@ public static class TagWriter
         return pictureTagBuilder.ToString();
     }
 
-    private static string CreateSourceElement(string srcset, string mimeType, string? sizes = null)
+    private static string CreateSourceElement(string srcset, string mimeType, string? sizes = null, string? media = null)
     {
         var sourceTag = $"  <source srcset=\"{srcset}\" ";
+        
         if (sizes != null)
         {
             sourceTag += $" sizes=\"{sizes}\" ";
+        }
+
+        if (media != null)
+        {
+            sourceTag += $" media=\"{media}\" ";
         }
 
         sourceTag += $"type=\"{mimeType}\" />\n";
         return sourceTag;
     }
 
-    private static string CreateImageElement(string srcset, string src, string altText, string? sizes = null)
+    private static string CreateImageElement(string src, string altText, string? srcset = null, string? sizes = null)
     {
-        var imgTag = $"  <img srcset=\"{srcset}\" ";
-        if (sizes != null)
+        var imgTag = $"  <img";
+        if (srcset != null)
         {
-            imgTag += $" sizes=\"{sizes}\" ";
+            imgTag += $" srcset=\"{srcset}\"";
         }
         
-        imgTag += $"src=\"{src}\" alt=\"{altText}\" />\n";
+        if (sizes != null)
+        {
+            imgTag += $" sizes=\"{sizes}\"";
+        }
+        
+        imgTag += $" src=\"{src}\" alt=\"{altText}\" />\n";
         return imgTag;
     }
 
@@ -169,19 +192,6 @@ public static class TagWriter
         sources.Add($"{outputPath.GetURI(format, widthsStrategyOptions.DefaultImageWidth!.Value)} {widthsStrategyOptions.DefaultImageWidth!.Value}w");
         return string.Join(", ", sources);
     }
-    
-    private static string CreateSourceSet(IImagePath outputPath, ImageFileFormat format,
-        MediaQueriesFormGroupValue mediaQueriesStrategyOptions)
-    {
-        var sources = mediaQueriesStrategyOptions.MediaQueryAndImageWidths.Select(mediaQueryAndImageWidth =>
-        {
-            return
-                $"{outputPath.GetURI(format, mediaQueryAndImageWidth.ImageWidth!.Value)} {mediaQueryAndImageWidth.ImageWidth!.Value}w";
-        }).ToList();
-        
-        sources.Add($"{outputPath.GetURI(format, mediaQueriesStrategyOptions.DefaultImageWidth!.Value)} {mediaQueriesStrategyOptions.DefaultImageWidth!.Value}w");
-        return string.Join(", ", sources);
-    }
 
     private static string CreateSizes(WidthsFormGroupValue widthsStrategyOptions)
     {
@@ -194,19 +204,6 @@ public static class TagWriter
         sizes.Add($"{widthsStrategyOptions.DefaultImageWidth!.Value}px");
         return string.Join(", ", sizes);
     }
-
-    private static string CreateSizes(MediaQueriesFormGroupValue mediaQueriesStrategyOptions)
-    {
-        var sizes = mediaQueriesStrategyOptions.MediaQueryAndImageWidths.Select(mediaQueryAndImageWidth =>
-        {
-            var mediaQuery = mediaQueryAndImageWidth.MediaQuery.Trim();
-            if (!IsEnclosedInParentheses(mediaQuery)) mediaQuery = $"({mediaQuery})";
-            return $"{mediaQuery} {mediaQueryAndImageWidth.ImageWidth!.Value}px";
-        }).ToList();
-        
-        sizes.Add($"{mediaQueriesStrategyOptions.DefaultImageWidth!.Value}px");
-        return string.Join(", ", sizes);
-    }
     
     /*
         NetVips.Image.Resize rounds to the nearest pixel, so the calculation here corresponds to what you would get
@@ -217,8 +214,27 @@ public static class TagWriter
         return (int)Math.Round(baseImageWidth * density.ToMultiplier());
     }
 
+    private static string FormatMediaQuery(string mediaQuery)
+    {
+        if (!IsEnclosedInParentheses(mediaQuery))
+        {
+            mediaQuery = $"({mediaQuery})";
+        }
+        
+        return mediaQuery;
+    }
+
     private static bool IsEnclosedInParentheses(string mediaQuery)
     {
-        return mediaQuery.IndexOf("(") == 0 && mediaQuery.LastIndexOf(")") == mediaQuery.Length - 1;
+        int openingParenthesesCount = 0;
+		
+        for(int i = 0; i < mediaQuery.Length - 1; i++)
+        {
+            if(mediaQuery[i] == '(') openingParenthesesCount++;
+            else if(mediaQuery[i] == ')') openingParenthesesCount--;
+            if(openingParenthesesCount <= 0) return false;
+        }
+		
+        return true;
     }
 }
