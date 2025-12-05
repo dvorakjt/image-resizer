@@ -65,7 +65,7 @@ you want, allowing you to query many different media features to determine what 
 If media queries mode is chosen, a separate source tag will be generated for each media query and format you have 
 entered with its `media` attribute set accordingly, as well as an img element with only the src attribute set (as a 
 fallback in case none of these features are supported, for instance if the user is using a very old browser). Note that 
-in this mode, if you query the screen width, it will NOT be multiplied by the device's DPI. However, you can achieve 
-this type of behavior by querying both the screen width and the resolution.
+in this mode, if you query the screen width, it will be compared to the users' screen width WITHOUT factoring the 
+device's DPI. However, you can achieve this type of behavior by querying both the screen width and the resolution.
 
 The media queries strategy is best when you need fine-grained control.
