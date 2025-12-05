@@ -43,7 +43,7 @@ public partial class MediaQueriesFormGroup : ContentView, IFormElement<MediaQuer
     private VerticalStackLayout _mediaQueriesListLayout;
     private readonly int _minImageWidth = 1;
     private readonly int _maxImageWidth = 40_000;
-    private readonly int _maxQueryCount = 30;
+    private readonly int _maxQueryCount = 200;
     
     public MediaQueriesFormGroup()
     {

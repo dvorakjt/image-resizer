@@ -63,7 +63,7 @@ public partial class WidthsFormGroup : ContentView, IFormElement<WidthsFormGroup
     private VerticalStackLayout _widthsListLayout;
     private readonly int _minWidth = 1;
     private readonly int _maxWidth = 40_000;
-    private readonly int _maxWidthCount = 30;
+    private readonly int _maxWidthCount = 200;
     
     public WidthsFormGroup()
     {
